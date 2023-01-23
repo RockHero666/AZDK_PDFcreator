@@ -1,0 +1,10 @@
+debug/azdk.o
+debug/calendar.o
+debug/main.o
+debug/mainwindow.o
+debug/parser.o
+debug/pdf_creator.o
+debug/moc_calendar.o
+debug/moc_mainwindow.o
+debug/moc_parser.o
+debug/moc_pdf_creator.o
