@@ -361,7 +361,11 @@ void MainWindow::on_puth_to_file_button_clicked()
 
 void MainWindow::on_path_to_file_line_textChanged(const QString &arg1)
 {
+    if(!arg1.isEmpty())
+    {
     parser.set_path(arg1);
+    parser.to_parse();
+    }
     check_box_checker();
 }
 
@@ -395,7 +399,7 @@ void MainWindow::on_to_path_button_clicked()
 
 void MainWindow::check_box_checker()
 {
-    parser.to_parse();
+
 
     ui->sfx_s->setDisabled(true);
     ui->sfx_ro1->setDisabled(true);
@@ -403,6 +407,23 @@ void MainWindow::check_box_checker()
     ui->sfx_r2->setDisabled(true);
     ui->sfx_r3->setDisabled(true);
     ui->sfx_o->setDisabled(true);
+
+
+
+    ui->sfx_o->setCheckState(Qt::Unchecked);
+
+    ui->sfx_ro1->setCheckState(Qt::Unchecked);
+
+    ui->sfx_r1->setCheckState(Qt::Unchecked);
+
+    ui->sfx_r2->setCheckState(Qt::Unchecked);
+
+    ui->sfx_r3->setCheckState(Qt::Unchecked);
+
+    ui->sfx_s->setCheckState(Qt::Unchecked);
+
+    ui->sfx_all->setCheckState(Qt::Unchecked);
+
 
     for (int i = 0; i <  parser.all_paths.size(); ++i)
     {

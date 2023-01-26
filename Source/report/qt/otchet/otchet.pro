@@ -31,6 +31,7 @@ HEADERS += \
     pdf_creator.h
 
 FORMS += \
+    form.ui \
     mainwindow.ui
 
 # Default rules for deployment.

@@ -359,7 +359,7 @@ HPDF_Page_BeginText(pages[page]);
             print_text(page,rus_std,vect_value[i][9].toStdString().c_str(),10,(start_table+=std_cell)-tw,y);
 HPDF_Page_EndText(pages[page]);
 HPDF_Page_BeginText(pages[page]);
-            tw = HPDF_Page_TextWidth(pages[page],vect_value[i][104].toStdString().c_str());
+            tw = HPDF_Page_TextWidth(pages[page],vect_value[i][10].toStdString().c_str());
             print_text(page,rus_std,vect_value[i][10].toStdString().c_str(),10,(start_table+=std_cell)-tw,y);
 HPDF_Page_EndText(pages[page]);
 HPDF_Page_BeginText(pages[page]);
@@ -1148,7 +1148,8 @@ HPDF_Page_BeginText(pages[page_count-1]);
 HPDF_Page_EndText(pages[page_count-1]);
 HPDF_Page_BeginText(pages[page_count-1]);
      print_text(page_count-1,rus_bold,"-",12,50,HPDF_Page_GetHeight(pages[0]) - x_start_pos-28*x++);
-     print_text(page_count-1,rus_std," Результаты измерений ошибок ориентации σ_x,σ_y,σ_z, представленные в " ,12);
+     QString x1 = QString::fromUtf16(reinterpret_cast<const quint16*>("0x394 "));
+     print_text(page_count-1,rus_std,x1.toStdString().c_str() ,12);
 HPDF_Page_EndText(pages[page_count-1]);
 HPDF_Page_BeginText(pages[page_count-1]);
      text = "системе координат прибора, показаны на Рис. " + std::to_string(ris_n++);
@@ -1296,7 +1297,7 @@ HPDF_Page_EndText(pages[page_count-1]);
 
      int y;
      if(sko_otchet.size()<=30)
-         y = sko_otchet.size()/30;
+         y = 1;//sko_otchet.size()/30;
      else
          y = sko_otchet.size()/30+1;
 

@@ -4,8 +4,9 @@
 #include <QWidget>
 
 
-
-
+QT_BEGIN_NAMESPACE
+namespace Ui { class Form; }
+QT_END_NAMESPACE
 
 class Calendar : public QWidget
 {
@@ -14,7 +15,7 @@ public:
     Calendar(QWidget *parent = nullptr);
 
 private:
-
+Ui::Form *ui;
 };
 
 #endif // CALENDAR_H
