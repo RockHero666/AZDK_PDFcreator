@@ -534,52 +534,6 @@
      </rect>
     </property>
    </widget>
-   <widget class="QDateEdit" name="dateEdit_start">
-    <property name="geometry">
-     <rect>
-      <x>190</x>
-      <y>330</y>
-      <width>110</width>
-      <height>22</height>
-     </rect>
-    </property>
-   </widget>
-   <widget class="QDateEdit" name="dateEdit_end">
-    <property name="geometry">
-     <rect>
-      <x>360</x>
-      <y>330</y>
-      <width>110</width>
-      <height>22</height>
-     </rect>
-    </property>
-   </widget>
-   <widget class="QLabel" name="label_20">
-    <property name="geometry">
-     <rect>
-      <x>170</x>
-      <y>333</y>
-      <width>16</width>
-      <height>16</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>C</string>
-    </property>
-   </widget>
-   <widget class="QLabel" name="label_21">
-    <property name="geometry">
-     <rect>
-      <x>330</x>
-      <y>333</y>
-      <width>21</width>
-      <height>16</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>По</string>
-    </property>
-   </widget>
    <widget class="QDoubleSpinBox" name="size_doubleSpinBox">
     <property name="geometry">
      <rect>
@@ -624,7 +578,7 @@
     <property name="geometry">
      <rect>
       <x>170</x>
-      <y>240</y>
+      <y>250</y>
       <width>71</width>
       <height>22</height>
      </rect>
@@ -634,7 +588,7 @@
     <property name="geometry">
      <rect>
       <x>170</x>
-      <y>280</y>
+      <y>290</y>
       <width>71</width>
       <height>22</height>
      </rect>
@@ -714,6 +668,19 @@
     </property>
     <property name="text">
      <string>r2</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="pushButton">
+    <property name="geometry">
+     <rect>
+      <x>170</x>
+      <y>330</y>
+      <width>111</width>
+      <height>21</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Выставить дату</string>
     </property>
    </widget>
   </widget>

@@ -4,6 +4,7 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
 CONFIG += C++11
 
+
 # The following define makes your compiler emit warnings if you use
 # any Qt feature that has been marked deprecated (the exact warnings
 # depend on your compiler). Please consult the documentation of the
@@ -40,7 +41,7 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
 
 
-
+win32:RC_ICONS += icon.ico
 win32: LIBS += -L$$PWD/../../../libharu/lib/ -lhpdf
 
 INCLUDEPATH += $$PWD/../../../libharu/include
@@ -48,3 +49,6 @@ DEPENDPATH += $$PWD/../../../libharu/include
 
 DISTFILES += \
     todo
+
+RESOURCES += \
+    resource.qrc

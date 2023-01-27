@@ -4,6 +4,7 @@ release/main.o
 release/mainwindow.o
 release/parser.o
 release/pdf_creator.o
+release/qrc_resource.o
 release/moc_calendar.o
 release/moc_mainwindow.o
 release/moc_parser.o

@@ -11,6 +11,7 @@
 #include "azdk.h"
 #include <QDate>
 #include <QSettings>
+#include "calendar.h"
 
 #define ORGANIZATION_NAME "Azmerit"
 #define ORGANIZATION_DOMAIN "http://www.azmerit.ru"
@@ -24,16 +25,16 @@ class MainWindow : public QMainWindow
 {
     Q_OBJECT
 
-QThread thread;
+    QThread thread;
 
-const QString sfx[5]  {"o","r01","r1","r3","s"};
+    const QString sfx[5]  {"o","r01","r1","r3","s"};
     Parser parser;
     PDF_creator pdf_creator;
     AZDK azdk;
 
     int progress;
 
-
+    Calendar calendar;
 
 
 public:
@@ -119,6 +120,10 @@ private slots:
     void on_speed_comboBox_currentIndexChanged(const QString &arg1);
 
    // void on_progressBar_valueChanged(int value);
+
+    void on_pushButton_clicked();
+
+    void another_window_close();
 
 private:
     Ui::MainWindow *ui;

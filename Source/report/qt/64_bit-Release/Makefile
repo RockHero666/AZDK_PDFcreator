@@ -33,7 +33,7 @@ IDC           = idc
 IDL           = midl
 ZIP           = zip -r -9
 DEF_FILE      = 
-RES_FILE      = 
+RES_FILE      = otchet_resource_res.o
 SED           = $(QMAKE) -install sed
 MOVE          = move
 SUBTARGETS    =  \
@@ -277,7 +277,8 @@ Makefile: ../otchet/otchet.pro D:/Programs/QT5/5.14.2/mingw73_64/mkspecs/win32-g
 		D:/Programs/QT5/5.14.2/mingw73_64/lib/Qt5Gui.prl \
 		D:/Programs/QT5/5.14.2/mingw73_64/lib/Qt5Core.prl \
 		D:/Programs/QT5/5.14.2/mingw73_64/lib/qtmain.prl \
-		D:/Programs/QT5/5.14.2/mingw73_64/mkspecs/features/build_pass.prf
+		D:/Programs/QT5/5.14.2/mingw73_64/mkspecs/features/build_pass.prf \
+		../otchet/resource.qrc
 	$(QMAKE) -o Makefile ..\otchet\otchet.pro -spec win32-g++ "CONFIG+=qtquickcompiler"
 D:/Programs/QT5/5.14.2/mingw73_64/mkspecs/features/spec_pre.prf:
 D:/Programs/QT5/5.14.2/mingw73_64/mkspecs/qdevice.pri:
@@ -487,6 +488,7 @@ D:/Programs/QT5/5.14.2/mingw73_64/lib/Qt5Gui.prl:
 D:/Programs/QT5/5.14.2/mingw73_64/lib/Qt5Core.prl:
 D:/Programs/QT5/5.14.2/mingw73_64/lib/qtmain.prl:
 D:/Programs/QT5/5.14.2/mingw73_64/mkspecs/features/build_pass.prf:
+../otchet/resource.qrc:
 qmake: FORCE
 	@$(QMAKE) -o Makefile ..\otchet\otchet.pro -spec win32-g++ "CONFIG+=qtquickcompiler"
 

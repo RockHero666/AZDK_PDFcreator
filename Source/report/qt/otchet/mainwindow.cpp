@@ -56,8 +56,8 @@ MainWindow::MainWindow(QWidget *parent)
     ui->speed_comboBox->setCurrentIndex(settings.value("speed").toInt());
     ui->comboBox->setCurrentIndex(settings.value("interface_").toInt());
 
-    ui->dateEdit_start->setDate(QDate(settings.value("time_start_y").toInt(),settings.value("time_start_m").toInt(),settings.value("time_start_d").toInt()));
-    ui->dateEdit_end->setDate(QDate(settings.value("time_end_y").toInt(),settings.value("time_end_m").toInt(),settings.value("time_end_d").toInt()));
+    calendar.set_date_begin(settings.value("time_start_y").toInt(),settings.value("time_start_m").toInt(),settings.value("time_start_d").toInt());
+    calendar.set_date_end(settings.value("time_end_y").toInt(),settings.value("time_end_m").toInt(),settings.value("time_end_d").toInt());
 
 
     if(!settings.value("path_to_file_line").toString().isEmpty())
@@ -72,9 +72,8 @@ MainWindow::MainWindow(QWidget *parent)
     on_savepath_line_textChanged(settings.value("savepath_line").toString());
     }
 
-   // QWidget *wdg = new QWidget;
-    //wdg->show();
 
+    connect(&calendar,&Calendar::finished,this,&MainWindow::another_window_close);
 
 }
 
@@ -169,14 +168,14 @@ void MainWindow::on_number_ods_spinBox_valueChanged(const QString &arg1)
 
 QString MainWindow::setDate()
 {
-  QDate start = ui->dateEdit_start->date();
-  QDate end = ui->dateEdit_end->date();
+  QDate start = calendar.get_date_begin();
+  QDate end = calendar.get_date_end();
 
   if(start == end)
   {
-      QString str = QString::number(ui->dateEdit_start->date().day()) + "." +
-              QString::number(ui->dateEdit_start->date().month()) + "." +
-              QString::number(ui->dateEdit_start->date().year()) + ".";
+      QString str = QString::number(calendar.get_date_begin().day()) + "." +
+              QString::number(calendar.get_date_begin().month()) + "." +
+              QString::number(calendar.get_date_begin().year()) + ".";
       return str;
   }
   if(start > end)
@@ -185,12 +184,12 @@ QString MainWindow::setDate()
   }
   if(start < end)
   {
-      QString start = QString::number(ui->dateEdit_start->date().day()) + "." +
-              QString::number(ui->dateEdit_start->date().month()) + "." +
-              QString::number(ui->dateEdit_start->date().year()) + ".";
-      QString end = QString::number(ui->dateEdit_end->date().day()) + "." +
-              QString::number(ui->dateEdit_end->date().month()) + "." +
-              QString::number(ui->dateEdit_end->date().year()) + ".";
+      QString start = QString::number(calendar.get_date_begin().day()) + "." +
+              QString::number(calendar.get_date_begin().month()) + "." +
+              QString::number(calendar.get_date_begin().year()) + ".";
+      QString end = QString::number(calendar.get_date_end().day()) + "." +
+              QString::number(calendar.get_date_end().month()) + "." +
+              QString::number(calendar.get_date_end().year()) + ".";
       return start + " - " + end;
   }
 
@@ -325,18 +324,18 @@ void MainWindow::save_state()
     settings.setValue("timer",ui->checkBox_timer->checkState());
 
 
-    int d = ui->dateEdit_start->date().day();
-    int m = ui->dateEdit_start->date().month();
-    int y = ui->dateEdit_start->date().year();
+    int d = calendar.get_date_begin().day();
+    int m = calendar.get_date_begin().month();
+    int y = calendar.get_date_begin().year();
 
     settings.setValue("time_start_d",d);
     settings.setValue("time_start_m",m);
     settings.setValue("time_start_y",y);
 
 
-    d = ui->dateEdit_end->date().day();
-    m = ui->dateEdit_end->date().month();
-    y = ui->dateEdit_end->date().year();
+    d = calendar.get_date_end().day();
+    m = calendar.get_date_end().month();
+    y = calendar.get_date_end().year();
 
     settings.setValue("time_end_d",d);
     settings.setValue("time_end_m",m);
@@ -470,10 +469,15 @@ void MainWindow::check_box_checker()
 
 
 
-//void MainWindow::on_progressBar_valueChanged(int value)
-//{
-//    progress +=value;
-//    qDebug()<<progress;
-    //ui->progressBar->setValue(progress);
 
-//}
+void MainWindow::on_pushButton_clicked()
+{
+    calendar.show();
+    ui->create_button->setDisabled(true);
+}
+
+
+void MainWindow::another_window_close()
+{
+    ui->create_button->setDisabled(false);
+}

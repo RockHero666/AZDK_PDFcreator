@@ -2,7 +2,7 @@
 #define CALENDAR_H
 
 #include <QWidget>
-
+#include <QMessageBox>
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class Form; }
@@ -13,6 +13,20 @@ class Calendar : public QWidget
     Q_OBJECT
 public:
     Calendar(QWidget *parent = nullptr);
+
+    QDate get_date_begin();
+    QDate get_date_end();
+
+    void set_date_begin(int y,int m,int d);
+    void set_date_end(int y,int m,int d);
+
+
+
+private slots:
+    void on_close_clicked();
+
+signals:
+    void finished();
 
 private:
 Ui::Form *ui;

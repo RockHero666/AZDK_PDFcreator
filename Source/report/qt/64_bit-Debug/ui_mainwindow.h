@@ -13,7 +13,6 @@
 #include <QtWidgets/QApplication>
 #include <QtWidgets/QCheckBox>
 #include <QtWidgets/QComboBox>
-#include <QtWidgets/QDateEdit>
 #include <QtWidgets/QDoubleSpinBox>
 #include <QtWidgets/QFrame>
 #include <QtWidgets/QLabel>
@@ -70,10 +69,6 @@ public:
     QLabel *label_19;
     QCheckBox *checkBox;
     QComboBox *comboBox;
-    QDateEdit *dateEdit_start;
-    QDateEdit *dateEdit_end;
-    QLabel *label_20;
-    QLabel *label_21;
     QDoubleSpinBox *size_doubleSpinBox;
     QDoubleSpinBox *focus_doubleSpinBox;
     QDoubleSpinBox *influence_doubleSpinBox;
@@ -85,6 +80,7 @@ public:
     QComboBox *speed_comboBox;
     QProgressBar *progressBar;
     QCheckBox *sfx_r2;
+    QPushButton *pushButton;
 
     void setupUi(QMainWindow *MainWindow)
     {
@@ -223,18 +219,6 @@ public:
         comboBox = new QComboBox(centralwidget);
         comboBox->setObjectName(QString::fromUtf8("comboBox"));
         comboBox->setGeometry(QRect(170, 570, 72, 22));
-        dateEdit_start = new QDateEdit(centralwidget);
-        dateEdit_start->setObjectName(QString::fromUtf8("dateEdit_start"));
-        dateEdit_start->setGeometry(QRect(190, 330, 110, 22));
-        dateEdit_end = new QDateEdit(centralwidget);
-        dateEdit_end->setObjectName(QString::fromUtf8("dateEdit_end"));
-        dateEdit_end->setGeometry(QRect(360, 330, 110, 22));
-        label_20 = new QLabel(centralwidget);
-        label_20->setObjectName(QString::fromUtf8("label_20"));
-        label_20->setGeometry(QRect(170, 333, 16, 16));
-        label_21 = new QLabel(centralwidget);
-        label_21->setObjectName(QString::fromUtf8("label_21"));
-        label_21->setGeometry(QRect(330, 333, 21, 16));
         size_doubleSpinBox = new QDoubleSpinBox(centralwidget);
         size_doubleSpinBox->setObjectName(QString::fromUtf8("size_doubleSpinBox"));
         size_doubleSpinBox->setGeometry(QRect(170, 530, 71, 22));
@@ -249,10 +233,10 @@ public:
         intensity_doubleSpinBox->setGeometry(QRect(170, 410, 71, 22));
         number_spinBox = new QSpinBox(centralwidget);
         number_spinBox->setObjectName(QString::fromUtf8("number_spinBox"));
-        number_spinBox->setGeometry(QRect(170, 240, 71, 22));
+        number_spinBox->setGeometry(QRect(170, 250, 71, 22));
         number_ods_spinBox = new QSpinBox(centralwidget);
         number_ods_spinBox->setObjectName(QString::fromUtf8("number_ods_spinBox"));
-        number_ods_spinBox->setGeometry(QRect(170, 280, 71, 22));
+        number_ods_spinBox->setGeometry(QRect(170, 290, 71, 22));
         checkBox_timer = new QCheckBox(centralwidget);
         checkBox_timer->setObjectName(QString::fromUtf8("checkBox_timer"));
         checkBox_timer->setGeometry(QRect(170, 690, 72, 19));
@@ -275,6 +259,9 @@ public:
         sfx_r2 = new QCheckBox(centralwidget);
         sfx_r2->setObjectName(QString::fromUtf8("sfx_r2"));
         sfx_r2->setGeometry(QRect(630, 100, 81, 19));
+        pushButton = new QPushButton(centralwidget);
+        pushButton->setObjectName(QString::fromUtf8("pushButton"));
+        pushButton->setGeometry(QRect(170, 330, 111, 21));
         MainWindow->setCentralWidget(centralwidget);
 
         retranslateUi(MainWindow);
@@ -315,11 +302,10 @@ public:
         label_18->setText(QCoreApplication::translate("MainWindow", "\320\222\321\200\320\265\320\274\321\217 \320\270\321\201\320\277\321\213\321\202\320\260\320\275\320\270\320\271", nullptr));
         label_19->setText(QCoreApplication::translate("MainWindow", "\320\236\320\224\320\241 1 \342\204\226", nullptr));
         checkBox->setText(QCoreApplication::translate("MainWindow", "\320\222\320\272\320\273\321\216\321\207\320\270\321\202\321\214", nullptr));
-        label_20->setText(QCoreApplication::translate("MainWindow", "C", nullptr));
-        label_21->setText(QCoreApplication::translate("MainWindow", "\320\237\320\276", nullptr));
         checkBox_timer->setText(QCoreApplication::translate("MainWindow", "\320\222\320\272\320\273\321\216\321\207\320\270\321\202\321\214", nullptr));
         label_22->setText(QCoreApplication::translate("MainWindow", "\320\241\321\202\320\276\321\200\320\276\320\266\320\265\320\262\320\276\320\271 \321\202\320\260\320\271\320\274\320\265\321\200", nullptr));
         sfx_r2->setText(QCoreApplication::translate("MainWindow", "r2", nullptr));
+        pushButton->setText(QCoreApplication::translate("MainWindow", "\320\222\321\213\321\201\321\202\320\260\320\262\320\270\321\202\321\214 \320\264\320\260\321\202\321\203", nullptr));
     } // retranslateUi
 
 };

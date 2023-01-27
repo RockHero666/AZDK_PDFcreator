@@ -4,6 +4,7 @@ debug/main.o
 debug/mainwindow.o
 debug/parser.o
 debug/pdf_creator.o
+debug/qrc_resource.o
 debug/moc_calendar.o
 debug/moc_mainwindow.o
 debug/moc_parser.o

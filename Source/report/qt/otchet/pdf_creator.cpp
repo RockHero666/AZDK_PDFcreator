@@ -164,7 +164,7 @@ HPDF_Page_EndText(pages[page]);
      HPDF_Page_Stroke (pages[page]);
 
      std::string str1 = " №                          Углы ориентации,°                            Отклонения                  СКО";
-     std::string str2 = "сер.             α                       δ                       φ              Δx,″    Δy,″    Δz,^″  σ_x,″   σ_y,″   σ_z,″";
+     std::string str2 = "сер.             α                       δ                       φ              Δx,″     Δy,″    Δz,″    Δx,″     Δy,″    Δz,″";
 
      start_table = 48;
 
@@ -277,7 +277,7 @@ HPDF_Page_EndText(pages[page]);
         for (int i = 0; i < 30; ++i) // переделат ьвложенным циклом!
         {
             double tw;
-            start_table = 118;
+            start_table = 117;
 
 HPDF_Page_BeginText(pages[page]);
             print_text(page,rus_std,QString::number(numer_of_line++).toStdString().c_str(),10,51+pos,y);
@@ -329,7 +329,7 @@ HPDF_Page_EndText(pages[page]);
         for (int i = 0; i < vect_value_size; ++i)
         {
             double tw;
-            start_table = 120;
+            start_table = 118;
 
 HPDF_Page_BeginText(pages[page]);
             print_text(page,rus_std,QString::number(numer_of_line++).toStdString().c_str(),10,51+pos,y);
@@ -728,48 +728,83 @@ void PDF_creator::set_parser(Parser & parser)
 
        QString t = time;
        QStringList line = t.split(".");
-       int insert_it=0;
+
+
+       QString d_s;
+       QString m_s;
+       QString y_s;
+
+       QString d_e;
+       QString m_e;
+       QString y_e;
+
+
+
+
 
        if(line.size() == 4)
        {
            if(line[0].toInt()<10)
            {
-            t.insert(0+insert_it,'0');
-            insert_it++;
+               d_s = "0"+line[0];
            }
+           else
+               d_s = line[0];
+
            if(line[1].toInt()<10)
            {
-            t.insert(3+insert_it,'0');
-            insert_it++;
+               m_s = "0"+line[1];
            }
+           else
+               m_s = line[1];
+
+           y_s = line[2];
+
+           return QString(d_s+'.'+m_s+'.'+y_s);
 
        }
        else
        {
            if(line[0].toInt()<10)
            {
-            t.insert(0+insert_it,'0');
-            insert_it++;
+               d_s = "0"+line[0];
            }
+           else
+               d_s = line[0];
+
            if(line[1].toInt()<10)
            {
-            t.insert(3+insert_it,'0');
-            insert_it++;
+               m_s = "0"+line[1];
            }
+           else
+               m_s = line[1];
+
+           y_s = line[2];
+
+
            if(line[3].toInt()<10)
            {
-            t.insert(12+insert_it,'0');
-            insert_it++;
+               line[3].insert(3,'0');
+               d_e = line[3];
            }
+           else
+               d_e = line[3];
+
            if(line[4].toInt()<10)
            {
-            t.insert(14+insert_it,'0');
-            insert_it++;
+               m_e = "0"+line[4];
            }
+           else
+               m_e = line[4];
+
+           y_e = line[5];
+
+           return QString(d_s+'.'+m_s+'.'+y_s + d_e+'.'+m_e+'.'+y_e);
 
        }
 
-       return t;
+
+       return QString("error");
 
    }
 
@@ -1148,8 +1183,7 @@ HPDF_Page_BeginText(pages[page_count-1]);
 HPDF_Page_EndText(pages[page_count-1]);
 HPDF_Page_BeginText(pages[page_count-1]);
      print_text(page_count-1,rus_bold,"-",12,50,HPDF_Page_GetHeight(pages[0]) - x_start_pos-28*x++);
-     QString x1 = QString::fromUtf16(reinterpret_cast<const quint16*>("0x394 "));
-     print_text(page_count-1,rus_std,x1.toStdString().c_str() ,12);
+     print_text(page_count-1,rus_std," Результаты измерений ошибок ориентации Δx, Δy, Δz, представленные в",12);
 HPDF_Page_EndText(pages[page_count-1]);
 HPDF_Page_BeginText(pages[page_count-1]);
      text = "системе координат прибора, показаны на Рис. " + std::to_string(ris_n++);
@@ -1165,7 +1199,7 @@ HPDF_Page_BeginText(pages[page_count-1]);
 HPDF_Page_EndText(pages[page_count-1]);
 HPDF_Page_BeginText(pages[page_count-1]);
      print_text(page_count-1,rus_bold,"-",12,50,HPDF_Page_GetHeight(pages[0]) - x_start_pos-28*x++);
-     print_text(page_count-1,rus_std," Результаты измерений ошибок ориентации σ_x,σ_y,σ_z, представленные в   " ,12);
+     print_text(page_count-1,rus_std," Результаты измерений ошибок ориентации Δx, Δy, Δz, представленные в   " ,12);
 HPDF_Page_EndText(pages[page_count-1]);
 HPDF_Page_BeginText(pages[page_count-1]);
       text = "системе координат прибора, показаны на Рис. " + std::to_string(ris_n++);
@@ -1259,7 +1293,7 @@ HPDF_Page_EndText(pages[page_count-1]);
      HPDF_Page_DrawImage (pages[page_count-1], image, 125-60, HPDF_Page_GetHeight(pages[page_count-1]) - 740, 536/1.1,489/1.1);
 
 HPDF_Page_BeginText(pages[page_count-1]);
-     text = "Рис. " + std::to_string(ris_g++) + " Гистограммы измерений ошибок ориентации σ_x,σ_y,σ_z, ";
+     text = "Рис. " + std::to_string(ris_g++) + " Гистограммы измерений ошибок ориентации Δx, Δy, Δz, ";
      print_text(page_count-1,rus_std,text.c_str(),10,x_start_pos,HPDF_Page_GetHeight(pages[page_count-1]) - 760);
 HPDF_Page_EndText(pages[page_count-1]);
 HPDF_Page_BeginText(pages[page_count-1]);
@@ -1287,7 +1321,7 @@ HPDF_Page_EndText(pages[page_count-1]);
      HPDF_Page_DrawImage (pages[page_count-1], image, 125-60, HPDF_Page_GetHeight(pages[page_count-1]) - 740, 536/1.1,489/1.1);
 
 HPDF_Page_BeginText(pages[page_count-1]);
-     text = "Рис. " + std::to_string(ris_g++) + " Гистограммы измерений ошибок ориентации σ_x,σ_y,σ_z, ";
+     text = "Рис. " + std::to_string(ris_g++) + " Гистограммы измерений ошибок ориентации Δx, Δy, Δz, ";
      print_text(page_count-1,rus_std,text.c_str(),10,x_start_pos,HPDF_Page_GetHeight(pages[page_count-1]) - 760);
 HPDF_Page_EndText(pages[page_count-1]);
 HPDF_Page_BeginText(pages[page_count-1]);
@@ -1393,7 +1427,7 @@ HPDF_Page_BeginText(pages[page_count-1]);
 HPDF_Page_EndText(pages[page_count-1]);
 HPDF_Page_BeginText(pages[page_count-1]);
      print_text(page_count-1,rus_bold,"-",12,50,HPDF_Page_GetHeight(pages[0]) - x_start_pos-28*x++);
-     print_text(page_count-1,rus_std," Результаты измерений ошибок ориентации σ_x,σ_y,σ_z, представленные в" ,12);
+     print_text(page_count-1,rus_std," Результаты измерений ошибок ориентации Δx, Δy, Δz, представленные в" ,12);
 HPDF_Page_EndText(pages[page_count-1]);
 HPDF_Page_BeginText(pages[page_count-1]);
      text = "системе координат прибора, показаны на Рис. " + std::to_string(ris_n++);
@@ -1479,7 +1513,7 @@ HPDF_Page_EndText(pages[page_count-1]);
      HPDF_Page_DrawImage (pages[page_count-1], image, 125-60, HPDF_Page_GetHeight(pages[page_count-1]) - 740, 536/1.1,489/1.1);
 
 HPDF_Page_BeginText(pages[page_count-1]);
-     text = "Рис. " + std::to_string(ris_g++) + " Гистограммы измерений ошибок ориентации σ_x,σ_y,σ_z,  ";
+     text = "Рис. " + std::to_string(ris_g++) + " Гистограммы измерений ошибок ориентации Δx, Δy, Δz,  ";
      print_text(page_count-1,rus_std,text.c_str(),10,x_start_pos,HPDF_Page_GetHeight(pages[page_count-1]) - 760);
 HPDF_Page_EndText(pages[page_count-1]);
 HPDF_Page_BeginText(pages[page_count-1]);
@@ -1955,7 +1989,7 @@ HPDF_Page_BeginText(pages[page_count-1]);
 HPDF_Page_EndText(pages[page_count-1]);
 HPDF_Page_BeginText(pages[page_count-1]);
      print_text(page_count-1,rus_bold,"-",12,50,HPDF_Page_GetHeight(pages[0]) - x_start_pos-28*x++);
-     print_text(page_count-1,rus_std," Гистограммы измерений ошибок ориентации σ_x,σ_y,σ_z, представленные в " ,12);
+     print_text(page_count-1,rus_std," Гистограммы измерений ошибок ориентации Δx, Δy, Δz, представленные в " ,12);
 HPDF_Page_EndText(pages[page_count-1]);
 HPDF_Page_BeginText(pages[page_count-1]);
      text = "системе координат прибора – Рис. " + std::to_string(ris_n++);
