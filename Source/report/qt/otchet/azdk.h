@@ -8,7 +8,7 @@ class AZDK
 public:
     AZDK();
 
-
+    QString ver;
     QString number;
     QString number_Ods;
     QString time;
@@ -21,6 +21,7 @@ public:
     QString speed;
     QString binar;
     QString timer;
+    QString duration;
 
 };
 

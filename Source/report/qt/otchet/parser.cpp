@@ -14,9 +14,21 @@ void Parser::to_parse()
     while (it.hasNext())
        all_paths.push_back(it.next());
 
+    emit log_message("Парсинг всех путей");
+
 }
 
+void Parser::to_parse_current_dir()
+{
+    if(all_paths.size())
+        all_paths.clear();
 
+    QDirIterator it(path,  QDir::Files, QDirIterator::QDirIterator::NoIteratorFlags);
+    while (it.hasNext())
+       all_paths.push_back(it.next());
+
+    emit log_message("Парсинг корневых путей");
+}
 
 
 void Parser::set_path(const QString & path)
@@ -31,6 +43,7 @@ void Parser::set_serial_num(const QString & serial)
 
  QVector<QVector<QString>> Parser::parse_resulte_table(const QString & error_path)
  {
+     emit log_message("Извлечение данных для СКО таблици");
 
      QString e_path = path + error_path;
      QString all_text;
@@ -55,7 +68,10 @@ void Parser::set_serial_num(const QString & serial)
          error.close();
      }
      else
+     {
+         emit log_message("Ошибка в пути к файлам!");
          throw std::runtime_error("bad_path");
+     }
 
      file_line = all_text.split('\n'); // разделяем единую строку на лист стрингов по разделителю
 
@@ -84,12 +100,16 @@ void Parser::set_serial_num(const QString & serial)
 
      }
 
+     emit log_message("Данные извлечены");
      return SKO;
 
  }
 
  QVector<int> Parser::parse_resulte_table_2_ver2(const QString & client_path,const QString & server_path)
  {
+
+     emit log_message("Извлечение данных результатов функциональных испытаний МЗД");
+
      QString c_path = path + client_path;
      QString s_path = path + server_path;
      QString all_text;
@@ -120,7 +140,10 @@ void Parser::set_serial_num(const QString & serial)
          server.close();
      }
      else
+     {
+         emit log_message("Ошибка в пути к файлам!");
          throw std::runtime_error("bad_path");
+     }
 
 
      file_line = all_text.split('\n'); // разделяем единую строку на лист стрингов по разделителю
@@ -228,6 +251,8 @@ void Parser::set_serial_num(const QString & serial)
          table_value.push_back( result[i] );
      }
 
+
+      emit log_message("Данные извлечены");
      return table_value;
 
 
@@ -624,8 +649,10 @@ QVector<QString> Parser::Frames_count_and_time(const QString & server_path,const
 }
 
 
- QVector<QString> Parser::Frames_count_and_time_ver2(const QString & server_path,const QString & azdk_server_path,const QString & index)
+ QVector<QString> Parser::Frames_count_and_time_ver2(const QString & server_path,const QString & azdk_server_path,const QString & index,const QString & azdk_number)
  {
+     emit log_message("Извлечение данных времени испытаний и их количества");
+
      QString s_path = path + server_path + index +".txt";
      QFile server(s_path);
      QString azdk_s_path = path + azdk_server_path + index +".txt";
@@ -651,8 +678,10 @@ QVector<QString> Parser::Frames_count_and_time(const QString & server_path,const
          azdk_server.close();
      }
      else
+     {
+         emit log_message("Ошибка в пути к файлам!");
          throw std::runtime_error("bad_path");
-
+     }
 
      file_line = all_text.split('\n'); // разделяем единую строку на лист стрингов по разделителю
 
@@ -768,12 +797,13 @@ QVector<QString> Parser::Frames_count_and_time(const QString & server_path,const
                          vect_time[i].second() == time_subtraction(vect_time[i+1],30))&&
                          vect_time[i].minute() == vect_time[i+1].minute()-j) // требуются тесты
                      {
-                         index_of_start = i;
+
                          //for (;i < vect_time.size()-1;i++)
                          //{
                          //    count++;
                          //}
                          i++;
+                         index_of_start = i;
                          count = vect_time.size()-i;
                          break;
                      }
@@ -789,12 +819,13 @@ QVector<QString> Parser::Frames_count_and_time(const QString & server_path,const
                          vect_time[i].second() == time_subtraction(vect_time[i+1],30))&&
                              time_step_converter( vect_time[i],j) == vect_time[i+1].minute())
                      {
-                         index_of_start = i;
+
                         // for (;i< vect_time.size()-1;i++)
                          //{
                          //    count++;
                          //}
                          i++;
+                         index_of_start = i;
                          count = vect_time.size()-i;
                          break;
                      }
@@ -814,10 +845,10 @@ QVector<QString> Parser::Frames_count_and_time(const QString & server_path,const
      //if(index != "s")
     // count -=1;// последний тест не учитывается    дурак придумал не могу сам объяснить ....  кажется из за последнй точки кват. {0.0.0}
 
-     result.push_back(QString::number(count));
+     result.push_back(QString::number(error_count("/azdk" + azdk_number + index + "/errors.csv")));
 
-     if(result[0] == "29")  // костыль
-         result[0] = "30";
+     //if(result[0] == "29")  // костыль
+         //result[0] = "30";
 
 
      QTime start(vect_time[index_of_start]);
@@ -827,35 +858,122 @@ QVector<QString> Parser::Frames_count_and_time(const QString & server_path,const
         // end = vect_time[vect_time.size()-1];
 
 
-     auto time_betwin = [=](QTime start,QTime end) mutable
+     auto time_betwin = [=](QTime start,QTime end,int step) mutable
      {
+
+         int steps;
          for (int i = 0;;i++)
          {
              if(start.hour()==end.hour())
                  if(start.minute()==end.minute())
-                     return i;
+                 {
+                     steps = i;
+                     break;
+                 }
 
-             start = start.addSecs(60);
+             start = start.addSecs(step);
          }
+
+         return steps;
      };
 
 
+
+     auto time_step = [=](QTime start,QTime end) mutable
+     {
+
+        for (int i = 5;;i++)
+         {
+         if(vect_time[index_of_start].second()  == time_subtraction(vect_time[index_of_start+1],i))
+         {
+             return i;
+
+         }
+         }
+     };
 
 
 
    //qint64 mm_time  = start.msecsTo(end);
    //qint64 s_time = mm_time/1000;
    //qint64 m_time = s_time/60;
-   int m_time = time_betwin(start,end);
-   int time = m_time/(vect_time.size()-(index_of_start+2));
+   int step = time_step(start,end);
+   int time = time_betwin(start,end,step);
+
+   QTime s(0,0,0);
+
+   for (int i = 0;i<time;i++)
+   {
+    s=s.addSecs(step);
+   }
+
+
+
+   //int time1 = m_time/(vect_time.size()-(index_of_start+2));
+
 
    if(!is_orbital)
-       result.push_back(QString::number(time));
-   else
-       result.push_back(QString::number(m_time));
+   {
 
+       if(step>=60)
+       {
+           int time1 = time/(vect_time.size()-(index_of_start+2));
+           result.push_back(QString::number(time1));
+           result.push_back(QString::number(1));
+        }
+       else
+       {
+           result.push_back(QString::number(step));
+           result.push_back(QString::number(0));
+
+       }
+   }
+   else
+   {
+       result.push_back(QString::number(s.minute()));
+
+           result.push_back(QString::number(1));
+
+
+    }
+
+     emit log_message("Данные извлечены");
      return result;
 
 
+ }
+
+ int Parser::error_count(const QString & error_path)
+ {
+     QString e_path = path + error_path;
+     QString all_text;
+
+     QVector<QVector<QString>> SKO;
+
+     QStringList line;
+     QStringList file_line;
+     QFile error(e_path);
+
+
+
+
+     if(error.open(QIODevice::Text|QIODevice::ReadOnly)) // парсим весь файл ерора
+     {
+         all_text = error.readAll();
+         error.close();
+     }
+     else
+         throw std::runtime_error("bad_path");
+
+     file_line = all_text.split('\n'); // разделяем единую строку на лист стрингов по разделителю
+
+       int n = 0;
+     for (int i = 0;i<file_line.size();i++)
+     {
+          if(!file_line[i].isEmpty())
+            n++;
+     }
+
+     return n-1;
  }
 

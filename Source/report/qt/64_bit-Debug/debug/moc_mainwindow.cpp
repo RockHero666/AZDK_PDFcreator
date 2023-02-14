@@ -7,7 +7,7 @@
 *****************************************************************************/
 
 #include <memory>
-#include "../../otchet/mainwindow.h"
+#include "../../../../qt/otchet/mainwindow.h"
 #include <QtCore/qbytearray.h>
 #include <QtCore/qmetatype.h>
 #if !defined(Q_MOC_OUTPUT_REVISION)
@@ -22,8 +22,8 @@ QT_BEGIN_MOC_NAMESPACE
 QT_WARNING_PUSH
 QT_WARNING_DISABLE_DEPRECATED
 struct qt_meta_stringdata_MainWindow_t {
-    QByteArrayData data[29];
-    char stringdata0[728];
+    QByteArrayData data[32];
+    char stringdata0[784];
 };
 #define QT_MOC_LITERAL(idx, ofs, len) \
     Q_STATIC_BYTE_ARRAY_DATA_HEADER_INITIALIZER_WITH_OFFSET(len, \
@@ -36,36 +36,39 @@ QT_MOC_LITERAL(0, 0, 10), // "MainWindow"
 QT_MOC_LITERAL(1, 11, 5), // "error"
 QT_MOC_LITERAL(2, 17, 0), // ""
 QT_MOC_LITERAL(3, 18, 7), // "massage"
-QT_MOC_LITERAL(4, 26, 23), // "on_sfx_all_stateChanged"
-QT_MOC_LITERAL(5, 50, 4), // "arg1"
-QT_MOC_LITERAL(6, 55, 7), // "setDate"
-QT_MOC_LITERAL(7, 63, 28), // "on_firmware_line_textChanged"
-QT_MOC_LITERAL(8, 92, 31), // "on_comboBox_currentIndexChanged"
-QT_MOC_LITERAL(9, 124, 24), // "on_checkBox_stateChanged"
-QT_MOC_LITERAL(10, 149, 24), // "on_create_button_clicked"
-QT_MOC_LITERAL(11, 174, 30), // "on_puth_to_file_button_clicked"
-QT_MOC_LITERAL(12, 205, 32), // "on_path_to_file_line_textChanged"
-QT_MOC_LITERAL(13, 238, 28), // "on_savepath_line_textChanged"
-QT_MOC_LITERAL(14, 267, 27), // "on_save_path_button_clicked"
-QT_MOC_LITERAL(15, 295, 29), // "on_file_name_line_textChanged"
-QT_MOC_LITERAL(16, 325, 25), // "on_to_path_button_clicked"
-QT_MOC_LITERAL(17, 351, 10), // "save_state"
-QT_MOC_LITERAL(18, 362, 39), // "on_intensity_doubleSpinBox_va..."
-QT_MOC_LITERAL(19, 402, 39), // "on_influence_doubleSpinBox_va..."
-QT_MOC_LITERAL(20, 442, 35), // "on_focus_doubleSpinBox_valueC..."
-QT_MOC_LITERAL(21, 478, 34), // "on_size_doubleSpinBox_valueCh..."
-QT_MOC_LITERAL(22, 513, 30), // "on_number_spinBox_valueChanged"
-QT_MOC_LITERAL(23, 544, 34), // "on_number_ods_spinBox_valueCh..."
-QT_MOC_LITERAL(24, 579, 30), // "on_checkBox_timer_stateChanged"
-QT_MOC_LITERAL(25, 610, 36), // "on_speed_comboBox_currentText..."
-QT_MOC_LITERAL(26, 647, 37), // "on_speed_comboBox_currentInde..."
-QT_MOC_LITERAL(27, 685, 21), // "on_pushButton_clicked"
-QT_MOC_LITERAL(28, 707, 20) // "another_window_close"
+QT_MOC_LITERAL(4, 26, 14), // "message_to_log"
+QT_MOC_LITERAL(5, 41, 7), // "message"
+QT_MOC_LITERAL(6, 49, 23), // "on_sfx_all_stateChanged"
+QT_MOC_LITERAL(7, 73, 4), // "arg1"
+QT_MOC_LITERAL(8, 78, 7), // "setDate"
+QT_MOC_LITERAL(9, 86, 28), // "on_firmware_line_textChanged"
+QT_MOC_LITERAL(10, 115, 31), // "on_comboBox_currentIndexChanged"
+QT_MOC_LITERAL(11, 147, 24), // "on_checkBox_stateChanged"
+QT_MOC_LITERAL(12, 172, 24), // "on_create_button_clicked"
+QT_MOC_LITERAL(13, 197, 30), // "on_puth_to_file_button_clicked"
+QT_MOC_LITERAL(14, 228, 32), // "on_path_to_file_line_textChanged"
+QT_MOC_LITERAL(15, 261, 28), // "on_savepath_line_textChanged"
+QT_MOC_LITERAL(16, 290, 27), // "on_save_path_button_clicked"
+QT_MOC_LITERAL(17, 318, 29), // "on_file_name_line_textChanged"
+QT_MOC_LITERAL(18, 348, 25), // "on_to_path_button_clicked"
+QT_MOC_LITERAL(19, 374, 10), // "save_state"
+QT_MOC_LITERAL(20, 385, 39), // "on_intensity_doubleSpinBox_va..."
+QT_MOC_LITERAL(21, 425, 39), // "on_influence_doubleSpinBox_va..."
+QT_MOC_LITERAL(22, 465, 35), // "on_focus_doubleSpinBox_valueC..."
+QT_MOC_LITERAL(23, 501, 34), // "on_size_doubleSpinBox_valueCh..."
+QT_MOC_LITERAL(24, 536, 30), // "on_number_spinBox_valueChanged"
+QT_MOC_LITERAL(25, 567, 34), // "on_number_ods_spinBox_valueCh..."
+QT_MOC_LITERAL(26, 602, 32), // "on_duration_spinBox_valueChanged"
+QT_MOC_LITERAL(27, 635, 30), // "on_checkBox_timer_stateChanged"
+QT_MOC_LITERAL(28, 666, 36), // "on_speed_comboBox_currentText..."
+QT_MOC_LITERAL(29, 703, 37), // "on_speed_comboBox_currentInde..."
+QT_MOC_LITERAL(30, 741, 21), // "on_pushButton_clicked"
+QT_MOC_LITERAL(31, 763, 20) // "another_window_close"
 
     },
-    "MainWindow\0error\0\0massage\0"
-    "on_sfx_all_stateChanged\0arg1\0setDate\0"
-    "on_firmware_line_textChanged\0"
+    "MainWindow\0error\0\0massage\0message_to_log\0"
+    "message\0on_sfx_all_stateChanged\0arg1\0"
+    "setDate\0on_firmware_line_textChanged\0"
     "on_comboBox_currentIndexChanged\0"
     "on_checkBox_stateChanged\0"
     "on_create_button_clicked\0"
@@ -81,6 +84,7 @@ QT_MOC_LITERAL(28, 707, 20) // "another_window_close"
     "on_size_doubleSpinBox_valueChanged\0"
     "on_number_spinBox_valueChanged\0"
     "on_number_ods_spinBox_valueChanged\0"
+    "on_duration_spinBox_valueChanged\0"
     "on_checkBox_timer_stateChanged\0"
     "on_speed_comboBox_currentTextChanged\0"
     "on_speed_comboBox_currentIndexChanged\0"
@@ -94,7 +98,7 @@ static const uint qt_meta_data_MainWindow[] = {
        8,       // revision
        0,       // classname
        0,    0, // classinfo
-      25,   14, // methods
+      27,   14, // methods
        0,    0, // properties
        0,    0, // enums/sets
        0,    0, // constructors
@@ -102,56 +106,60 @@ static const uint qt_meta_data_MainWindow[] = {
        0,       // signalCount
 
  // slots: name, argc, parameters, tag, flags
-       1,    1,  139,    2, 0x0a /* Public */,
-       4,    1,  142,    2, 0x08 /* Private */,
-       6,    0,  145,    2, 0x08 /* Private */,
-       7,    1,  146,    2, 0x08 /* Private */,
-       8,    1,  149,    2, 0x08 /* Private */,
-       9,    1,  152,    2, 0x08 /* Private */,
-      10,    0,  155,    2, 0x08 /* Private */,
-      11,    0,  156,    2, 0x08 /* Private */,
-      12,    1,  157,    2, 0x08 /* Private */,
-      13,    1,  160,    2, 0x08 /* Private */,
-      14,    0,  163,    2, 0x08 /* Private */,
-      15,    1,  164,    2, 0x08 /* Private */,
-      16,    0,  167,    2, 0x08 /* Private */,
-      17,    0,  168,    2, 0x08 /* Private */,
-      18,    1,  169,    2, 0x08 /* Private */,
-      19,    1,  172,    2, 0x08 /* Private */,
-      20,    1,  175,    2, 0x08 /* Private */,
-      21,    1,  178,    2, 0x08 /* Private */,
-      22,    1,  181,    2, 0x08 /* Private */,
-      23,    1,  184,    2, 0x08 /* Private */,
-      24,    1,  187,    2, 0x08 /* Private */,
-      25,    1,  190,    2, 0x08 /* Private */,
-      26,    1,  193,    2, 0x08 /* Private */,
-      27,    0,  196,    2, 0x08 /* Private */,
-      28,    0,  197,    2, 0x08 /* Private */,
+       1,    1,  149,    2, 0x0a /* Public */,
+       4,    1,  152,    2, 0x0a /* Public */,
+       6,    1,  155,    2, 0x08 /* Private */,
+       8,    0,  158,    2, 0x08 /* Private */,
+       9,    1,  159,    2, 0x08 /* Private */,
+      10,    1,  162,    2, 0x08 /* Private */,
+      11,    1,  165,    2, 0x08 /* Private */,
+      12,    0,  168,    2, 0x08 /* Private */,
+      13,    0,  169,    2, 0x08 /* Private */,
+      14,    1,  170,    2, 0x08 /* Private */,
+      15,    1,  173,    2, 0x08 /* Private */,
+      16,    0,  176,    2, 0x08 /* Private */,
+      17,    1,  177,    2, 0x08 /* Private */,
+      18,    0,  180,    2, 0x08 /* Private */,
+      19,    0,  181,    2, 0x08 /* Private */,
+      20,    1,  182,    2, 0x08 /* Private */,
+      21,    1,  185,    2, 0x08 /* Private */,
+      22,    1,  188,    2, 0x08 /* Private */,
+      23,    1,  191,    2, 0x08 /* Private */,
+      24,    1,  194,    2, 0x08 /* Private */,
+      25,    1,  197,    2, 0x08 /* Private */,
+      26,    1,  200,    2, 0x08 /* Private */,
+      27,    1,  203,    2, 0x08 /* Private */,
+      28,    1,  206,    2, 0x08 /* Private */,
+      29,    1,  209,    2, 0x08 /* Private */,
+      30,    0,  212,    2, 0x08 /* Private */,
+      31,    0,  213,    2, 0x08 /* Private */,
 
  // slots: parameters
     QMetaType::Void, QMetaType::QString,    3,
-    QMetaType::Void, QMetaType::Int,    5,
+    QMetaType::Void, QMetaType::QString,    5,
+    QMetaType::Void, QMetaType::Int,    7,
     QMetaType::QString,
-    QMetaType::Void, QMetaType::QString,    5,
-    QMetaType::Void, QMetaType::QString,    5,
-    QMetaType::Void, QMetaType::Int,    5,
+    QMetaType::Void, QMetaType::QString,    7,
+    QMetaType::Void, QMetaType::QString,    7,
+    QMetaType::Void, QMetaType::Int,    7,
     QMetaType::Void,
     QMetaType::Void,
-    QMetaType::Void, QMetaType::QString,    5,
-    QMetaType::Void, QMetaType::QString,    5,
+    QMetaType::Void, QMetaType::QString,    7,
+    QMetaType::Void, QMetaType::QString,    7,
     QMetaType::Void,
-    QMetaType::Void, QMetaType::QString,    5,
+    QMetaType::Void, QMetaType::QString,    7,
     QMetaType::Void,
     QMetaType::Void,
-    QMetaType::Void, QMetaType::QString,    5,
-    QMetaType::Void, QMetaType::QString,    5,
-    QMetaType::Void, QMetaType::QString,    5,
-    QMetaType::Void, QMetaType::QString,    5,
-    QMetaType::Void, QMetaType::QString,    5,
-    QMetaType::Void, QMetaType::QString,    5,
-    QMetaType::Void, QMetaType::Int,    5,
-    QMetaType::Void, QMetaType::QString,    5,
-    QMetaType::Void, QMetaType::QString,    5,
+    QMetaType::Void, QMetaType::QString,    7,
+    QMetaType::Void, QMetaType::QString,    7,
+    QMetaType::Void, QMetaType::QString,    7,
+    QMetaType::Void, QMetaType::QString,    7,
+    QMetaType::Void, QMetaType::QString,    7,
+    QMetaType::Void, QMetaType::QString,    7,
+    QMetaType::Void, QMetaType::QString,    7,
+    QMetaType::Void, QMetaType::Int,    7,
+    QMetaType::Void, QMetaType::QString,    7,
+    QMetaType::Void, QMetaType::QString,    7,
     QMetaType::Void,
     QMetaType::Void,
 
@@ -165,31 +173,33 @@ void MainWindow::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, 
         Q_UNUSED(_t)
         switch (_id) {
         case 0: _t->error((*reinterpret_cast< const QString(*)>(_a[1]))); break;
-        case 1: _t->on_sfx_all_stateChanged((*reinterpret_cast< int(*)>(_a[1]))); break;
-        case 2: { QString _r = _t->setDate();
+        case 1: _t->message_to_log((*reinterpret_cast< const QString(*)>(_a[1]))); break;
+        case 2: _t->on_sfx_all_stateChanged((*reinterpret_cast< int(*)>(_a[1]))); break;
+        case 3: { QString _r = _t->setDate();
             if (_a[0]) *reinterpret_cast< QString*>(_a[0]) = std::move(_r); }  break;
-        case 3: _t->on_firmware_line_textChanged((*reinterpret_cast< const QString(*)>(_a[1]))); break;
-        case 4: _t->on_comboBox_currentIndexChanged((*reinterpret_cast< const QString(*)>(_a[1]))); break;
-        case 5: _t->on_checkBox_stateChanged((*reinterpret_cast< int(*)>(_a[1]))); break;
-        case 6: _t->on_create_button_clicked(); break;
-        case 7: _t->on_puth_to_file_button_clicked(); break;
-        case 8: _t->on_path_to_file_line_textChanged((*reinterpret_cast< const QString(*)>(_a[1]))); break;
-        case 9: _t->on_savepath_line_textChanged((*reinterpret_cast< const QString(*)>(_a[1]))); break;
-        case 10: _t->on_save_path_button_clicked(); break;
-        case 11: _t->on_file_name_line_textChanged((*reinterpret_cast< const QString(*)>(_a[1]))); break;
-        case 12: _t->on_to_path_button_clicked(); break;
-        case 13: _t->save_state(); break;
-        case 14: _t->on_intensity_doubleSpinBox_valueChanged((*reinterpret_cast< const QString(*)>(_a[1]))); break;
-        case 15: _t->on_influence_doubleSpinBox_valueChanged((*reinterpret_cast< const QString(*)>(_a[1]))); break;
-        case 16: _t->on_focus_doubleSpinBox_valueChanged((*reinterpret_cast< const QString(*)>(_a[1]))); break;
-        case 17: _t->on_size_doubleSpinBox_valueChanged((*reinterpret_cast< const QString(*)>(_a[1]))); break;
-        case 18: _t->on_number_spinBox_valueChanged((*reinterpret_cast< const QString(*)>(_a[1]))); break;
-        case 19: _t->on_number_ods_spinBox_valueChanged((*reinterpret_cast< const QString(*)>(_a[1]))); break;
-        case 20: _t->on_checkBox_timer_stateChanged((*reinterpret_cast< int(*)>(_a[1]))); break;
-        case 21: _t->on_speed_comboBox_currentTextChanged((*reinterpret_cast< const QString(*)>(_a[1]))); break;
-        case 22: _t->on_speed_comboBox_currentIndexChanged((*reinterpret_cast< const QString(*)>(_a[1]))); break;
-        case 23: _t->on_pushButton_clicked(); break;
-        case 24: _t->another_window_close(); break;
+        case 4: _t->on_firmware_line_textChanged((*reinterpret_cast< const QString(*)>(_a[1]))); break;
+        case 5: _t->on_comboBox_currentIndexChanged((*reinterpret_cast< const QString(*)>(_a[1]))); break;
+        case 6: _t->on_checkBox_stateChanged((*reinterpret_cast< int(*)>(_a[1]))); break;
+        case 7: _t->on_create_button_clicked(); break;
+        case 8: _t->on_puth_to_file_button_clicked(); break;
+        case 9: _t->on_path_to_file_line_textChanged((*reinterpret_cast< const QString(*)>(_a[1]))); break;
+        case 10: _t->on_savepath_line_textChanged((*reinterpret_cast< const QString(*)>(_a[1]))); break;
+        case 11: _t->on_save_path_button_clicked(); break;
+        case 12: _t->on_file_name_line_textChanged((*reinterpret_cast< const QString(*)>(_a[1]))); break;
+        case 13: _t->on_to_path_button_clicked(); break;
+        case 14: _t->save_state(); break;
+        case 15: _t->on_intensity_doubleSpinBox_valueChanged((*reinterpret_cast< const QString(*)>(_a[1]))); break;
+        case 16: _t->on_influence_doubleSpinBox_valueChanged((*reinterpret_cast< const QString(*)>(_a[1]))); break;
+        case 17: _t->on_focus_doubleSpinBox_valueChanged((*reinterpret_cast< const QString(*)>(_a[1]))); break;
+        case 18: _t->on_size_doubleSpinBox_valueChanged((*reinterpret_cast< const QString(*)>(_a[1]))); break;
+        case 19: _t->on_number_spinBox_valueChanged((*reinterpret_cast< const QString(*)>(_a[1]))); break;
+        case 20: _t->on_number_ods_spinBox_valueChanged((*reinterpret_cast< const QString(*)>(_a[1]))); break;
+        case 21: _t->on_duration_spinBox_valueChanged((*reinterpret_cast< const QString(*)>(_a[1]))); break;
+        case 22: _t->on_checkBox_timer_stateChanged((*reinterpret_cast< int(*)>(_a[1]))); break;
+        case 23: _t->on_speed_comboBox_currentTextChanged((*reinterpret_cast< const QString(*)>(_a[1]))); break;
+        case 24: _t->on_speed_comboBox_currentIndexChanged((*reinterpret_cast< const QString(*)>(_a[1]))); break;
+        case 25: _t->on_pushButton_clicked(); break;
+        case 26: _t->another_window_close(); break;
         default: ;
         }
     }
@@ -224,13 +234,13 @@ int MainWindow::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
     if (_id < 0)
         return _id;
     if (_c == QMetaObject::InvokeMetaMethod) {
-        if (_id < 25)
+        if (_id < 27)
             qt_static_metacall(this, _c, _id, _a);
-        _id -= 25;
+        _id -= 27;
     } else if (_c == QMetaObject::RegisterMethodArgumentMetaType) {
-        if (_id < 25)
+        if (_id < 27)
             *reinterpret_cast<int*>(_a[0]) = -1;
-        _id -= 25;
+        _id -= 27;
     }
     return _id;
 }

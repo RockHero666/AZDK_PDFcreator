@@ -19,6 +19,10 @@ DEFINES += QT_DEPRECATED_WARNINGS
 SOURCES += \
     azdk.cpp \
     calendar.cpp \
+    log/azdklogger.cpp \
+    log/contexmenuwidget.cpp \
+    log/logmodel.cpp \
+    log/logw.cpp \
     main.cpp \
     mainwindow.cpp \
     parser.cpp \
@@ -27,6 +31,10 @@ SOURCES += \
 HEADERS += \
     azdk.h \
     calendar.h \
+    log/azdklogger.h \
+    log/contexmenuwidget.h \
+    log/logmodel.h \
+    log/logw.h \
     mainwindow.h \
     parser.h \
     pdf_creator.h
@@ -42,10 +50,10 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 
 
 win32:RC_ICONS += icon.ico
-win32: LIBS += -L$$PWD/../../../libharu/lib/ -lhpdf
+win32: LIBS += -L$$PWD/../../libharu/lib/ -lhpdf
 
-INCLUDEPATH += $$PWD/../../../libharu/include
-DEPENDPATH += $$PWD/../../../libharu/include
+INCLUDEPATH += $$PWD/../../libharu/include
+DEPENDPATH += $$PWD/../../libharu/include
 
 DISTFILES += \
     todo

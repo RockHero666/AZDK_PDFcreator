@@ -12,6 +12,7 @@
 #include <QDate>
 #include <QSettings>
 #include "calendar.h"
+#include "log/azdklogger.h"
 
 #define ORGANIZATION_NAME "Azmerit"
 #define ORGANIZATION_DOMAIN "http://www.azmerit.ru"
@@ -36,6 +37,10 @@ class MainWindow : public QMainWindow
 
     Calendar calendar;
 
+    int test=0;
+    bool start= 1;
+    AzdkLogger save_log;
+
 
 public:
     MainWindow(QWidget *parent = nullptr);
@@ -49,6 +54,7 @@ public:
 
 public slots:
     void error(const QString & massage);
+    void message_to_log(const QString & message);
 
 private slots:
     void on_sfx_all_stateChanged(int arg1);
@@ -111,6 +117,8 @@ private slots:
 
     void on_number_ods_spinBox_valueChanged(const QString &arg1);
 
+    void on_duration_spinBox_valueChanged(const QString &arg1);
+
 
 
     void on_checkBox_timer_stateChanged(int arg1);
@@ -125,7 +133,13 @@ private slots:
 
     void another_window_close();
 
+
+
+
+
 private:
     Ui::MainWindow *ui;
+    void ui_load_and_config();
+    void block_unblock_ui();
 };
 #endif // MAINWINDOW_H

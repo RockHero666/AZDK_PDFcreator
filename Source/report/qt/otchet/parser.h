@@ -13,6 +13,7 @@
 #include <algorithm>
 
 
+
 class MainWindow;
 
 class Parser : public QObject
@@ -34,6 +35,7 @@ public:
 
 
     void to_parse();
+    void to_parse_current_dir();
     void set_path(const QString & path);
     void set_serial_num(const QString & path);
 
@@ -46,9 +48,12 @@ public:
     QVector<QString> Frames_count_and_time(const QString & server_path,const QString & index);
     QString Png_path_veryf(const QString & path);
     QVector<int> parse_resulte_table_2_ver2(const QString & client_path,const QString & server_path);
-    QVector<QString> Frames_count_and_time_ver2(const QString & server_path,const QString & azdk_server_path,const QString & index);
+    QVector<QString> Frames_count_and_time_ver2(const QString & server_path,const QString & azdk_server_path,const QString & index,const QString & azdk_number);
+    int error_count(const QString & error_path);
 
 
+signals:
+    void log_message(const QString & message);
 };
 
 #endif // PARSER_H

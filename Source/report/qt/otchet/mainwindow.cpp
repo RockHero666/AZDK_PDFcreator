@@ -13,7 +13,32 @@ MainWindow::MainWindow(QWidget *parent)
 
     this->setWindowTitle("PDF_report");
 
+    ui_load_and_config();
 
+
+    connect(&pdf_creator, SIGNAL(progress(int)), ui->progressBar, SLOT(setValue(int)));
+    connect(&pdf_creator, SIGNAL(error(const QString &)),this, SLOT(error(const QString &)));
+
+    connect(&thread, &QThread::started, &pdf_creator, &PDF_creator::start);
+    connect(&pdf_creator, &PDF_creator::finished, &thread, &QThread::terminate);
+    connect(&pdf_creator, &PDF_creator::unblock_ui, this, &MainWindow::block_unblock_ui);
+
+    connect(&calendar,&Calendar::finished,this,&MainWindow::another_window_close);
+    connect(&pdf_creator, SIGNAL(log_message(const QString &)),this, SLOT(message_to_log(const QString &)));
+    connect(&parser, SIGNAL(log_message(const QString &)),this, SLOT(message_to_log(const QString &)));
+
+    save_log.open("log.json",LogType::Common,"json");
+}
+
+void MainWindow::message_to_log(const QString & message)
+{
+    ui->loger->addLog(message);
+    save_log.log(message);
+}
+
+
+void MainWindow::ui_load_and_config()
+{
     ui->name_report_line->setText("azdkclient.tracked.azdk");
     ui->management_report_line->setText("azdkserver.tracked.azdk");
     ui->management_sky_report_line->setText("pdsserver.tracked.azdk");
@@ -47,6 +72,7 @@ MainWindow::MainWindow(QWidget *parent)
     ui->influence_doubleSpinBox->setValue(settings.value("influence").toDouble());
     ui->intensity_doubleSpinBox->setValue(settings.value("intensity").toDouble());
     ui->firmware_line->setText(settings.value("firmware").toString());
+    ui->duration_spinBox->setValue(settings.value("duration").toInt());
 
     ui->checkBox->setCheckState(Qt::CheckState(settings.value("binar").toInt()));
     on_checkBox_stateChanged(settings.value("binar").toInt());
@@ -59,6 +85,8 @@ MainWindow::MainWindow(QWidget *parent)
     calendar.set_date_begin(settings.value("time_start_y").toInt(),settings.value("time_start_m").toInt(),settings.value("time_start_d").toInt());
     calendar.set_date_end(settings.value("time_end_y").toInt(),settings.value("time_end_m").toInt(),settings.value("time_end_d").toInt());
 
+    if(settings.value("AZDK_ver").toBool())
+        azdk.ver = settings.value("AZDK_ver").toString();
 
     if(!settings.value("path_to_file_line").toString().isEmpty())
     {
@@ -71,16 +99,63 @@ MainWindow::MainWindow(QWidget *parent)
     ui->savepath_line->setText(settings.value("savepath_line").toString());
     on_savepath_line_textChanged(settings.value("savepath_line").toString());
     }
-
-
-    connect(&calendar,&Calendar::finished,this,&MainWindow::another_window_close);
-
 }
 
+ void MainWindow::block_unblock_ui()
+ {
+     bool state;
+     if(ui->path_to_file_line->isEnabled())
+         state = 1;
+     else
+         state = 0;
+
+         ui->path_to_file_line->setDisabled(state);
+         ui->name_report_line->setDisabled(state);
+         ui->management_report_line->setDisabled(state);
+         ui->management_sky_report_line->setDisabled(state);
+         ui->puth_to_file_button->setDisabled(state);
+         ui->number_spinBox->setDisabled(state);
+         ui->number_ods_spinBox->setDisabled(state);
+         ui->size_doubleSpinBox->setDisabled(state);
+         ui->focus_doubleSpinBox->setDisabled(state);
+         ui->influence_doubleSpinBox->setDisabled(state);
+         ui->intensity_doubleSpinBox->setDisabled(state);
+         ui->firmware_line->setDisabled(state);
+         ui->duration_spinBox->setDisabled(state);
+         ui->checkBox->setDisabled(state);
+         ui->checkBox_timer->setDisabled(state);
+         ui->comboBox->setDisabled(state);
+         ui->speed_comboBox->setDisabled(state);
+         ui->pushButton->setDisabled(state);
+         ui->file_name_line->setDisabled(state);
+         ui->savepath_line->setDisabled(state);
+         ui->save_path_button->setDisabled(state);
+         ui->create_button->setDisabled(state);
+
+         if(state)
+         {
+             ui->sfx_o->setDisabled(state);
+             ui->sfx_s->setDisabled(state);
+             ui->sfx_r1->setDisabled(state);
+             ui->sfx_r2->setDisabled(state);
+             ui->sfx_r3->setDisabled(state);
+             ui->sfx_ro1->setDisabled(state);
+             ui->sfx_all->setDisabled(state);
+         }
+         else
+         {
+             check_box_checker();
+             ui->sfx_all->setDisabled(state);
+         }
+
+
+
+ }
 
 
 MainWindow::~MainWindow()
 {
+    save_log.close(0);
     delete ui;
 }
 
@@ -98,7 +173,7 @@ bool MainWindow::checker()
 
     if(azdk.size.isEmpty()||azdk.binar.isEmpty()||azdk.focus.isEmpty()||azdk.speed.isEmpty()||
             azdk.number.isEmpty()||azdk.firmware.isEmpty()||azdk.influence.isEmpty()||azdk.intensity.isEmpty()||
-            azdk.interface_.isEmpty()||azdk.number_Ods.isEmpty())
+            azdk.interface_.isEmpty()||azdk.number_Ods.isEmpty()||azdk.duration.isEmpty())
         return false;
 
     if(ui->path_to_file_line->text().isEmpty()||ui->name_report_line->text().isEmpty()||ui->management_report_line->text().isEmpty()||
@@ -171,26 +246,18 @@ QString MainWindow::setDate()
   QDate start = calendar.get_date_begin();
   QDate end = calendar.get_date_end();
 
+
+
   if(start == end)
   {
-      QString str = QString::number(calendar.get_date_begin().day()) + "." +
-              QString::number(calendar.get_date_begin().month()) + "." +
-              QString::number(calendar.get_date_begin().year()) + ".";
-      return str;
-  }
-  if(start > end)
-  {
-      return "error date";
+      QString st = calendar.get_date_begin().toString("dd. MMMM. yyyy");
+      return st;
   }
   if(start < end)
   {
-      QString start = QString::number(calendar.get_date_begin().day()) + "." +
-              QString::number(calendar.get_date_begin().month()) + "." +
-              QString::number(calendar.get_date_begin().year()) + ".";
-      QString end = QString::number(calendar.get_date_end().day()) + "." +
-              QString::number(calendar.get_date_end().month()) + "." +
-              QString::number(calendar.get_date_end().year()) + ".";
-      return start + " - " + end;
+      QString st = calendar.get_date_begin().toString("dd. MMMM. yyyy");
+      QString en = calendar.get_date_end().toString("dd. MMMM. yyyy");
+      return st + " - " + en;
   }
 
   return "error";
@@ -248,11 +315,15 @@ void MainWindow::on_checkBox_stateChanged(int arg1)
 void MainWindow::on_checkBox_timer_stateChanged(int arg1)
 {
     if(arg1)
-    azdk.timer = "сторожевой таймер включен.";
+    azdk.timer = "сторожевой таймер включен";
     else
-    azdk.timer = "сторожевого таймера нет или отключен.";
+    azdk.timer = "сторожевого таймера нет или отключен";
 }
 
+void MainWindow::on_duration_spinBox_valueChanged(const QString &arg1)
+{
+     azdk.duration = arg1;
+}
 
 /////////////////////////////////////////////////////////////////////////
 
@@ -272,24 +343,11 @@ void MainWindow::on_create_button_clicked()
             pdf_creator.set_AZDK(azdk);
             pdf_creator.set_parser(parser);
 
-
-
-            connect(&pdf_creator, SIGNAL(progress(int)), ui->progressBar, SLOT(setValue(int)));
-            connect(&pdf_creator, SIGNAL(error(const QString &)),this, SLOT(error(const QString &)));
-
-            connect(&thread, &QThread::started, &pdf_creator, &PDF_creator::start);
-            connect(&pdf_creator, &PDF_creator::finished, &thread, &QThread::terminate);
             pdf_creator.moveToThread(&thread);
-
             pdf_creator.set_thread_gate(true);
             thread.start();
 
-
-
-
-
-
-
+            block_unblock_ui();
 
 
             save_state();
@@ -317,6 +375,7 @@ void MainWindow::save_state()
     settings.setValue("firmware",azdk.firmware);
     settings.setValue("influence",ui->influence_doubleSpinBox->value());
     settings.setValue("intensity",ui->intensity_doubleSpinBox->value());
+    settings.setValue("duration",ui->duration_spinBox->value());
 
     settings.setValue("interface_",ui->comboBox->currentIndex());
 
@@ -346,6 +405,9 @@ void MainWindow::save_state()
     settings.setValue("file_name_line",ui->file_name_line->text());
     settings.setValue("savepath_line",ui->savepath_line->text());
 
+    if(!settings.value("AZDK_ver").toBool())
+        settings.setValue("AZDK_ver","АЗДК-1.5");
+
 
 }
 
@@ -353,7 +415,7 @@ void MainWindow::save_state()
 
 void MainWindow::on_puth_to_file_button_clicked()
 {
-    QString temp = QFileDialog::getExistingDirectory(this);
+    QString temp = QFileDialog::getExistingDirectory(this,"Choose directory",ui->path_to_file_line->text());
     parser.set_path(temp);
     ui->path_to_file_line->setText(temp);
 }
@@ -363,7 +425,7 @@ void MainWindow::on_path_to_file_line_textChanged(const QString &arg1)
     if(!arg1.isEmpty())
     {
     parser.set_path(arg1);
-    parser.to_parse();
+    parser.to_parse_current_dir();
     }
     check_box_checker();
 }
@@ -481,3 +543,9 @@ void MainWindow::another_window_close()
 {
     ui->create_button->setDisabled(false);
 }
+
+
+
+
+
+

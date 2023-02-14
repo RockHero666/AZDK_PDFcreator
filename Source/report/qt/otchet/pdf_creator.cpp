@@ -34,13 +34,17 @@ void error_handler(HPDF_STATUS error_no, HPDF_STATUS detail_no, void* user_data)
  {
 
 
+          QString str;
 
 HPDF_Page_BeginText(pages[page]);
 HPDF_Page_SetRGBFill(pages[page],0.700,0.700,0.700);
           print_text(page,rus_std,QString::number(page+1).toStdString().c_str(),12,HPDF_Page_GetWidth(pages[page])/2,HPDF_Page_GetHeight(pages[page]) - 15);
 HPDF_Page_EndText(pages[page]);
 
-          QString str = "ФИ АЗДК-1.5 №" + azdk.number;
+          if(azdk.ver.isEmpty())
+              str = "ФИ АЗДК-1.5 №" + azdk.number;
+          else
+              str = "ФИ "+azdk.ver+" №" + azdk.number;
 
 HPDF_Page_BeginText(pages[page]);
           print_text(page,rus_std,str.toStdString().c_str(),12,HPDF_Page_GetWidth(pages[page])/2+100,HPDF_Page_GetHeight(pages[page]) - 15);
@@ -51,12 +55,16 @@ HPDF_Page_EndText(pages[page]);
 
  }
 
- std::string PDF_creator::minute_validator(int min)
+ std::string PDF_creator::minute_validator(int min,bool flag60)
  {
      std::string str;
 
      QTime time(0,0,0);
+
+     if(flag60)
      time = time.addSecs(min*60);
+     else
+     time = time.addSecs(min);
 
      if(time.hour() > 0)
      {
@@ -103,6 +111,30 @@ HPDF_Page_EndText(pages[page]);
                  str += std::to_string(time.minute()) + " минуты ";
              else
                  str += std::to_string(time.minute()) + " минут ";
+         }
+     }
+
+     if(time.second() > 0)
+     {
+         if(time.second() >= 20)
+         {
+             if(time.second() == 20)
+                 str += "20 секунд ";
+             else if(time.second() >= 21 && time.second() < 25)
+                 str += std::to_string(time.second()) + " секунды ";
+             else
+                 str += std::to_string(time.second()) + " секунд ";
+
+         }
+         else
+         {
+
+             if(time.second() == 1)
+                 str += "1 секунде ";
+             else if(time.second() >= 2 && time.second() < 5)
+                 str += std::to_string(time.second()) + " секунды ";
+             else
+                 str += std::to_string(time.second()) + " секунд ";
          }
      }
 
@@ -493,6 +525,8 @@ HPDF_Page_EndText(pages[page]);
 
   void PDF_creator::draw_graph_2(int page,QVector<int> & vect_value,int frames, const QString & sfx)
   {
+      emit log_message("Формирование МЗД таблици");
+
      double tw;
      font = HPDF_GetFont (pdf, rus_std, "UTF-8");
      HPDF_Page_SetFontAndSize(pages[page], font, 10);
@@ -619,7 +653,18 @@ HPDF_Page_BeginText(pages[page]);
      print_text(page,rus_std,"              АЗДК-1 при скоростях вращения 3°/сек.",10,100, HPDF_Page_GetHeight(pages[page_count-1]) /2+183);
 HPDF_Page_EndText(pages[page]);
 }
+if(sfx == "r2")
+{
+HPDF_Page_BeginText(pages[page]);
+     text = "Таблица "+QString::number(ris_t++)+" Статистические результаты функциональных испытаний МЗД ";
+     print_text(page,rus_std,text.toStdString().c_str(),10,100, HPDF_Page_GetHeight(pages[page_count-1]) /2+203);
+HPDF_Page_EndText(pages[page]);
+HPDF_Page_BeginText(pages[page]);
+     print_text(page,rus_std,"              АЗДК-1 при скоростях вращения 2°/сек.",10,100, HPDF_Page_GetHeight(pages[page_count-1]) /2+183);
+HPDF_Page_EndText(pages[page]);
+}
 
+emit log_message("Таблица успешно сформированна");
 
 
   }
@@ -653,6 +698,8 @@ HPDF_Page_EndText(pages[page]);
  void PDF_creator::save()
  {
 
+     emit log_message("Сохранение pdf файла");
+
      QString path = save_path+"/"+fname;
      while(true)
      {
@@ -667,6 +714,8 @@ HPDF_Page_EndText(pages[page]);
      QByteArray ba = path.toLocal8Bit();
      const char *c_str = ba.data();
      HPDF_SaveToFile(pdf, c_str);
+
+     emit log_message("Сохранение завершино");
 
  }
 
@@ -723,97 +772,10 @@ void PDF_creator::set_parser(Parser & parser)
    }
 
 
-   QString PDF_creator::lider_zero(QString &time)
-   {
-
-       QString t = time;
-       QStringList line = t.split(".");
-
-
-       QString d_s;
-       QString m_s;
-       QString y_s;
-
-       QString d_e;
-       QString m_e;
-       QString y_e;
-
-
-
-
-
-       if(line.size() == 4)
-       {
-           if(line[0].toInt()<10)
-           {
-               d_s = "0"+line[0];
-           }
-           else
-               d_s = line[0];
-
-           if(line[1].toInt()<10)
-           {
-               m_s = "0"+line[1];
-           }
-           else
-               m_s = line[1];
-
-           y_s = line[2];
-
-           return QString(d_s+'.'+m_s+'.'+y_s);
-
-       }
-       else
-       {
-           if(line[0].toInt()<10)
-           {
-               d_s = "0"+line[0];
-           }
-           else
-               d_s = line[0];
-
-           if(line[1].toInt()<10)
-           {
-               m_s = "0"+line[1];
-           }
-           else
-               m_s = line[1];
-
-           y_s = line[2];
-
-
-           if(line[3].toInt()<10)
-           {
-               line[3].insert(3,'0');
-               d_e = line[3];
-           }
-           else
-               d_e = line[3];
-
-           if(line[4].toInt()<10)
-           {
-               m_e = "0"+line[4];
-           }
-           else
-               m_e = line[4];
-
-           y_e = line[5];
-
-           return QString(d_s+'.'+m_s+'.'+y_s + d_e+'.'+m_e+'.'+y_e);
-
-       }
-
-
-       return QString("error");
-
-   }
-
-
-
-
  void PDF_creator::start()
  {
 
+     emit emit log_message("Начало работы");
      if(thread_gate)
      {
          parser->to_parse();
@@ -970,8 +932,12 @@ void PDF_creator::set_parser(Parser & parser)
          emit progress(100);
          QApplication::beep();
          thread_gate = false;
+         emit unblock_ui();
+          emit emit log_message("Конец работы");
          emit finished();
+
      }
+
 
 
  }
@@ -991,7 +957,11 @@ void PDF_creator::set_parser(Parser & parser)
 
 
      font = HPDF_GetFont (pdf, rus_bold, "UTF-8");
-     text= "Отчет о функциональных испытаниях МЗД АЗДК-1.5 №";//Заголовок////////
+     if(azdk.ver.isEmpty())
+        text= "Отчет о функциональных испытаниях МЗД АЗДК-1.5 №";//Заголовок////////
+     else
+        text= "Отчет о функциональных испытаниях МЗД "+azdk.ver.toStdString() +" №";
+
      text+=azdk.number.toStdString();
      HPDF_Page_SetFontAndSize(pages[0], font, 16);
      tw = HPDF_Page_TextWidth(pages[0], text.c_str());
@@ -1014,12 +984,23 @@ HPDF_Page_EndText(pages[0]);/////////////////////////////////////////////////
 
 HPDF_Page_BeginText(pages[0]);
      print_text(0,rus_bold,"Объект испытаний: ",12,50,HPDF_Page_GetHeight(pages[0]) - 150-28*0);
-     print_text(0,rus_std,"малогабаритный звездный датчик АЗДК-1.5 (АЗДК-1).",12);
+
+     if(azdk.ver.isEmpty())
+         print_text(0,rus_std,"малогабаритный звездный датчик АЗДК-1.5 (АЗДК-1).",12);
+     else
+     {
+         text = QString("малогабаритный звездный датчик " + azdk.ver + " (АЗДК-1).").toStdString();
+         print_text(0,rus_std,text.c_str(),12);
+     }
 HPDF_Page_EndText(pages[0]);
 
 HPDF_Page_BeginText(pages[0]);
      print_text(0,rus_bold,"Метка изделия МЗД АЗДК-1: ",12,50,HPDF_Page_GetHeight(pages[0]) - 150-28*1);
-     text = "АЗДК-1.5 №"+azdk.number.toStdString();
+     if(azdk.ver.isEmpty())
+        text = "АЗДК-1.5 №"+azdk.number.toStdString();
+     else
+         text = azdk.ver.toStdString() + " №" + azdk.number.toStdString();
+
      print_text(0,rus_std,text.c_str(),12);
 HPDF_Page_EndText(pages[0]);
 
@@ -1034,13 +1015,13 @@ HPDF_Page_BeginText(pages[0]);
 HPDF_Page_EndText(pages[0]);
 
 HPDF_Page_BeginText(pages[0]);
-     print_text(0,rus_std,"Место испытаний: ",12,50,HPDF_Page_GetHeight(pages[0]) - 150-28*4);
+     print_text(0,rus_bold,"Место испытаний: ",12,50,HPDF_Page_GetHeight(pages[0]) - 150-28*4);
      print_text(0,rus_std,"Москва, Красная Пресня",12);
 HPDF_Page_EndText(pages[0]);
 
 HPDF_Page_BeginText(pages[0]);
      print_text(0,rus_bold,"Время испытаний: ",12,50,HPDF_Page_GetHeight(pages[0]) - 150-28*5);
-     text = lider_zero(azdk.time).toStdString();
+     text = azdk.time.toStdString();
      print_text(0,rus_std,text.c_str(),12);
 HPDF_Page_EndText(pages[0]);
 
@@ -1062,43 +1043,50 @@ HPDF_Page_BeginText(pages[0]);
 HPDF_Page_EndText(pages[0]);
 
 HPDF_Page_BeginText(pages[0]);
-     print_text(0,rus_bold,"-  ",12,60,HPDF_Page_GetHeight(pages[0]) - 150-28*10);
+     print_text(0,rus_bold,"—  ",12,60,HPDF_Page_GetHeight(pages[0]) - 150-28*10);
      text = "настройки ПО ОДС: интенсивность " + azdk.intensity.toStdString() + "; влияние величины "
              +azdk.influence.toStdString() + "; фокус ";
      print_text(0,rus_std,text.c_str(),12);
 HPDF_Page_EndText(pages[0]);
 
 HPDF_Page_BeginText(pages[0]);
-     text = azdk.focus.toStdString() + " мм; размер изображения звезды "+azdk.size.toStdString() + " пикс";
+     text = azdk.focus.toStdString() + " мм; размер изображения звезды "+azdk.size.toStdString() + " пикс;";
      print_text(0,rus_std,text.c_str(),12,70,HPDF_Page_GetHeight(pages[0]) - 150-28*11);
 HPDF_Page_EndText(pages[0]);
 
 HPDF_Page_BeginText(pages[0]);
-     print_text(0,rus_bold,"-  ",12,60,HPDF_Page_GetHeight(pages[0]) - 150-28*12);
-     print_text(0,rus_std,"ОДС: каталог звезд до 7.5 звездной величины,",12);
+     print_text(0,rus_bold,"—  ",12,60,HPDF_Page_GetHeight(pages[0]) - 150-28*12);
+     print_text(0,rus_std,"ОДС: каталог звезд до 7.5 звездной величины;",12);
 HPDF_Page_EndText(pages[0]);
 
 HPDF_Page_BeginText(pages[0]);
-     print_text(0,rus_bold,"-  ",12,60,HPDF_Page_GetHeight(pages[0]) - 150-28*13);
-     text = "версия прошивки АЗДК-1: " + azdk.firmware.toStdString();
+     print_text(0,rus_bold,"—  ",12,60,HPDF_Page_GetHeight(pages[0]) - 150-28*13);
+     text = "версия прошивки АЗДК-1: " + azdk.firmware.toStdString()+";";
      print_text(0,rus_std,text.c_str(),12);
 HPDF_Page_EndText(pages[0]);
 
 HPDF_Page_BeginText(pages[0]);
-     print_text(0,rus_bold,"-  ",12,60,HPDF_Page_GetHeight(pages[0]) - 150-28*14);
-     text = "взаимодействие по интерфейсу " + azdk.interface_.toStdString() + " на скорости " + azdk.speed.toStdString();
+     print_text(0,rus_bold,"—  ",12,60,HPDF_Page_GetHeight(pages[0]) - 150-28*14);
+     text = "взаимодействие по интерфейсу " + azdk.interface_.toStdString() + " на скорости " + azdk.speed.toStdString()+";";
      print_text(0,rus_std,text.c_str(),12);
 HPDF_Page_EndText(pages[0]);
 
 HPDF_Page_BeginText(pages[0]);
-     print_text(0,rus_bold,"-  ",12,60,HPDF_Page_GetHeight(pages[0]) - 150-28*15);
-     text = "режим бинирования кадров в АЗДК-1 " + azdk.binar.toStdString();
+     print_text(0,rus_bold,"—  ",12,60,HPDF_Page_GetHeight(pages[0]) - 150-28*15);
+     text = "длительность накопления сигнала в МЗД: " + azdk.duration.toStdString()+" мс"+";";
      print_text(0,rus_std,text.c_str(),12);
 HPDF_Page_EndText(pages[0]);
 
 HPDF_Page_BeginText(pages[0]);
-     print_text(0,rus_bold,"-  ",12,60,HPDF_Page_GetHeight(pages[0]) - 150-28*16);
+     print_text(0,rus_bold,"—  ",12,60,HPDF_Page_GetHeight(pages[0]) - 150-28*16);
+     text = "режим бинирования кадров в АЗДК-1 " + azdk.binar.toStdString()+";";
+     print_text(0,rus_std,text.c_str(),12);
+HPDF_Page_EndText(pages[0]);
+
+HPDF_Page_BeginText(pages[0]);
+     print_text(0,rus_bold,"—  ",12,60,HPDF_Page_GetHeight(pages[0]) - 150-28*17);
      print_text(0,rus_std,azdk.timer.toStdString().c_str(),12);
+     print_text(0,rus_std,";",12);
 HPDF_Page_EndText(pages[0]);
 
 
@@ -1108,10 +1096,10 @@ HPDF_Page_EndText(pages[0]);
  {
      auto sko_otchet = parser->parse_resulte_table("/azdk" + azdk.number +"s" + "/errors.csv" );
      //auto ct = parser->Frames_count_and_time("/"+template_files[2]+azdk.number,"s");
-     auto ct = parser->Frames_count_and_time_ver2("/"+template_files[2]+azdk.number,"/"+template_files[1]+azdk.number,"s");
+     auto ct = parser->Frames_count_and_time_ver2("/"+template_files[2]+azdk.number,"/"+template_files[1]+azdk.number,"s",azdk.number);
      std::string text = "Тест-"+ std::to_string(test) + " (точностной)";
 
-
+    emit log_message("создание s отчета");
 
      create_page();
      calantitul(page_count-1);
@@ -1135,78 +1123,78 @@ HPDF_Page_BeginText(pages[page_count-1]);
 HPDF_Page_EndText(pages[page_count-1]);
 HPDF_Page_BeginText(pages[page_count-1]);
      print_text(page_count-1,rus_std,"случайных статичных кадра звездного неба длительностью по ",12,50,HPDF_Page_GetHeight(pages[0]) - x_start_pos-28*x++);
-     text = minute_validator(ct[1].toInt()) + " каждый";
+     text = minute_validator(ct[1].toInt(),ct[2].toInt()) + " каждый";
      print_text(page_count-1,rus_std,text.c_str(),12);
 HPDF_Page_EndText(pages[page_count-1]);
 HPDF_Page_BeginText(pages[page_count-1]);
      print_text(page_count-1,rus_std,"          В результате теста выполнены следующие измерения:",12,50,HPDF_Page_GetHeight(pages[0]) - x_start_pos-28*x++);
 HPDF_Page_EndText(pages[page_count-1]);
 HPDF_Page_BeginText(pages[page_count-1]);
-     print_text(page_count-1,rus_bold,"-",12,50,HPDF_Page_GetHeight(pages[0]) - x_start_pos-28*x++);
+     print_text(page_count-1,rus_bold,"—",12,50,HPDF_Page_GetHeight(pages[0]) - x_start_pos-28*x++);
      print_text(page_count-1,rus_std," Компонент кватерниона w, измеренного в МЗД (красные точки) и" ,12);
 HPDF_Page_EndText(pages[page_count-1]);
 HPDF_Page_BeginText(pages[page_count-1]);
-     text = "компонент кватерниона, установленного в ОДС (синяя линия) – см. Рис. " + std::to_string(ris_n++);
+     text = "компонент кватерниона, установленного в ОДС (синяя линия) – см. Рис. " + std::to_string(ris_n++)+";";
      print_text(page_count-1,rus_std,text.c_str(),12,50,HPDF_Page_GetHeight(pages[0]) - x_start_pos-28*x++);
 HPDF_Page_EndText(pages[page_count-1]);
 HPDF_Page_BeginText(pages[page_count-1]);
-     print_text(page_count-1,rus_bold,"-",12,50,HPDF_Page_GetHeight(pages[0]) - x_start_pos-28*x++);
+     print_text(page_count-1,rus_bold,"—",12,50,HPDF_Page_GetHeight(pages[0]) - x_start_pos-28*x++);
      print_text(page_count-1,rus_std," Компонент кватерниона x, измеренного в МЗД (красные точки) и " ,12);
 HPDF_Page_EndText(pages[page_count-1]);
 HPDF_Page_BeginText(pages[page_count-1]);
-     text = "компонент кватерниона, установленного в ОДС (синяя линия) – см. Рис. " + std::to_string(ris_n++);
+     text = "компонент кватерниона, установленного в ОДС (синяя линия) – см. Рис. " + std::to_string(ris_n++)+";";
      print_text(page_count-1,rus_std,text.c_str(),12,50,HPDF_Page_GetHeight(pages[0]) - x_start_pos-28*x++);
 HPDF_Page_EndText(pages[page_count-1]);
 HPDF_Page_BeginText(pages[page_count-1]);
-     print_text(page_count-1,rus_bold,"-",12,50,HPDF_Page_GetHeight(pages[0]) - x_start_pos-28*x++);
+     print_text(page_count-1,rus_bold,"—",12,50,HPDF_Page_GetHeight(pages[0]) - x_start_pos-28*x++);
      print_text(page_count-1,rus_std," Компонент кватерниона y, измеренного в МЗД (красные точки) и " ,12);
 HPDF_Page_EndText(pages[page_count-1]);
 HPDF_Page_BeginText(pages[page_count-1]);
-     text = "компонент кватерниона, установленного в ОДС (синяя линия) – см. Рис. " + std::to_string(ris_n++);
+     text = "компонент кватерниона, установленного в ОДС (синяя линия) – см. Рис. " + std::to_string(ris_n++)+";";
      print_text(page_count-1,rus_std,text.c_str(),12,50,HPDF_Page_GetHeight(pages[0]) - x_start_pos-28*x++);
 HPDF_Page_EndText(pages[page_count-1]);
 HPDF_Page_BeginText(pages[page_count-1]);
-     print_text(page_count-1,rus_bold,"-",12,50,HPDF_Page_GetHeight(pages[0]) - x_start_pos-28*x++);
+     print_text(page_count-1,rus_bold,"—",12,50,HPDF_Page_GetHeight(pages[0]) - x_start_pos-28*x++);
      print_text(page_count-1,rus_std," Компонент кватерниона z, измеренного в МЗД (красные точки) и  " ,12);
 HPDF_Page_EndText(pages[page_count-1]);
 HPDF_Page_BeginText(pages[page_count-1]);
-     text = "компонент кватерниона, установленного в ОДС (синяя линия) – см. Рис. " + std::to_string(ris_n++);
+     text = "компонент кватерниона, установленного в ОДС (синяя линия) – см. Рис. " + std::to_string(ris_n++)+";";
      print_text(page_count-1,rus_std,text.c_str(),12,50,HPDF_Page_GetHeight(pages[0]) - x_start_pos-28*x++);
 HPDF_Page_EndText(pages[page_count-1]);
 HPDF_Page_BeginText(pages[page_count-1]);
-     print_text(page_count-1,rus_bold,"-",12,50,HPDF_Page_GetHeight(pages[0]) - x_start_pos-28*x++);
+     print_text(page_count-1,rus_bold,"—",12,50,HPDF_Page_GetHeight(pages[0]) - x_start_pos-28*x++);
      print_text(page_count-1,rus_std," Отклонения углов ориентации между измерениями и установкой в ОДС по " ,12);
 HPDF_Page_EndText(pages[page_count-1]);
 HPDF_Page_BeginText(pages[page_count-1]);
-     text = "временной шкале показаны на Рис. " + std::to_string(ris_n++);
+     text = "временной шкале показаны на Рис. " + std::to_string(ris_n++)+";";
      print_text(page_count-1,rus_std,text.c_str(),12,50,HPDF_Page_GetHeight(pages[0]) - x_start_pos-28*x++);
 HPDF_Page_EndText(pages[page_count-1]);
 HPDF_Page_BeginText(pages[page_count-1]);
-     print_text(page_count-1,rus_bold,"-",12,50,HPDF_Page_GetHeight(pages[0]) - x_start_pos-28*x++);
+     print_text(page_count-1,rus_bold,"—",12,50,HPDF_Page_GetHeight(pages[0]) - x_start_pos-28*x++);
      print_text(page_count-1,rus_std," Результаты измерений ошибок ориентации Δx, Δy, Δz, представленные в",12);
 HPDF_Page_EndText(pages[page_count-1]);
 HPDF_Page_BeginText(pages[page_count-1]);
-     text = "системе координат прибора, показаны на Рис. " + std::to_string(ris_n++);
+     text = "системе координат прибора, показаны на Рис. " + std::to_string(ris_n++)+";";
      print_text(page_count-1,rus_std,text.c_str(),12,50,HPDF_Page_GetHeight(pages[0]) - x_start_pos-28*x++);
 HPDF_Page_EndText(pages[page_count-1]);
 HPDF_Page_BeginText(pages[page_count-1]);
-     print_text(page_count-1,rus_bold,"-",12,50,HPDF_Page_GetHeight(pages[0]) - x_start_pos-28*x++);
+     print_text(page_count-1,rus_bold,"—",12,50,HPDF_Page_GetHeight(pages[0]) - x_start_pos-28*x++);
      print_text(page_count-1,rus_std," Отклонения углов ориентации от средних значений по временной шкале  " ,12);
 HPDF_Page_EndText(pages[page_count-1]);
 HPDF_Page_BeginText(pages[page_count-1]);
-     text = "показаны на Рис. " + std::to_string(ris_n++);
+     text = "показаны на Рис. " + std::to_string(ris_n++)+";";
      print_text(page_count-1,rus_std,text.c_str(),12,50,HPDF_Page_GetHeight(pages[0]) - x_start_pos-28*x++);
 HPDF_Page_EndText(pages[page_count-1]);
 HPDF_Page_BeginText(pages[page_count-1]);
-     print_text(page_count-1,rus_bold,"-",12,50,HPDF_Page_GetHeight(pages[0]) - x_start_pos-28*x++);
+     print_text(page_count-1,rus_bold,"—",12,50,HPDF_Page_GetHeight(pages[0]) - x_start_pos-28*x++);
      print_text(page_count-1,rus_std," Результаты измерений ошибок ориентации Δx, Δy, Δz, представленные в   " ,12);
 HPDF_Page_EndText(pages[page_count-1]);
 HPDF_Page_BeginText(pages[page_count-1]);
-      text = "системе координат прибора, показаны на Рис. " + std::to_string(ris_n++);
+      text = "системе координат прибора, показаны на Рис. " + std::to_string(ris_n++)+";";
      print_text(page_count-1,rus_std,text.c_str(),12,50,HPDF_Page_GetHeight(pages[0]) - x_start_pos-28*x++);
 HPDF_Page_EndText(pages[page_count-1]);
 HPDF_Page_BeginText(pages[page_count-1]);
-     print_text(page_count-1,rus_bold,"-",12,50,HPDF_Page_GetHeight(pages[0]) - x_start_pos-28*x++);
+     print_text(page_count-1,rus_bold,"—",12,50,HPDF_Page_GetHeight(pages[0]) - x_start_pos-28*x++);
      print_text(page_count-1,rus_std," В таблице 1 приведены средние значения отклонений кватернионов для " ,12);
 HPDF_Page_EndText(pages[page_count-1]);
 HPDF_Page_BeginText(pages[page_count-1]);
@@ -1329,6 +1317,7 @@ HPDF_Page_BeginText(pages[page_count-1]);
 HPDF_Page_EndText(pages[page_count-1]);
 
 
+     emit log_message("Формирование СКО таблици");
      int y;
      if(sko_otchet.size()<=30)
          y = 1;//sko_otchet.size()/30;
@@ -1344,15 +1333,18 @@ HPDF_Page_EndText(pages[page_count-1]);
          draw_graph(page_count-1,sko_otchet);
      }
 
+     emit log_message("Таблица сформированна");
+     emit log_message("s отчет создан");
+
  }
 
  void PDF_creator::r01_otchet()
  {
      //auto ct = parser->Frames_count_and_time("/"+template_files[2]+azdk.number,"r01");
-     auto ct = parser->Frames_count_and_time_ver2("/"+template_files[2]+azdk.number,"/"+template_files[1]+azdk.number,"r01");
+     auto ct = parser->Frames_count_and_time_ver2("/"+template_files[2]+azdk.number,"/"+template_files[1]+azdk.number,"r01",azdk.number);
      std::string text = "Тест-"+ std::to_string(test) + " (точностной)";
 
-
+     emit log_message("Создание r01 отчета");
 
      create_page();
      calantitul(page_count-1);
@@ -1376,7 +1368,7 @@ HPDF_Page_BeginText(pages[page_count-1]);
 HPDF_Page_EndText(pages[page_count-1]);
 HPDF_Page_BeginText(pages[page_count-1]);
      print_text(page_count-1,rus_std,"случайных ориентаций кадра звездного неба длительностью по ",12,50,HPDF_Page_GetHeight(pages[0]) - x_start_pos-28*x++);
-     text = minute_validator(ct[1].toInt()) + " каждый";
+     text = minute_validator(ct[1].toInt(),ct[2].toInt()) + " каждый";
      print_text(page_count-1,rus_std,text.c_str(),12);
 HPDF_Page_EndText(pages[page_count-1]);
 HPDF_Page_BeginText(pages[page_count-1]);
@@ -1386,51 +1378,51 @@ HPDF_Page_BeginText(pages[page_count-1]);
      print_text(page_count-1,rus_std,"          В результате теста выполнены следующие измерения:",12,50,HPDF_Page_GetHeight(pages[0]) - x_start_pos-28*x++);
 HPDF_Page_EndText(pages[page_count-1]);
 HPDF_Page_BeginText(pages[page_count-1]);
-     print_text(page_count-1,rus_bold,"-",12,50,HPDF_Page_GetHeight(pages[0]) - x_start_pos-28*x++);
+     print_text(page_count-1,rus_bold,"—",12,50,HPDF_Page_GetHeight(pages[0]) - x_start_pos-28*x++);
      print_text(page_count-1,rus_std," Компонент кватерниона w, измеренного в МЗД (красные точки) и" ,12);
 HPDF_Page_EndText(pages[page_count-1]);
 HPDF_Page_BeginText(pages[page_count-1]);
-     text = "компонент кватерниона, установленного в ОДС (синяя линия) – см. Рис. " + std::to_string(ris_n++);
+     text = "компонент кватерниона, установленного в ОДС (синяя линия) – см. Рис. " + std::to_string(ris_n++)+";";
      print_text(page_count-1,rus_std,text.c_str(),12,50,HPDF_Page_GetHeight(pages[0]) - x_start_pos-28*x++);
 HPDF_Page_EndText(pages[page_count-1]);
 HPDF_Page_BeginText(pages[page_count-1]);
-     print_text(page_count-1,rus_bold,"-",12,50,HPDF_Page_GetHeight(pages[0]) - x_start_pos-28*x++);
+     print_text(page_count-1,rus_bold,"—",12,50,HPDF_Page_GetHeight(pages[0]) - x_start_pos-28*x++);
      print_text(page_count-1,rus_std," Компонент кватерниона x, измеренного в МЗД (красные точки) и" ,12);
 HPDF_Page_EndText(pages[page_count-1]);
 HPDF_Page_BeginText(pages[page_count-1]);
-     text = "компонент кватерниона, установленного в ОДС (синяя линия) – см. Рис. " + std::to_string(ris_n++);
+     text = "компонент кватерниона, установленного в ОДС (синяя линия) – см. Рис. " + std::to_string(ris_n++)+";";
      print_text(page_count-1,rus_std,text.c_str(),12,50,HPDF_Page_GetHeight(pages[0]) - x_start_pos-28*x++);
 HPDF_Page_EndText(pages[page_count-1]);
 HPDF_Page_BeginText(pages[page_count-1]);
-     print_text(page_count-1,rus_bold,"-",12,50,HPDF_Page_GetHeight(pages[0]) - x_start_pos-28*x++);
+     print_text(page_count-1,rus_bold,"—",12,50,HPDF_Page_GetHeight(pages[0]) - x_start_pos-28*x++);
      print_text(page_count-1,rus_std," Компонент кватерниона y, измеренного в МЗД (красные точки) и" ,12);
 HPDF_Page_EndText(pages[page_count-1]);
 HPDF_Page_BeginText(pages[page_count-1]);
-     text = "компонент кватерниона, установленного в ОДС (синяя линия) – см. Рис. " + std::to_string(ris_n++);
+     text = "компонент кватерниона, установленного в ОДС (синяя линия) – см. Рис. " + std::to_string(ris_n++)+";";
      print_text(page_count-1,rus_std,text.c_str(),12,50,HPDF_Page_GetHeight(pages[0]) - x_start_pos-28*x++);
 HPDF_Page_EndText(pages[page_count-1]);
 HPDF_Page_BeginText(pages[page_count-1]);
-     print_text(page_count-1,rus_bold,"-",12,50,HPDF_Page_GetHeight(pages[0]) - x_start_pos-28*x++);
+     print_text(page_count-1,rus_bold,"—",12,50,HPDF_Page_GetHeight(pages[0]) - x_start_pos-28*x++);
      print_text(page_count-1,rus_std," Компонент кватерниона z, измеренного в МЗД (красные точки) и" ,12);
 HPDF_Page_EndText(pages[page_count-1]);
 HPDF_Page_BeginText(pages[page_count-1]);
-     text = "компонент кватерниона, установленного в ОДС (синяя линия) – см. Рис. " + std::to_string(ris_n++);
+     text = "компонент кватерниона, установленного в ОДС (синяя линия) – см. Рис. " + std::to_string(ris_n++)+";";
      print_text(page_count-1,rus_std,text.c_str(),12,50,HPDF_Page_GetHeight(pages[0]) - x_start_pos-28*x++);
 HPDF_Page_EndText(pages[page_count-1]);
 HPDF_Page_BeginText(pages[page_count-1]);
-     print_text(page_count-1,rus_bold,"-",12,50,HPDF_Page_GetHeight(pages[0]) - x_start_pos-28*x++);
+     print_text(page_count-1,rus_bold,"—",12,50,HPDF_Page_GetHeight(pages[0]) - x_start_pos-28*x++);
      print_text(page_count-1,rus_std," Отклонения углов ориентации между измерениями и установкой в ОДС по" ,12);
 HPDF_Page_EndText(pages[page_count-1]);
 HPDF_Page_BeginText(pages[page_count-1]);
-     text = "временной шкале показаны на Рис. " + std::to_string(ris_n++);
+     text = "временной шкале показаны на Рис. " + std::to_string(ris_n++)+";";
      print_text(page_count-1,rus_std,text.c_str(),12,50,HPDF_Page_GetHeight(pages[0]) - x_start_pos-28*x++);
 HPDF_Page_EndText(pages[page_count-1]);
 HPDF_Page_BeginText(pages[page_count-1]);
-     print_text(page_count-1,rus_bold,"-",12,50,HPDF_Page_GetHeight(pages[0]) - x_start_pos-28*x++);
+     print_text(page_count-1,rus_bold,"—",12,50,HPDF_Page_GetHeight(pages[0]) - x_start_pos-28*x++);
      print_text(page_count-1,rus_std," Результаты измерений ошибок ориентации Δx, Δy, Δz, представленные в" ,12);
 HPDF_Page_EndText(pages[page_count-1]);
 HPDF_Page_BeginText(pages[page_count-1]);
-     text = "системе координат прибора, показаны на Рис. " + std::to_string(ris_n++);
+     text = "системе координат прибора, показаны на Рис. " + std::to_string(ris_n++)+".";
      print_text(page_count-1,rus_std,text.c_str(),12,50,HPDF_Page_GetHeight(pages[0]) - x_start_pos-28*x++);
 HPDF_Page_EndText(pages[page_count-1]);
 
@@ -1520,16 +1512,18 @@ HPDF_Page_BeginText(pages[page_count-1]);
      print_text(page_count-1,rus_std,"          представленные в системе координат прибора.",10,x_start_pos,HPDF_Page_GetHeight(pages[page_count-1]) - 775);
 HPDF_Page_EndText(pages[page_count-1]);
 
+     emit log_message("ro1 отчет создан");
+
  }
 
  void PDF_creator::r1_otchet()
  {
      //auto ct = parser->Frames_count_and_time("/"+template_files[2]+azdk.number,"r1");
-     auto ct = parser->Frames_count_and_time_ver2("/"+template_files[2]+azdk.number,"/"+template_files[1]+azdk.number,"r1");
+     auto ct = parser->Frames_count_and_time_ver2("/"+template_files[2]+azdk.number,"/"+template_files[1]+azdk.number,"r1",azdk.number);
      auto val_vect = parser->parse_resulte_table_2_ver2("/"+template_files[0]+azdk.number + "r1.txt","/"+template_files[2]+azdk.number + "r1.txt");
      std::string text = "Тест-"+ std::to_string(test) + " (статистический)";
 
-
+     emit log_message("Создание r1 отчета");
 
      create_page();
      calantitul(page_count-1);
@@ -1556,7 +1550,7 @@ HPDF_Page_BeginText(pages[page_count-1]);
 HPDF_Page_EndText(pages[page_count-1]);
 HPDF_Page_BeginText(pages[page_count-1]);
      print_text(page_count-1,rus_std,"треков длительностью по ",12,50,HPDF_Page_GetHeight(pages[0]) - x_start_pos-28*x++);
-     text = minute_validator(ct[1].toInt()) +"." ;
+     text = minute_validator(ct[1].toInt(),ct[2].toInt()) +"." ;
      print_text(page_count-1,rus_std,text.c_str(),12);
 HPDF_Page_EndText(pages[page_count-1]);
 
@@ -1568,48 +1562,48 @@ HPDF_Page_BeginText(pages[page_count-1]);
      print_text(page_count-1,rus_std,"          В результате теста выполнены следующие измерения:",12,50,HPDF_Page_GetHeight(pages[0]) - x_start_pos-28*x++);
 HPDF_Page_EndText(pages[page_count-1]);
 HPDF_Page_BeginText(pages[page_count-1]);
-     print_text(page_count-1,rus_bold,"-",12,50,HPDF_Page_GetHeight(pages[0]) - x_start_pos-28*x++);
+     print_text(page_count-1,rus_bold,"—",12,50,HPDF_Page_GetHeight(pages[0]) - x_start_pos-28*x++);
      print_text(page_count-1,rus_std," Компонент кватерниона w, измеренного в МЗД (красные точки) и" ,12);
 HPDF_Page_EndText(pages[page_count-1]);
 HPDF_Page_BeginText(pages[page_count-1]);
-     text = "компонент кватерниона, установленного в ОДС (синяя линия) – см. Рис. " + std::to_string(ris_n++);
+     text = "компонент кватерниона, установленного в ОДС (синяя линия) – см. Рис. " + std::to_string(ris_n++)+";";
      print_text(page_count-1,rus_std,text.c_str(),12,50,HPDF_Page_GetHeight(pages[0]) - x_start_pos-28*x++);
 HPDF_Page_EndText(pages[page_count-1]);
 HPDF_Page_BeginText(pages[page_count-1]);
-     print_text(page_count-1,rus_bold,"-",12,50,HPDF_Page_GetHeight(pages[0]) - x_start_pos-28*x++);
+     print_text(page_count-1,rus_bold,"—",12,50,HPDF_Page_GetHeight(pages[0]) - x_start_pos-28*x++);
      print_text(page_count-1,rus_std," Компонент кватерниона x, измеренного в МЗД (красные точки) и" ,12);
 HPDF_Page_EndText(pages[page_count-1]);
 HPDF_Page_BeginText(pages[page_count-1]);
-     text = "компонент кватерниона, установленного в ОДС (синяя линия) – см. Рис. " + std::to_string(ris_n++);
+     text = "компонент кватерниона, установленного в ОДС (синяя линия) – см. Рис. " + std::to_string(ris_n++)+";";
      print_text(page_count-1,rus_std,text.c_str(),12,50,HPDF_Page_GetHeight(pages[0]) - x_start_pos-28*x++);
 HPDF_Page_EndText(pages[page_count-1]);
 HPDF_Page_BeginText(pages[page_count-1]);
-     print_text(page_count-1,rus_bold,"-",12,50,HPDF_Page_GetHeight(pages[0]) - x_start_pos-28*x++);
+     print_text(page_count-1,rus_bold,"—",12,50,HPDF_Page_GetHeight(pages[0]) - x_start_pos-28*x++);
      print_text(page_count-1,rus_std," Компонент кватерниона y, измеренного в МЗД (красные точки) и" ,12);
 HPDF_Page_EndText(pages[page_count-1]);
 HPDF_Page_BeginText(pages[page_count-1]);
-     text = "компонент кватерниона, установленного в ОДС (синяя линия) – см. Рис. " + std::to_string(ris_n++);
+     text = "компонент кватерниона, установленного в ОДС (синяя линия) – см. Рис. " + std::to_string(ris_n++)+";";
      print_text(page_count-1,rus_std,text.c_str(),12,50,HPDF_Page_GetHeight(pages[0]) - x_start_pos-28*x++);
 HPDF_Page_EndText(pages[page_count-1]);
 HPDF_Page_BeginText(pages[page_count-1]);
-     print_text(page_count-1,rus_bold,"-",12,50,HPDF_Page_GetHeight(pages[0]) - x_start_pos-28*x++);
+     print_text(page_count-1,rus_bold,"—",12,50,HPDF_Page_GetHeight(pages[0]) - x_start_pos-28*x++);
      print_text(page_count-1,rus_std," Компонент кватерниона z, измеренного в МЗД (красные точки) и" ,12);
 HPDF_Page_EndText(pages[page_count-1]);
 HPDF_Page_BeginText(pages[page_count-1]);
-     text = "компонент кватерниона, установленного в ОДС (синяя линия) – см. Рис. " + std::to_string(ris_n++);
+     text = "компонент кватерниона, установленного в ОДС (синяя линия) – см. Рис. " + std::to_string(ris_n++)+";";
      print_text(page_count-1,rus_std,text.c_str(),12,50,HPDF_Page_GetHeight(pages[0]) - x_start_pos-28*x++);
 HPDF_Page_EndText(pages[page_count-1]);
 HPDF_Page_BeginText(pages[page_count-1]);
-     print_text(page_count-1,rus_bold,"-",12,50,HPDF_Page_GetHeight(pages[0]) - x_start_pos-28*x++);
+     print_text(page_count-1,rus_bold,"—",12,50,HPDF_Page_GetHeight(pages[0]) - x_start_pos-28*x++);
      print_text(page_count-1,rus_std," Отклонения углов ориентации между измерениями в МЗД и установкой в " ,12);
 HPDF_Page_EndText(pages[page_count-1]);
 HPDF_Page_BeginText(pages[page_count-1]);
-     text = "ОДС в приборной системе координат показаны см. Рис. " + std::to_string(ris_n++);
+     text = "ОДС в приборной системе координат показаны см. Рис. " + std::to_string(ris_n++)+";";
      print_text(page_count-1,rus_std,text.c_str(),12,50,HPDF_Page_GetHeight(pages[0]) - x_start_pos-28*x++);
 HPDF_Page_EndText(pages[page_count-1]);
 HPDF_Page_BeginText(pages[page_count-1]);
-     print_text(page_count-1,rus_bold,"-",12,50,HPDF_Page_GetHeight(pages[0]) - x_start_pos-28*x++);
-     text = " Частота выдачи МЗД АЗДК-1 кадров по статистическим данным – см. Рис. " + std::to_string(ris_n++);
+     print_text(page_count-1,rus_bold,"—",12,50,HPDF_Page_GetHeight(pages[0]) - x_start_pos-28*x++);
+     text = " Частота выдачи МЗД АЗДК-1 кадров по статистическим данным – см. Рис. " + std::to_string(ris_n++)+".";
      print_text(page_count-1,rus_std,text.c_str(),12);
 HPDF_Page_EndText(pages[page_count-1]);
 
@@ -1705,16 +1699,18 @@ HPDF_Page_BeginText(pages[page_count-1]);
      print_text(page_count-1,rus_std,"          отождествлениями  ",10,x_start_pos,HPDF_Page_GetHeight(pages[page_count-1]) - 805);
 HPDF_Page_EndText(pages[page_count-1]);
 
+    emit log_message("r1 отчет создан");
+
  }
 
  void PDF_creator::r2_otchet()
  {
      //auto ct = parser->Frames_count_and_time("/"+template_files[2]+azdk.number,"r2");
-     auto ct = parser->Frames_count_and_time_ver2("/"+template_files[2]+azdk.number,"/"+template_files[1]+azdk.number,"r2");
+     auto ct = parser->Frames_count_and_time_ver2("/"+template_files[2]+azdk.number,"/"+template_files[1]+azdk.number,"r2",azdk.number);
      auto val_vect = parser->parse_resulte_table_2_ver2("/"+template_files[0]+azdk.number + "r2.txt","/"+template_files[2]+azdk.number + "r2.txt");
      std::string text = "Тест-"+ std::to_string(test) + " (статистический)";
 
-
+     emit log_message("Создание r2 отчета");
 
      create_page();
      calantitul(page_count-1);
@@ -1735,13 +1731,13 @@ HPDF_Page_BeginText(pages[page_count-1]);
      print_text(page_count-1,rus_std,"кадров и количество срывов ведений МЗД АЗДК-1 на случайных участках неба ",12,50,HPDF_Page_GetHeight(pages[0]) - x_start_pos-28*x++);
 HPDF_Page_EndText(pages[page_count-1]);
 HPDF_Page_BeginText(pages[page_count-1]);
-     print_text(page_count-1,rus_std,"при скорости вращения КА 3°/сек. Данные получены на основе ",12,50,HPDF_Page_GetHeight(pages[0]) - x_start_pos-28*x++);
+     print_text(page_count-1,rus_std,"при скорости вращения КА 2°/сек. Данные получены на основе ",12,50,HPDF_Page_GetHeight(pages[0]) - x_start_pos-28*x++);
      text = ct[0].toStdString() + " случайных";
      print_text(page_count-1,rus_std,text.c_str(),12);
 HPDF_Page_EndText(pages[page_count-1]);
 HPDF_Page_BeginText(pages[page_count-1]);
      print_text(page_count-1,rus_std,"звездных треков длительностью по ",12,50,HPDF_Page_GetHeight(pages[0]) - x_start_pos-28*x++);
-     text = minute_validator(ct[1].toInt()) +"." ;
+     text = minute_validator(ct[1].toInt(),ct[2].toInt()) +"." ;
      print_text(page_count-1,rus_std,text.c_str(),12);
 HPDF_Page_EndText(pages[page_count-1]);
 
@@ -1753,16 +1749,16 @@ HPDF_Page_BeginText(pages[page_count-1]);
      print_text(page_count-1,rus_std,"          В результате теста выполнены следующие измерения:",12,50,HPDF_Page_GetHeight(pages[0]) - x_start_pos-28*x++);
 HPDF_Page_EndText(pages[page_count-1]);
 HPDF_Page_BeginText(pages[page_count-1]);
-     print_text(page_count-1,rus_bold,"-",12,50,HPDF_Page_GetHeight(pages[0]) - x_start_pos-28*x++);
+     print_text(page_count-1,rus_bold,"—",12,50,HPDF_Page_GetHeight(pages[0]) - x_start_pos-28*x++);
      print_text(page_count-1,rus_std," Отклонения углов ориентации между измерениями в МЗД и установкой в  " ,12);
 HPDF_Page_EndText(pages[page_count-1]);
 HPDF_Page_BeginText(pages[page_count-1]);
-     text = "ОДС в приборной системе координат – см. Рис. " + std::to_string(ris_n++);
+     text = "ОДС в приборной системе координат – см. Рис. " + std::to_string(ris_n++)+";";
      print_text(page_count-1,rus_std,text.c_str(),12,50,HPDF_Page_GetHeight(pages[0]) - x_start_pos-28*x++);
 HPDF_Page_EndText(pages[page_count-1]);
 HPDF_Page_BeginText(pages[page_count-1]);
-     print_text(page_count-1,rus_bold,"-",12,50,HPDF_Page_GetHeight(pages[0]) - x_start_pos-28*x++);
-     text = " Частота выдачи МЗД АЗДК-1 кадров по статистическим данным – см. Рис. " + std::to_string(ris_n++);
+     print_text(page_count-1,rus_bold,"—",12,50,HPDF_Page_GetHeight(pages[0]) - x_start_pos-28*x++);
+     text = " Частота выдачи МЗД АЗДК-1 кадров по статистическим данным – см. Рис. " + std::to_string(ris_n++)+".";
      print_text(page_count-1,rus_std,text.c_str(),12);
 HPDF_Page_EndText(pages[page_count-1]);
 
@@ -1802,17 +1798,18 @@ HPDF_Page_BeginText(pages[page_count-1]);
      print_text(page_count-1,rus_std,"          отождествлениями  ",10,x_start_pos,HPDF_Page_GetHeight(pages[page_count-1]) - 805);
 HPDF_Page_EndText(pages[page_count-1]);
 
+     emit log_message("r2 отчет создан");
 
  }
 
  void PDF_creator::r3_otchet()
  {
      //auto ct = parser->Frames_count_and_time("/"+template_files[2]+azdk.number,"r3");
-     auto ct = parser->Frames_count_and_time_ver2("/"+template_files[2]+azdk.number,"/"+template_files[1]+azdk.number,"r3");
+     auto ct = parser->Frames_count_and_time_ver2("/"+template_files[2]+azdk.number,"/"+template_files[1]+azdk.number,"r3",azdk.number);
      auto val_vect = parser->parse_resulte_table_2_ver2("/"+template_files[0]+azdk.number + "r3.txt","/"+template_files[2]+azdk.number + "r3.txt");
      std::string text = "Тест-"+ std::to_string(test) + " (статистический)";
 
-
+     emit log_message("Создание ro3 отчета");
 
      create_page();
      calantitul(page_count-1);
@@ -1839,7 +1836,7 @@ HPDF_Page_BeginText(pages[page_count-1]);
 HPDF_Page_EndText(pages[page_count-1]);
 HPDF_Page_BeginText(pages[page_count-1]);
      print_text(page_count-1,rus_std,"звездных треков длительностью по ",12,50,HPDF_Page_GetHeight(pages[0]) - x_start_pos-28*x++);
-     text = minute_validator(ct[1].toInt()) +"." ;
+     text = minute_validator(ct[1].toInt(),ct[2].toInt()) +"." ;
      print_text(page_count-1,rus_std,text.c_str(),12);
 HPDF_Page_EndText(pages[page_count-1]);
 
@@ -1851,16 +1848,16 @@ HPDF_Page_BeginText(pages[page_count-1]);
      print_text(page_count-1,rus_std,"          В результате теста выполнены следующие измерения:",12,50,HPDF_Page_GetHeight(pages[0]) - x_start_pos-28*x++);
 HPDF_Page_EndText(pages[page_count-1]);
 HPDF_Page_BeginText(pages[page_count-1]);
-     print_text(page_count-1,rus_bold,"-",12,50,HPDF_Page_GetHeight(pages[0]) - x_start_pos-28*x++);
+     print_text(page_count-1,rus_bold,"—",12,50,HPDF_Page_GetHeight(pages[0]) - x_start_pos-28*x++);
      print_text(page_count-1,rus_std," Отклонения углов ориентации между измерениями в МЗД и установкой в  " ,12);
 HPDF_Page_EndText(pages[page_count-1]);
 HPDF_Page_BeginText(pages[page_count-1]);
-     text = "ОДС в приборной системе координат – см. Рис. " + std::to_string(ris_n++);
+     text = "ОДС в приборной системе координат – см. Рис. " + std::to_string(ris_n++)+";";
      print_text(page_count-1,rus_std,text.c_str(),12,50,HPDF_Page_GetHeight(pages[0]) - x_start_pos-28*x++);
 HPDF_Page_EndText(pages[page_count-1]);
 HPDF_Page_BeginText(pages[page_count-1]);
-     print_text(page_count-1,rus_bold,"-",12,50,HPDF_Page_GetHeight(pages[0]) - x_start_pos-28*x++);
-     text = " Частота выдачи МЗД АЗДК-1 кадров по статистическим данным – см. Рис. " + std::to_string(ris_n++);
+     print_text(page_count-1,rus_bold,"—",12,50,HPDF_Page_GetHeight(pages[0]) - x_start_pos-28*x++);
+     text = " Частота выдачи МЗД АЗДК-1 кадров по статистическим данным – см. Рис. " + std::to_string(ris_n++)+".";
      print_text(page_count-1,rus_std,text.c_str(),12);
 HPDF_Page_EndText(pages[page_count-1]);
 
@@ -1900,17 +1897,17 @@ HPDF_Page_BeginText(pages[page_count-1]);
      print_text(page_count-1,rus_std,"          отождествлениями  ",10,x_start_pos,HPDF_Page_GetHeight(pages[page_count-1]) - 805);
 HPDF_Page_EndText(pages[page_count-1]);
 
-
+    emit log_message("r3 отчет создан");
  }
 
  void PDF_creator::o_otchet()
  {
      //auto ct = parser->Frames_count_and_time("/"+template_files[2]+azdk.number,"o");
-     auto ct = parser->Frames_count_and_time_ver2("/"+template_files[2]+azdk.number,"/"+template_files[1]+azdk.number,"o");
+     auto ct = parser->Frames_count_and_time_ver2("/"+template_files[2]+azdk.number,"/"+template_files[1]+azdk.number,"o",azdk.number);
      auto val_vect = parser->parse_resulte_table_2_ver2("/"+template_files[0]+azdk.number + "o.txt","/"+template_files[2]+azdk.number + "o.txt");
      std::string text = "Тест-"+ std::to_string(test) + " (орбитальный)";
 
-
+     emit log_message("Создание о отчета");
 
      create_page();
      calantitul(page_count-1);
@@ -1928,7 +1925,7 @@ HPDF_Page_BeginText(pages[page_count-1]);
      print_text(page_count-1,rus_std,text.c_str(),12,50,HPDF_Page_GetHeight(pages[0]) - x_start_pos-28*x++);
 HPDF_Page_EndText(pages[page_count-1]);
 HPDF_Page_BeginText(pages[page_count-1]);
-     text = "орбите. Продолжительность теста составила " + minute_validator(ct[1].toInt()) + ".";
+     text = "орбите. Продолжительность теста составила " + minute_validator(ct[1].toInt(),ct[2].toInt()) + ".";
      print_text(page_count-1,rus_std,text.c_str(),12,50,HPDF_Page_GetHeight(pages[0]) - x_start_pos-28*x++);
 HPDF_Page_EndText(pages[page_count-1]);
 
@@ -1940,59 +1937,59 @@ HPDF_Page_BeginText(pages[page_count-1]);
      print_text(page_count-1,rus_std,"          В результате теста выполнены следующие измерения:",12,50,HPDF_Page_GetHeight(pages[0]) - x_start_pos-28*x++);
 HPDF_Page_EndText(pages[page_count-1]);
 HPDF_Page_BeginText(pages[page_count-1]);
-     print_text(page_count-1,rus_bold,"-",12,50,HPDF_Page_GetHeight(pages[0]) - x_start_pos-28*x++);
+     print_text(page_count-1,rus_bold,"—",12,50,HPDF_Page_GetHeight(pages[0]) - x_start_pos-28*x++);
      print_text(page_count-1,rus_std," Компонент кватерниона w, измеренного в МЗД (красные точки) и" ,12);
 HPDF_Page_EndText(pages[page_count-1]);
 HPDF_Page_BeginText(pages[page_count-1]);
-     text = "компонент кватерниона, установленного в ОДС (синяя линия) – см. Рис. " + std::to_string(ris_n++);
+     text = "компонент кватерниона, установленного в ОДС (синяя линия) – см. Рис. " + std::to_string(ris_n++)+";";
      print_text(page_count-1,rus_std,text.c_str(),12,50,HPDF_Page_GetHeight(pages[0]) - x_start_pos-28*x++);
 HPDF_Page_EndText(pages[page_count-1]);
 HPDF_Page_BeginText(pages[page_count-1]);
-     print_text(page_count-1,rus_bold,"-",12,50,HPDF_Page_GetHeight(pages[0]) - x_start_pos-28*x++);
+     print_text(page_count-1,rus_bold,"—",12,50,HPDF_Page_GetHeight(pages[0]) - x_start_pos-28*x++);
      print_text(page_count-1,rus_std," Компонент кватерниона x, измеренного в МЗД (красные точки) и" ,12);
 HPDF_Page_EndText(pages[page_count-1]);
 HPDF_Page_BeginText(pages[page_count-1]);
-     text = "компонент кватерниона, установленного в ОДС (синяя линия) – см. Рис. " + std::to_string(ris_n++);
+     text = "компонент кватерниона, установленного в ОДС (синяя линия) – см. Рис. " + std::to_string(ris_n++)+";";
      print_text(page_count-1,rus_std,text.c_str(),12,50,HPDF_Page_GetHeight(pages[0]) - x_start_pos-28*x++);
 HPDF_Page_EndText(pages[page_count-1]);
 HPDF_Page_BeginText(pages[page_count-1]);
-     print_text(page_count-1,rus_bold,"-",12,50,HPDF_Page_GetHeight(pages[0]) - x_start_pos-28*x++);
+     print_text(page_count-1,rus_bold,"—",12,50,HPDF_Page_GetHeight(pages[0]) - x_start_pos-28*x++);
      print_text(page_count-1,rus_std," Компонент кватерниона y, измеренного в МЗД (красные точки) и" ,12);
 HPDF_Page_EndText(pages[page_count-1]);
 HPDF_Page_BeginText(pages[page_count-1]);
-     text = "компонент кватерниона, установленного в ОДС (синяя линия) – см. Рис. " + std::to_string(ris_n++);
+     text = "компонент кватерниона, установленного в ОДС (синяя линия) – см. Рис. " + std::to_string(ris_n++)+";";
      print_text(page_count-1,rus_std,text.c_str(),12,50,HPDF_Page_GetHeight(pages[0]) - x_start_pos-28*x++);
 HPDF_Page_EndText(pages[page_count-1]);
 HPDF_Page_BeginText(pages[page_count-1]);
-     print_text(page_count-1,rus_bold,"-",12,50,HPDF_Page_GetHeight(pages[0]) - x_start_pos-28*x++);
+     print_text(page_count-1,rus_bold,"—",12,50,HPDF_Page_GetHeight(pages[0]) - x_start_pos-28*x++);
      print_text(page_count-1,rus_std," Компонент кватерниона z, измеренного в МЗД (красные точки) и" ,12);
 HPDF_Page_EndText(pages[page_count-1]);
 HPDF_Page_BeginText(pages[page_count-1]);
-     text = "компонент кватерниона, установленного в ОДС (синяя линия) – см. Рис. " + std::to_string(ris_n++);
+     text = "компонент кватерниона, установленного в ОДС (синяя линия) – см. Рис. " + std::to_string(ris_n++)+";";
      print_text(page_count-1,rus_std,text.c_str(),12,50,HPDF_Page_GetHeight(pages[0]) - x_start_pos-28*x++);
 HPDF_Page_EndText(pages[page_count-1]);
 HPDF_Page_BeginText(pages[page_count-1]);
-     print_text(page_count-1,rus_bold,"-",12,50,HPDF_Page_GetHeight(pages[0]) - x_start_pos-28*x++);
+     print_text(page_count-1,rus_bold,"—",12,50,HPDF_Page_GetHeight(pages[0]) - x_start_pos-28*x++);
      print_text(page_count-1,rus_std," Частота выдачи МЗД АЗДК-1 кадров по статистическим данным показана " ,12);
 HPDF_Page_EndText(pages[page_count-1]);
 HPDF_Page_BeginText(pages[page_count-1]);
-     text = "на Рис. " + std::to_string(ris_n++);
+     text = "на Рис. " + std::to_string(ris_n++)+";";
      print_text(page_count-1,rus_std,text.c_str(),12,50,HPDF_Page_GetHeight(pages[0]) - x_start_pos-28*x++);
 HPDF_Page_EndText(pages[page_count-1]);
 HPDF_Page_BeginText(pages[page_count-1]);
-     print_text(page_count-1,rus_bold,"-",12,50,HPDF_Page_GetHeight(pages[0]) - x_start_pos-28*x++);
+     print_text(page_count-1,rus_bold,"—",12,50,HPDF_Page_GetHeight(pages[0]) - x_start_pos-28*x++);
      print_text(page_count-1,rus_std," Разница углов ориентации между измерениями в МЗД и установкой в ОДС " ,12);
 HPDF_Page_EndText(pages[page_count-1]);
 HPDF_Page_BeginText(pages[page_count-1]);
-     text = "в приборной системе координат – Рис. " + std::to_string(ris_n++);
+     text = "в приборной системе координат – Рис. " + std::to_string(ris_n++)+";";
      print_text(page_count-1,rus_std,text.c_str(),12,50,HPDF_Page_GetHeight(pages[0]) - x_start_pos-28*x++);
 HPDF_Page_EndText(pages[page_count-1]);
 HPDF_Page_BeginText(pages[page_count-1]);
-     print_text(page_count-1,rus_bold,"-",12,50,HPDF_Page_GetHeight(pages[0]) - x_start_pos-28*x++);
+     print_text(page_count-1,rus_bold,"—",12,50,HPDF_Page_GetHeight(pages[0]) - x_start_pos-28*x++);
      print_text(page_count-1,rus_std," Гистограммы измерений ошибок ориентации Δx, Δy, Δz, представленные в " ,12);
 HPDF_Page_EndText(pages[page_count-1]);
 HPDF_Page_BeginText(pages[page_count-1]);
-     text = "системе координат прибора – Рис. " + std::to_string(ris_n++);
+     text = "системе координат прибора – Рис. " + std::to_string(ris_n++)+".";
      print_text(page_count-1,rus_std,text.c_str(),12,50,HPDF_Page_GetHeight(pages[0]) - x_start_pos-28*x++);
 HPDF_Page_EndText(pages[page_count-1]);
 
@@ -2105,4 +2102,5 @@ HPDF_Page_BeginText(pages[page_count-1]);
      print_text(page_count-1,rus_std,"          компонент кватерниона, установленного в ОДС (синяя линия). ",10,x_start_pos,HPDF_Page_GetHeight(pages[page_count-1]) - 395-150);
 HPDF_Page_EndText(pages[page_count-1]);
 
+     emit log_message("о отчет создан");
  }

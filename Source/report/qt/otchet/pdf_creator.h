@@ -73,7 +73,7 @@ public:
     void set_sfx_state(bool s1,bool s2,bool s3,bool s4,bool s5,bool s6);
     void set_AZDK(const AZDK & azdk);
 
-    std::string minute_validator(int min);
+    std::string minute_validator(int min,bool flag60);
     void print_text(int page,const char * font_setting,const char * text,int size_text,float x_pos,float y_pos);
     void draw_graph(int page,QVector<QVector<QString>> & vect_value);
     void top_of_graph(int pos,double height,int start_table,int std_cell,int long_cell,int PAGE_HEIGHT,int PAGE_WIDTH , int page);
@@ -95,7 +95,9 @@ public:
 signals:
     void finished();
     void progress(int val);
-    void error(const QString & massage);
+    void error(const QString & message);
+    void unblock_ui();
+    void log_message(const QString & message);
 };
 
 

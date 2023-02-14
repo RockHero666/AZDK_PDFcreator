@@ -9,7 +9,7 @@ Calendar::Calendar(QWidget *parent):
 {
     ui->setupUi(this);
     this->setWindowTitle("Выберите дату");
-    this->setWindowFlags(Qt::SubWindow);
+    //this->setWindowFlags(Qt::SubWindow);
 
 
 
