@@ -491,11 +491,16 @@ HPDF_Page_EndText(pages[page]);
     double av_om_y = std::sqrt(sum_om_y/ vect_value.size());
     double av_om_z = std::sqrt(sum_om_z/ vect_value.size());
 
-    QString result = "среднии значения                                                         " + QString::number(av_del_x,'f',1) + "    " + QString::number(av_del_y,'f',1) + "   " +
+    QString result = "среднии значения                       " + QString::number(av_del_x,'f',1) + "    " + QString::number(av_del_y,'f',1) + "   " +
             QString::number(av_del_z,'f',1) + "  " + QString::number(av_om_x,'f',1) + "    " + QString::number(av_om_y,'f',1) + "      " +
             QString::number(av_om_z,'f',1);
 
 
+
+    HPDF_Page_BeginText(pages[page]);
+
+                print_text(page,rus_std,QString("среднии значения").toStdString().c_str(),10,start_table-long_cell*3-std_cell+5,PAGE_HEIGHT-16);
+    HPDF_Page_EndText(pages[page]);
     HPDF_Page_BeginText(pages[page]);
                 tw = HPDF_Page_TextWidth(pages[page],QString::number(av_del_x,'f',1).toStdString().c_str());
                 print_text(page,rus_std,QString::number(av_del_x,'f',1).toStdString().c_str(),10,(start_table+=std_cell)-tw,PAGE_HEIGHT-16);

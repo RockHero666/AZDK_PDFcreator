@@ -108,7 +108,6 @@ public:
     QPushButton *puth_to_file_button;
     QLineEdit *management_sky_report_line;
     QSpacerItem *verticalSpacer_2;
-    QSpacerItem *verticalSpacer_9;
     QFrame *line_5;
 
     void setupUi(QMainWindow *MainWindow)
@@ -502,10 +501,6 @@ public:
 
 
         gridLayout_4->addLayout(gridLayout_2, 0, 0, 2, 1);
-
-        verticalSpacer_9 = new QSpacerItem(20, 40, QSizePolicy::Minimum, QSizePolicy::Expanding);
-
-        gridLayout_4->addItem(verticalSpacer_9, 5, 0, 1, 1);
 
         line_5 = new QFrame(centralwidget);
         line_5->setObjectName(QString::fromUtf8("line_5"));
