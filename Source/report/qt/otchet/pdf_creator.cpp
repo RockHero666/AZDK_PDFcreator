@@ -1,22 +1,28 @@
 #include "pdf_creator.h"
 #include "hpdf.h"
+#include <QStandardPaths>
+#include <QFontDatabase>
+#include <QRegularExpression>
 
 
 
 int PDF_creator::count = 1;
 
+PDF_creator* PDF_creator::pdf_ptr = nullptr;
 
-void error_handler(HPDF_STATUS error_no, HPDF_STATUS detail_no, void* user_data)
+void PDF_creator::error_handler(HPDF_STATUS error_no, HPDF_STATUS detail_no, void* user_data)
 {
     Q_UNUSED(user_data);
     /* throw exception when an error has occured */
     std::cout << "ERROR: error_no= " << std::hex << error_no << std::dec << " detail_no = " << detail_no << "/n";
+    if(pdf_ptr)
+        emit pdf_ptr->log_message(QString::asprintf("%x", error_no));
     throw std::runtime_error("handler_error");
 }
 
- PDF_creator::PDF_creator(QObject *parent) :QObject(parent)
+ PDF_creator::PDF_creator(const QString& font_name,QObject *parent) :font_name(font_name), QObject(parent)  
  {
-
+     pdf_ptr = this;
  }
 
  PDF_creator::~PDF_creator()
@@ -688,6 +694,11 @@ emit log_message("Таблица успешно сформированна");
      }
  }
 
+ void PDF_creator::set_font_name(const QString& font_name)
+ {
+     this->font_name = font_name;
+ }
+
  void PDF_creator::create_page()
  {
       pages.push_back(HPDF_AddPage(pdf));
@@ -777,6 +788,7 @@ void PDF_creator::set_parser(Parser & parser)
    }
 
 
+
  void PDF_creator::start()
  {
 
@@ -792,10 +804,21 @@ void PDF_creator::set_parser(Parser & parser)
 
          HPDF_SetCompressionMode (pdf, HPDF_COMP_ALL);
 
+       
+
+        
+
+
          HPDF_UseUTFEncodings(pdf); // ЕНКОДИНГ НА РУССКИЙ ТЕКСТ
          HPDF_SetCurrentEncoder(pdf,"UTF-8");
-         rus_bold = HPDF_LoadTTFontFromFile (pdf, "fonts/arialbd.ttf", HPDF_TRUE);
-         rus_std = HPDF_LoadTTFontFromFile (pdf, "fonts/arial.ttf", HPDF_TRUE);//
+         QString bold = QStandardPaths::displayName(QStandardPaths::FontsLocation)+"/"+ font_name+"bd.ttf";
+         QString std = QStandardPaths::displayName(QStandardPaths::FontsLocation) + "/" + font_name + ".ttf";
+         rus_bold = HPDF_LoadTTFontFromFile (pdf, bold.toStdString().c_str(), HPDF_TRUE);
+         rus_std = HPDF_LoadTTFontFromFile (pdf, std.toStdString().c_str(), HPDF_TRUE);//
+
+         //rus_bold = HPDF_LoadTTFontFromFile(pdf, "C:\Work\Azdk_PDFCreator\AZDK_PDFcreator\Release\fonts\arialbd.ttf", HPDF_TRUE);
+         //rus_std = HPDF_LoadTTFontFromFile(pdf, "C:\Work\Azdk_PDFCreator\AZDK_PDFcreator\Release\fonts\arial.ttf", HPDF_TRUE);//
+                                   
 
 
 

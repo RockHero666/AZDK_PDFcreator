@@ -1,5 +1,5 @@
 #include "mainwindow.h"
-#include "ui_mainwindow.h"
+#include "ui_mainwindow2.h"
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -61,6 +61,7 @@ void MainWindow::ui_load_and_config()
     ui->influence_doubleSpinBox->setRange(0,99999999);
     ui->intensity_doubleSpinBox->setRange(0,99999999);
     ui->size_doubleSpinBox->setRange(0,99999999);
+    ui->duration_spinBox->setRange(0, 99999999);
 
 
     QSettings settings("PDF_creator.ini", QSettings::IniFormat);
@@ -87,6 +88,9 @@ void MainWindow::ui_load_and_config()
 
     if(settings.value("AZDK_ver").toBool())
         azdk.ver = settings.value("AZDK_ver").toString();
+
+    if (settings.value("PDF_font").toBool())
+        pdf_creator.set_font_name(settings.value("PDF_font").toString());
 
     if(!settings.value("path_to_file_line").toString().isEmpty())
     {
@@ -407,6 +411,9 @@ void MainWindow::save_state()
 
     if(!settings.value("AZDK_ver").toBool())
         settings.setValue("AZDK_ver","АЗДК-1.5");
+
+    if (!settings.value("PDF_font").toBool())
+        settings.setValue("PDF_font", "arial");
 
 
 }
