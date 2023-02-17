@@ -46,19 +46,24 @@ private:
     bool thread_gate = 0;
 
 
+    QString font_name;
     HPDF_Image image;
     HPDF_Doc pdf;
     HPDF_Font font;
     std::vector<HPDF_Page> pages;
     const char* rus_bold;
     const char* rus_std;
+    static PDF_creator* pdf_ptr;
 
 public:
 
-    PDF_creator(QObject *parent = nullptr);
+    PDF_creator(const QString& font_name = "arial", QObject* parent = nullptr);
     ~PDF_creator();
 
+    static void error_handler(HPDF_STATUS error_no, HPDF_STATUS detail_no, void* user_data);
+
     void create_pdf();
+    void set_font_name(const QString& font_name);
     void create_page();
     void set_thread_gate(bool val);
     void save();
