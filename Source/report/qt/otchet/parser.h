@@ -11,6 +11,7 @@
 #include <QFile>
 #include <iostream>
 #include <algorithm>
+#include <QColor>
 
 
 
@@ -50,10 +51,11 @@ public:
     QVector<int> parse_resulte_table_2_ver2(const QString & client_path,const QString & server_path);
     QVector<QString> Frames_count_and_time_ver2(const QString & server_path,const QString & azdk_server_path,const QString & index,const QString & azdk_number);
     int error_count(const QString & error_path);
+    bool is_exists(const QString& path);
 
 
 signals:
-    void log_message(const QString & message);
+    void log_message(const QString & message, QRgb color = QRgb());
 };
 
 #endif // PARSER_H

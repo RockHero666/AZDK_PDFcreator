@@ -682,7 +682,7 @@ emit log_message("Таблица успешно сформированна");
 
 
 
-
+  
 
  void PDF_creator::create_pdf()
  {
@@ -716,22 +716,45 @@ emit log_message("Таблица успешно сформированна");
 
      emit log_message("Сохранение pdf файла");
 
-     QString path = save_path+"/"+fname;
-     while(true)
+     QString path = save_path;
+
+
+     if (path.indexOf(".pdf") == -1)
+         path += ".pdf";
+    
+     if (QFile::exists(path))
      {
-         if(QFile::exists (path))
+         QFile file(path);
+         
+         
+         
+         if (!file.open(QIODevice::WriteOnly))
          {
-             path.insert(path.size()-4,"(" + QString::number(count++) +")");
+             emit log_message("Файл с выбранным названием в данный", qRgb(255, 170, 0));
+             emit log_message("момент используется, закройте", qRgb(255, 170, 0));
+             emit log_message("файл и повторите попытку", qRgb(255, 170, 0));
+             return;
          }
-         else
-             break;
+         file.remove();
      }
+     
+
+
+    // while(true)
+    // {
+     //    if(QFile::exists (path))
+     //    {
+     //        path.insert(path.size()-4,"(" + QString::number(count++) +")");
+     //    }
+     //    else
+     //        break;
+    // }
 
      QByteArray ba = path.toLocal8Bit();
      const char *c_str = ba.data();
      HPDF_SaveToFile(pdf, c_str);
 
-     emit log_message("Сохранение завершино");
+     emit log_message("Сохранение завершено");
 
  }
 
@@ -792,7 +815,7 @@ void PDF_creator::set_parser(Parser & parser)
  void PDF_creator::start()
  {
 
-     emit emit log_message("Начало работы");
+     emit log_message("Начало работы",qRgb(90,200,90));
      if(thread_gate)
      {
          parser->to_parse();
@@ -809,12 +832,11 @@ void PDF_creator::set_parser(Parser & parser)
         
 
 
-         HPDF_UseUTFEncodings(pdf); // ЕНКОДИНГ НА РУССКИЙ ТЕКСТ
-         HPDF_SetCurrentEncoder(pdf,"UTF-8");
-         QString bold = QStandardPaths::displayName(QStandardPaths::FontsLocation)+"/"+ font_name+"bd.ttf";
-         QString std = QStandardPaths::displayName(QStandardPaths::FontsLocation) + "/" + font_name + ".ttf";
-         rus_bold = HPDF_LoadTTFontFromFile (pdf, bold.toStdString().c_str(), HPDF_TRUE);
-         rus_std = HPDF_LoadTTFontFromFile (pdf, std.toStdString().c_str(), HPDF_TRUE);//
+         if (!font_setting())
+         {
+             end_work();
+             return;
+         }
 
          //rus_bold = HPDF_LoadTTFontFromFile(pdf, "C:\Work\Azdk_PDFCreator\AZDK_PDFcreator\Release\fonts\arialbd.ttf", HPDF_TRUE);
          //rus_std = HPDF_LoadTTFontFromFile(pdf, "C:\Work\Azdk_PDFCreator\AZDK_PDFcreator\Release\fonts\arial.ttf", HPDF_TRUE);//
@@ -945,29 +967,71 @@ void PDF_creator::set_parser(Parser & parser)
 
 
 
-         vect_value_size = 0;
-         page_count = 0;
-         numer_of_line = 1;
-         ris_g=1;
-         ris_n=1;
-         ris_t = 1;
-         test = 1;
-
-         save();
-         free();
-         sfx_state.clear();
-         template_files.clear();
-         emit progress(100);
-         QApplication::beep();
-         thread_gate = false;
-         emit unblock_ui();
-          emit emit log_message("Конец работы");
-         emit finished();
+         end_work();
 
      }
 
 
 
+ }
+
+ bool PDF_creator::font_setting()
+ {
+
+     HPDF_UseUTFEncodings(pdf); // ЕНКОДИНГ НА РУССКИЙ ТЕКСТ
+     HPDF_SetCurrentEncoder(pdf, "UTF-8");
+     QString bold;
+     QString std;
+
+    bold = QStandardPaths::displayName(QStandardPaths::FontsLocation) + "/" + font_name + "bd.ttf";
+    std = QStandardPaths::displayName(QStandardPaths::FontsLocation) + "/" + font_name + ".ttf";
+
+     if (parser->is_exists(bold) && parser->is_exists(std))
+     {
+         rus_bold = HPDF_LoadTTFontFromFile(pdf, bold.toStdString().c_str(), HPDF_TRUE);
+         rus_std = HPDF_LoadTTFontFromFile(pdf, std.toStdString().c_str(), HPDF_TRUE);
+         emit log_message("Шрифт установлен");
+         return true;
+     }
+     
+     bold = QString("C:/Windows/Fonts") + QString("/") + font_name + QString("bd.ttf");
+     std  = QString("C:/Windows/Fonts") + QString("/") + font_name + QString(".ttf");
+
+     if (parser->is_exists(bold) && parser->is_exists(std))
+     {
+         rus_bold = HPDF_LoadTTFontFromFile(pdf, bold.toStdString().c_str(), HPDF_TRUE);
+         rus_std = HPDF_LoadTTFontFromFile(pdf, std.toStdString().c_str(), HPDF_TRUE);
+         emit log_message("Шрифт установлен");
+         return true;
+     }
+     else
+     {
+         emit log_message("Указанный шрифт не был найден, работа программы остановленна!",qRgb(250,0,0));
+         return false;
+     }
+     
+ }
+
+ void PDF_creator::end_work()
+ {
+     vect_value_size = 0;
+     page_count = 0;
+     numer_of_line = 1;
+     ris_g = 1;
+     ris_n = 1;
+     ris_t = 1;
+     test = 1;
+
+     save();
+     free();
+     sfx_state.clear();
+     template_files.clear();
+     emit progress(100);
+     QApplication::beep();
+     thread_gate = false;
+     emit unblock_ui();
+     emit log_message("Конец работы",qRgb(90,200,90));
+     emit finished();
  }
 
 
@@ -1025,9 +1089,9 @@ HPDF_Page_EndText(pages[0]);
 HPDF_Page_BeginText(pages[0]);
      print_text(0,rus_bold,"Метка изделия МЗД АЗДК-1: ",12,50,HPDF_Page_GetHeight(pages[0]) - 150-28*1);
      if(azdk.ver.isEmpty())
-        text = "АЗДК-1.5 №"+azdk.number.toStdString();
+        text = "АЗДК-1.5 №"+azdk.number.toStdString()+'.';
      else
-         text = azdk.ver.toStdString() + " №" + azdk.number.toStdString();
+         text = azdk.ver.toStdString() + " №" + azdk.number.toStdString()+'.';
 
      print_text(0,rus_std,text.c_str(),12);
 HPDF_Page_EndText(pages[0]);
@@ -1044,7 +1108,7 @@ HPDF_Page_EndText(pages[0]);
 
 HPDF_Page_BeginText(pages[0]);
      print_text(0,rus_bold,"Место испытаний: ",12,50,HPDF_Page_GetHeight(pages[0]) - 150-28*4);
-     print_text(0,rus_std,"Москва, Красная Пресня",12);
+     print_text(0,rus_std,"Москва, Красная Пресня.",12);
 HPDF_Page_EndText(pages[0]);
 
 HPDF_Page_BeginText(pages[0]);

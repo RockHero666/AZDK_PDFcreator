@@ -3,6 +3,7 @@
 #include <QApplication>
 #include <QObject>
 #include "hpdf.h"
+#include <QPdfWriter>
 #include <exception>
 #include <iostream>
 #include <string>
@@ -16,6 +17,7 @@
 #include <QTime>
 #include <QThread>
 #include <cmath>
+#include <QColor>
 
 
 
@@ -69,6 +71,8 @@ public:
     void save();
     void free();
     void start();
+    bool font_setting();
+    void end_work();
 
 
     void set_parser(Parser & parser);
@@ -85,7 +89,7 @@ public:
     void both_of_graph(int pos,double height,int start_table,int std_cell,int long_cell,int PAGE_HEIGHT,int PAGE_WIDTH , int page,QVector<QVector<QString>> & vect_value);
     void draw_graph_2(int page,QVector<int> & vect_value,int frames,const QString & sfx);
 
-    QString lider_zero(QString &time);
+    
 
 
     void calantitul(int page);
@@ -102,7 +106,7 @@ signals:
     void progress(int val);
     void error(const QString & message);
     void unblock_ui();
-    void log_message(const QString & message);
+    void log_message(const QString & message,QRgb color = QRgb());
 };
 
 

@@ -46,7 +46,7 @@ public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
 
-    void create_pdf();
+   
 
     bool checker();
 
@@ -54,7 +54,7 @@ public:
 
 public slots:
     void error(const QString & massage);
-    void message_to_log(const QString & message);
+    void message_to_log(const QString & message, QRgb color = QRgb());
 
 private slots:
     void on_sfx_all_stateChanged(int arg1);
@@ -79,15 +79,21 @@ private slots:
 
     void on_puth_to_file_button_clicked();
 
+    void text_path_line_changed(const QString& arg1);
+
     void on_path_to_file_line_textChanged(const QString &arg1);
 
     void on_savepath_line_textChanged(const QString &arg1);
+
+    void text_save_line_changed(const QString& arg1);
 
     void on_save_path_button_clicked();
 
     void on_file_name_line_textChanged(const QString &arg1);
 
     void on_to_path_button_clicked();
+
+    void to_open_path();
 
 
 

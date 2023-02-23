@@ -21,11 +21,18 @@
       <UniqueIdentifier>{639EADAA-A684-42e4-A9AD-28FC9BCB8F7C}</UniqueIdentifier>
       <Extensions>ts</Extensions>
     </Filter>
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="..\..\otchet\azdk.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
+    <Filter Include="Source Files\log">
+      <UniqueIdentifier>{f70ce809-5823-467c-8c61-25876a2d6c9b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\log">
+      <UniqueIdentifier>{9c1459a5-7458-435e-9ff9-169ee0c80913}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\ngts">
+      <UniqueIdentifier>{4e746182-129a-44e7-87d0-db9842d3754a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\ngts">
+      <UniqueIdentifier>{9ba57123-02e8-498b-8941-2f017ddaa1a9}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <QtMoc Include="..\..\otchet\calendar.h">
@@ -40,23 +47,23 @@
     <QtMoc Include="..\..\otchet\pdf_creator.h">
       <Filter>Header Files</Filter>
     </QtMoc>
-    <QtMoc Include="..\..\otchet\log\azdklogger.h">
-      <Filter>Header Files</Filter>
-    </QtMoc>
-    <QtMoc Include="..\..\otchet\log\contexmenuwidget.h">
-      <Filter>Header Files</Filter>
+    <QtMoc Include="..\..\otchet\log\logw.h">
+      <Filter>Header Files\log</Filter>
     </QtMoc>
     <QtMoc Include="..\..\otchet\log\logmodel.h">
-      <Filter>Header Files</Filter>
+      <Filter>Header Files\log</Filter>
     </QtMoc>
-    <QtMoc Include="..\..\otchet\log\logw.h">
+    <QtMoc Include="..\..\otchet\log\contexmenuwidget.h">
+      <Filter>Header Files\log</Filter>
+    </QtMoc>
+    <QtMoc Include="..\..\otchet\log\azdklogger.h">
+      <Filter>Header Files\log</Filter>
+    </QtMoc>
+    <QtMoc Include="..\..\otchet\filepathedit.h">
       <Filter>Header Files</Filter>
     </QtMoc>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\otchet\azdk.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\otchet\calendar.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -72,17 +79,23 @@
     <ClCompile Include="..\..\otchet\pdf_creator.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\otchet\azdk.cpp">
+      <Filter>Source Files\log</Filter>
+    </ClCompile>
     <ClCompile Include="..\..\otchet\log\azdklogger.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\log</Filter>
     </ClCompile>
     <ClCompile Include="..\..\otchet\log\contexmenuwidget.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\log</Filter>
     </ClCompile>
     <ClCompile Include="..\..\otchet\log\logmodel.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\log</Filter>
     </ClCompile>
     <ClCompile Include="..\..\otchet\log\logw.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\log</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\otchet\filepathedit.cpp">
+      <Filter>Source Files\ngts</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -102,5 +115,13 @@
     <QtUic Include="..\..\otchet\mainwindow2.ui">
       <Filter>Form Files</Filter>
     </QtUic>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\otchet\azdk.h">
+      <Filter>Header Files\log</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\otchet\ngts\filepathedit.h">
+      <Filter>Header Files\ngts</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

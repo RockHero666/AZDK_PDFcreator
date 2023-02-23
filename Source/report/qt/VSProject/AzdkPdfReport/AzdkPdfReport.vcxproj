@@ -13,30 +13,30 @@
   <PropertyGroup Label="Globals">
     <ProjectGuid>{2BC243CB-31DE-457D-B9D4-1507E2C4EB4D}</ProjectGuid>
     <Keyword>QtVS_v304</Keyword>
-    <WindowsTargetPlatformVersion Condition="'$(Configuration)|$(Platform)' == 'Debug|Win32'">10.0.20348.0</WindowsTargetPlatformVersion>
-    <WindowsTargetPlatformVersion Condition="'$(Configuration)|$(Platform)' == 'Release|Win32'">10.0.20348.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion Condition="'$(Configuration)|$(Platform)' == 'Debug|Win32'">10.0.19041.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion Condition="'$(Configuration)|$(Platform)' == 'Release|Win32'">10.0.19041.0</WindowsTargetPlatformVersion>
     <QtMsBuild Condition="'$(QtMsBuild)'=='' OR !Exists('$(QtMsBuild)\qt.targets')">$(MSBuildProjectDirectory)\QtMsBuild</QtMsBuild>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
-    <PlatformToolset>v141</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
-    <PlatformToolset>v141</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Condition="Exists('$(QtMsBuild)\qt_defaults.props')">
     <Import Project="$(QtMsBuild)\qt_defaults.props" />
   </ImportGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|Win32'" Label="QtSettings">
-    <QtInstall>msvc2017</QtInstall>
+    <QtInstall>5.14.2_msvc2017</QtInstall>
     <QtModules>core;gui;widgets;core;gui;widgets;</QtModules>
     <QtBuildConfig>debug</QtBuildConfig>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|Win32'" Label="QtSettings">
-    <QtInstall>msvc2017</QtInstall>
+    <QtInstall>5.14.2_msvc2017</QtInstall>
     <QtModules>core;gui;widgets;</QtModules>
     <QtBuildConfig>release</QtBuildConfig>
   </PropertyGroup>
@@ -57,27 +57,27 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|Win32'">
     <ExecutablePath>%MiscLibs%\bin;$(ExecutablePath)</ExecutablePath>
     <IncludePath>%MiscLibs%;%MiscLibs%\include;$(IncludePath)</IncludePath>
-    <LibraryPath>%MiscLibs%\lib;$(LibraryPath)</LibraryPath>
+    <LibraryPath>C:\Program Files %28x86%29\libpng\lib;C:\Program Files %28x86%29\zlib\lib;%MiscLibs%\lib;C:\Program Files %28x86%29\libharu\lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|Win32'">
     <ExecutablePath>%MiscLibs%\bin;$(ExecutablePath)</ExecutablePath>
     <IncludePath>%MiscLibs%;%MiscLibs%\include;$(IncludePath)</IncludePath>
-    <LibraryPath>%MiscLibs%\lib;$(LibraryPath)</LibraryPath>
+    <LibraryPath>C:\Program Files %28x86%29\libpng\lib;C:\Program Files %28x86%29\zlib\lib;%MiscLibs%\lib;C:\Program Files %28x86%29\libharu\lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <Link>
-      <AdditionalDependencies>zlib.lib;libpng16.lib;libhpdfs.lib;%(AdditionalDependencies);$(Qt_LIBS_)</AdditionalDependencies>
+      <AdditionalDependencies>zlib.lib;libpng16.lib;hpdf.lib;%(AdditionalDependencies);$(Qt_LIBS_)</AdditionalDependencies>
     </Link>
     <ClCompile>
-      <AdditionalIncludeDirectories>C:\Work\Azdk_PDFCreator\AZDK_PDFcreator\Source\report\qt\otchet\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Program Files\libharu\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <Link>
-      <AdditionalDependencies>zlib.lib;libpng16.lib;libhpdfs.lib;%(AdditionalDependencies);$(Qt_LIBS_)</AdditionalDependencies>
+      <AdditionalDependencies>zlib.lib;libpng16.lib;hpdf.lib;%(AdditionalDependencies);$(Qt_LIBS_)</AdditionalDependencies>
     </Link>
     <ClCompile>
-      <AdditionalIncludeDirectories>C:\Work\Azdk_PDFCreator\AZDK_PDFcreator\Source\report\qt\otchet\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Program Files\libharu\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|Win32'" Label="Configuration">
@@ -106,6 +106,8 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="..\..\otchet\azdk.h" />
+    <ClInclude Include="..\..\otchet\ngts\filepathedit.h" />
+    <QtMoc Include="..\..\otchet\filepathedit.h" />
     <QtMoc Include="..\..\otchet\log\logw.h" />
     <QtMoc Include="..\..\otchet\log\logmodel.h" />
     <QtMoc Include="..\..\otchet\log\contexmenuwidget.h" />
@@ -118,6 +120,7 @@
   <ItemGroup>
     <ClCompile Include="..\..\otchet\azdk.cpp" />
     <ClCompile Include="..\..\otchet\calendar.cpp" />
+    <ClCompile Include="..\..\otchet\filepathedit.cpp" />
     <ClCompile Include="..\..\otchet\log\azdklogger.cpp" />
     <ClCompile Include="..\..\otchet\log\contexmenuwidget.cpp" />
     <ClCompile Include="..\..\otchet\log\logmodel.cpp" />

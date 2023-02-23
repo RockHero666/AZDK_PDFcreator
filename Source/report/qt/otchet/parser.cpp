@@ -69,7 +69,7 @@ void Parser::set_serial_num(const QString & serial)
      }
      else
      {
-         emit log_message("Ошибка в пути к файлам!");
+         emit log_message("Ошибка в пути к файлам!",qRgb(255,0,0));
          throw std::runtime_error("bad_path");
      }
 
@@ -141,7 +141,7 @@ void Parser::set_serial_num(const QString & serial)
      }
      else
      {
-         emit log_message("Ошибка в пути к файлам!");
+         emit log_message("Ошибка в пути к файлам!", qRgb(255, 0, 0));
          throw std::runtime_error("bad_path");
      }
 
@@ -679,7 +679,7 @@ QVector<QString> Parser::Frames_count_and_time(const QString & server_path,const
      }
      else
      {
-         emit log_message("Ошибка в пути к файлам!");
+         emit log_message("Ошибка в пути к файлам!", qRgb(255, 0, 0));
          throw std::runtime_error("bad_path");
      }
 
@@ -975,5 +975,30 @@ QVector<QString> Parser::Frames_count_and_time(const QString & server_path,const
      }
 
      return n-1;
+ }
+
+ bool Parser::is_exists(const QString& path)
+ {
+     QStringList sl = path.split("/");
+     QString dir_p;
+
+     for (int i = 0 ; i<sl.size()-1 ; i++)
+     {
+         if(i==0)
+         dir_p += sl[i];
+         else
+         dir_p += "/"+ sl[i];
+     }
+
+     
+     QDirIterator it(dir_p, QDir::Files, QDirIterator::QDirIterator::NoIteratorFlags);
+     while (it.hasNext())
+     {
+         if (path == it.next())
+             return true;
+     }
+     return false;
+
+
  }
 
