@@ -59,8 +59,8 @@
     <QtMoc Include="..\..\otchet\log\azdklogger.h">
       <Filter>Header Files\log</Filter>
     </QtMoc>
-    <QtMoc Include="..\..\otchet\filepathedit.h">
-      <Filter>Header Files</Filter>
+    <QtMoc Include="..\..\otchet\ngts\filepathedit.h">
+      <Filter>Header Files\ngts</Filter>
     </QtMoc>
   </ItemGroup>
   <ItemGroup>
@@ -102,6 +102,12 @@
     <Image Include="..\..\otchet\icon.ico">
       <Filter>Resource Files</Filter>
     </Image>
+    <Image Include="icon1.ico">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="..\..\otchet\error.png">
+      <Filter>Resource Files</Filter>
+    </Image>
   </ItemGroup>
   <ItemGroup>
     <QtRcc Include="..\..\otchet\resource.qrc">
@@ -120,8 +126,13 @@
     <ClInclude Include="..\..\otchet\azdk.h">
       <Filter>Header Files\log</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\otchet\ngts\filepathedit.h">
-      <Filter>Header Files\ngts</Filter>
+    <ClInclude Include="resource.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="AzdkPdfReport.rc">
+      <Filter>Resource Files</Filter>
+    </ResourceCompile>
   </ItemGroup>
 </Project>

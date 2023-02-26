@@ -1,34 +1,50 @@
-#include "pdf_creator.h"
-#include "hpdf.h"
+#include <exception>
+#include <iostream>
+#include <string>
+#include <QFile>
+#include <QApplication>
+#include <algorithm>
+#include <QColor>
+#include <QTime>
+#include <cmath>
 #include <QStandardPaths>
-#include <QFontDatabase>
-#include <QRegularExpression>
+#include "pdf_creator.h"
 
 
 
-int PDF_creator::count = 1;
-
-PDF_creator* PDF_creator::pdf_ptr = nullptr;
 
 void PDF_creator::error_handler(HPDF_STATUS error_no, HPDF_STATUS detail_no, void* user_data)
 {
     Q_UNUSED(user_data);
     /* throw exception when an error has occured */
     std::cout << "ERROR: error_no= " << std::hex << error_no << std::dec << " detail_no = " << detail_no << "/n";
-    if(pdf_ptr)
-        emit pdf_ptr->log_message(QString::asprintf("%x", error_no));
+    if (pdf_ptr)
+    {
+        emit pdf_ptr->log_message(QString::asprintf("%x", "ERROR: error_no = " + error_no));
+        emit pdf_ptr->log_message(" detail_no = " + detail_no);
+    }
     throw std::runtime_error("handler_error");
 }
 
- PDF_creator::PDF_creator(const QString& font_name,QObject *parent) :font_name(font_name), QObject(parent)  
+ PDF_creator::PDF_creator(const QString& font_name,QObject *parent)
+     :font_name(font_name),
+     QObject(parent)  
  {
-     pdf_ptr = this;
+     
  }
 
  PDF_creator::~PDF_creator()
  {
-     //free();
      emit finished();
+ }
+
+ PDF_creator* PDF_creator::pdf_ptr = nullptr;
+ PDF_creator* PDF_creator::get_instance(const QString& font_name, QObject* parent)
+ {
+     if (pdf_ptr == nullptr) {
+         pdf_ptr = new PDF_creator(font_name, parent);
+     }
+     return pdf_ptr;
  }
 
  void PDF_creator::set_thread_gate(bool val)
@@ -38,8 +54,6 @@ void PDF_creator::error_handler(HPDF_STATUS error_no, HPDF_STATUS detail_no, voi
 
  void PDF_creator::calantitul(int page)
  {
-
-
           QString str;
 
 HPDF_Page_BeginText(pages[page]);
@@ -155,7 +169,9 @@ HPDF_Page_EndText(pages[page]);
  {
      int height1 = height-40;
      int height2 = height-20;
-    /* Draw vertical lines. */
+
+
+     // вертикальные линии
      HPDF_Page_MoveTo (pages[page], start_table + pos, PAGE_HEIGHT - height1);
      HPDF_Page_LineTo (pages[page], start_table + pos, PAGE_HEIGHT - height);
 
@@ -191,7 +207,7 @@ HPDF_Page_EndText(pages[page]);
 
      start_table = 40;
 
-     /* Draw horizontal lines. */
+     //горизонтальные линии
 
      HPDF_Page_MoveTo (pages[page], start_table+pos, PAGE_HEIGHT - height1);
      HPDF_Page_LineTo (pages[page], PAGE_WIDTH-85, PAGE_HEIGHT - height1);
@@ -199,18 +215,53 @@ HPDF_Page_EndText(pages[page]);
      HPDF_Page_MoveTo (pages[page], start_table+pos+std_cell, PAGE_HEIGHT - height2);
      HPDF_Page_LineTo (pages[page], PAGE_WIDTH-85, PAGE_HEIGHT - height2);
 
-     HPDF_Page_Stroke (pages[page]);
+     HPDF_Page_Stroke (pages[page]); // конец черчения
 
-     std::string str1 = " №                          Углы ориентации,°                            Отклонения                  СКО";
-     std::string str2 = "сер.             α                       δ                       φ              Δx,″     Δy,″    Δz,″    Δx,″     Δy,″    Δz,″";
 
      start_table = 48;
 
      HPDF_Page_BeginText(pages[page]);
-                 print_text(page,rus_std,str1.c_str(),10,start_table+pos,PAGE_HEIGHT -height1-15);
+                 print_text(page,rus_std,"№", 10, start_table + pos, PAGE_HEIGHT - height1 - 15);
      HPDF_Page_EndText(pages[page]);
      HPDF_Page_BeginText(pages[page]);
-                 print_text(page,rus_std,str2.c_str(),10,start_table+pos,PAGE_HEIGHT -height2-15);
+                 print_text(page, rus_std,"Углы ориентации,°", 10, start_table + pos+90, PAGE_HEIGHT - height1 - 15);
+     HPDF_Page_EndText(pages[page]);
+     HPDF_Page_BeginText(pages[page]);
+                 print_text(page, rus_std,"Отклонения", 10, start_table + pos+250, PAGE_HEIGHT - height1 - 15);
+     HPDF_Page_EndText(pages[page]);
+     HPDF_Page_BeginText(pages[page]);
+                 print_text(page, rus_std,"СКО", 10, start_table + pos+355, PAGE_HEIGHT - height1 - 15);
+     HPDF_Page_EndText(pages[page]);
+
+     HPDF_Page_BeginText(pages[page]);
+                 print_text(page,rus_std,"сер.", 10, start_table + pos, PAGE_HEIGHT - height2 - 15);
+     HPDF_Page_EndText(pages[page]);
+     HPDF_Page_BeginText(pages[page]);
+                 print_text(page, rus_std, "α", 10, (start_table += long_cell) + pos-15, PAGE_HEIGHT - height2 - 15);
+     HPDF_Page_EndText(pages[page]);
+     HPDF_Page_BeginText(pages[page]);
+                 print_text(page, rus_std, "δ", 10, (start_table += long_cell) + pos-15, PAGE_HEIGHT - height2 - 15);
+     HPDF_Page_EndText(pages[page]);
+     HPDF_Page_BeginText(pages[page]);
+                 print_text(page, rus_std, "φ", 10, (start_table += long_cell) + pos-15, PAGE_HEIGHT - height2 - 15);
+     HPDF_Page_EndText(pages[page]);
+     HPDF_Page_BeginText(pages[page]);
+                 print_text(page, rus_std, "Δx,″", 10, (start_table += std_cell) + pos, PAGE_HEIGHT - height2 - 15);
+     HPDF_Page_EndText(pages[page]);
+     HPDF_Page_BeginText(pages[page]);
+                 print_text(page, rus_std, "Δy,″", 10, (start_table += std_cell) + pos, PAGE_HEIGHT - height2 - 15);
+     HPDF_Page_EndText(pages[page]);
+     HPDF_Page_BeginText(pages[page]);
+                 print_text(page, rus_std, "Δz,″", 10, (start_table += std_cell) + pos, PAGE_HEIGHT - height2 - 15);
+     HPDF_Page_EndText(pages[page]);
+     HPDF_Page_BeginText(pages[page]);
+                 print_text(page, rus_std, "Δx,″", 10, (start_table += std_cell) + pos, PAGE_HEIGHT - height2 - 15);
+     HPDF_Page_EndText(pages[page]);
+     HPDF_Page_BeginText(pages[page]);
+                 print_text(page, rus_std, "Δy,″", 10, (start_table += std_cell) + pos, PAGE_HEIGHT - height2 - 15);
+     HPDF_Page_EndText(pages[page]);
+     HPDF_Page_BeginText(pages[page]);
+                 print_text(page, rus_std, "Δz,″", 10, (start_table += std_cell) + pos, PAGE_HEIGHT - height2 - 15);
      HPDF_Page_EndText(pages[page]);
 
  }
@@ -220,15 +271,11 @@ HPDF_Page_EndText(pages[page]);
  void PDF_creator::draw_graph (int page,QVector<QVector<QString>> & vect_value)
  {
 
-      const int PAGE_WIDTH = HPDF_Page_GetWidth(pages[page]);
-      const int PAGE_HEIGHT = HPDF_Page_GetHeight(pages[page]);
-
-
+     const int PAGE_WIDTH = HPDF_Page_GetWidth(pages[page]);
+     const int PAGE_HEIGHT = HPDF_Page_GetHeight(pages[page]);
 
      HPDF_Page_SetLineWidth (pages[page], 0.5);
-
-
-
+     
      int pos = 50;
      double height = 120.05;
      int start_table = 40;
@@ -236,126 +283,85 @@ HPDF_Page_EndText(pages[page]);
      int long_cell = 70;
 
 
- if(vect_value_size == 0)
- {
-     top_of_graph(pos,height,start_table,std_cell,long_cell,PAGE_HEIGHT,PAGE_WIDTH,page);
+	 if (vect_value_size == 0)
+	 {
+		 top_of_graph(pos, height, start_table, std_cell, long_cell, PAGE_HEIGHT, PAGE_WIDTH, page);
 
-HPDF_Page_BeginText(pages[page]);
-     QString text = "Таблица "+QString::number(ris_t++)+" Результаты СКО серий измерений с нулевой угловой скоростью";
-     print_text(page_count-1,rus_std,text.toStdString().c_str(),12,90,HPDF_Page_GetHeight(pages[page_count-1]) - 50);
-HPDF_Page_EndText(pages[page]);
+		 HPDF_Page_BeginText(pages[page]);
+		             QString text = "Таблица " + QString::number(ris_t++) + " Результаты СКО серий измерений с нулевой угловой скоростью";
+		             print_text(page_count - 1, rus_std, text.toStdString().c_str(), 12, 90, HPDF_Page_GetHeight(pages[page_count - 1]) - 50);
+		 HPDF_Page_EndText(pages[page]);
+	 }
+ // вертикальные линии
+ for (int i = 0; i < 11; ++i)
+ {
+	 if (i == 0)
+	 {
+		 HPDF_Page_MoveTo(pages[page], start_table + pos, PAGE_HEIGHT - height);
+		 HPDF_Page_LineTo(pages[page], start_table + pos, height);
+		 continue;
+	 }
+
+	 if (i > 1 && i < 5)
+	 {
+		 HPDF_Page_MoveTo(pages[page], (start_table += long_cell) + pos, PAGE_HEIGHT - height);
+		 HPDF_Page_LineTo(pages[page], start_table + pos, height);
+	 }
+	 else
+	 {
+		 HPDF_Page_MoveTo(pages[page], (start_table += std_cell) + pos, PAGE_HEIGHT - height);
+		 HPDF_Page_LineTo(pages[page], start_table + pos, height);
+
+	 }
  }
 
-
-     /* Draw vertical lines. */
-         HPDF_Page_MoveTo (pages[page], start_table + pos, PAGE_HEIGHT - height);
-         HPDF_Page_LineTo (pages[page], start_table + pos, height);
-
-         HPDF_Page_MoveTo (pages[page], (start_table+=std_cell)+pos, PAGE_HEIGHT - height);
-         HPDF_Page_LineTo (pages[page], start_table+pos, height);
-
-         HPDF_Page_MoveTo (pages[page], (start_table+=long_cell)+pos, PAGE_HEIGHT - height);
-         HPDF_Page_LineTo (pages[page], start_table+pos, height);
-
-         HPDF_Page_MoveTo (pages[page], (start_table+=long_cell)+pos, PAGE_HEIGHT - height);
-         HPDF_Page_LineTo (pages[page], start_table+pos, height);
-
-         HPDF_Page_MoveTo (pages[page], (start_table+=long_cell)+pos, PAGE_HEIGHT - height);
-         HPDF_Page_LineTo (pages[page], start_table+pos, height);
-
-         HPDF_Page_MoveTo (pages[page], (start_table+=std_cell)+pos, PAGE_HEIGHT - height);
-         HPDF_Page_LineTo (pages[page], start_table+pos, height);
-
-         HPDF_Page_MoveTo (pages[page], (start_table+=std_cell)+pos, PAGE_HEIGHT - height);
-         HPDF_Page_LineTo (pages[page], start_table+pos, height);
-
-         HPDF_Page_MoveTo (pages[page], (start_table+=std_cell)+pos, PAGE_HEIGHT - height);
-         HPDF_Page_LineTo (pages[page], start_table+pos, height);
-
-         HPDF_Page_MoveTo (pages[page], (start_table+=std_cell)+pos, PAGE_HEIGHT - height);
-         HPDF_Page_LineTo (pages[page], start_table+pos, height);
-
-         HPDF_Page_MoveTo (pages[page], (start_table+=std_cell)+pos, PAGE_HEIGHT - height);
-         HPDF_Page_LineTo (pages[page], start_table+pos, height);
-
-         HPDF_Page_MoveTo (pages[page], (start_table+=std_cell)+pos, PAGE_HEIGHT - height);
-         HPDF_Page_LineTo (pages[page], start_table+pos, height);
-
-
-
-
-
     start_table = 40;
-
     int y = PAGE_HEIGHT - height;
-     /* Draw horizontal lines. */
-     for (int i = 0; i <= 30; i++) {
 
+     // горизонтальные линии
+     for (int i = 0; i <= 30; i++) 
+     {
 
          HPDF_Page_MoveTo (pages[page], start_table+pos, y);
          HPDF_Page_LineTo (pages[page], PAGE_WIDTH-85, y);
 
-
-        y -= 20;
+         y -= 20;
      }
 
-    HPDF_Page_Stroke (pages[page]);
-
-
+    HPDF_Page_Stroke (pages[page]); // конец черчения таблици 
 
     if(vect_value_size == 0)
     vect_value_size = vect_value.size();
 
 
-
-
     y = PAGE_HEIGHT - height-15;
     if(vect_value_size>=30)
     {
-        for (int i = 0; i < 30; ++i) // переделат ьвложенным циклом!
+        for (int i = 0; i < 30; ++i) 
         {
             double tw;
             start_table = 117;
+            HPDF_Page_BeginText(pages[page]);
+            print_text(page, rus_std, QString::number(numer_of_line++).toStdString().c_str(), 10, 51 + pos, y);
+            HPDF_Page_EndText(pages[page]);
+            for (int j = 4; j <= 12; ++j) 
+            {
+                if (j < 7)
+                {
+                    HPDF_Page_BeginText(pages[page]);
+                    tw = HPDF_Page_TextWidth(pages[page], vect_value[i][j].toStdString().c_str());
+                    print_text(page, rus_std, vect_value[i][j].toStdString().c_str(), 10, (start_table += long_cell) - tw, y);
+                    HPDF_Page_EndText(pages[page]);
+                }
+                else
+                {
+                    HPDF_Page_BeginText(pages[page]);
+                    tw = HPDF_Page_TextWidth(pages[page], vect_value[i][j].toStdString().c_str());
+                    print_text(page, rus_std, vect_value[i][j].toStdString().c_str(), 10, (start_table += std_cell) - tw, y);
+                    HPDF_Page_EndText(pages[page]);
 
-HPDF_Page_BeginText(pages[page]);
-            print_text(page,rus_std,QString::number(numer_of_line++).toStdString().c_str(),10,51+pos,y);
-HPDF_Page_EndText(pages[page]);
-HPDF_Page_BeginText(pages[page]);
-            tw = HPDF_Page_TextWidth(pages[page],vect_value[i][4].toStdString().c_str());
-            print_text(page,rus_std,vect_value[i][4].toStdString().c_str(),10,(start_table+=long_cell)-tw,y);
-HPDF_Page_EndText(pages[page]);
-HPDF_Page_BeginText(pages[page]);
-            tw = HPDF_Page_TextWidth(pages[page],vect_value[i][5].toStdString().c_str());
-            print_text(page,rus_std,vect_value[i][5].toStdString().c_str(),10,(start_table+=long_cell)-tw,y);
-HPDF_Page_EndText(pages[page]);
-HPDF_Page_BeginText(pages[page]);
-            tw = HPDF_Page_TextWidth(pages[page],vect_value[i][6].toStdString().c_str());
-            print_text(page,rus_std,vect_value[i][6].toStdString().c_str(),10,(start_table+=long_cell)-tw,y);
-HPDF_Page_EndText(pages[page]);
-HPDF_Page_BeginText(pages[page]);
-            tw = HPDF_Page_TextWidth(pages[page],vect_value[i][7].toStdString().c_str());
-            print_text(page,rus_std,vect_value[i][7].toStdString().c_str(),10,(start_table+=std_cell)-tw,y);
-HPDF_Page_EndText(pages[page]);
-HPDF_Page_BeginText(pages[page]);
-            tw = HPDF_Page_TextWidth(pages[page],vect_value[i][8].toStdString().c_str());
-            print_text(page,rus_std,vect_value[i][8].toStdString().c_str(),10,(start_table+=std_cell)-tw,y);
-HPDF_Page_EndText(pages[page]);
-HPDF_Page_BeginText(pages[page]);
-            tw = HPDF_Page_TextWidth(pages[page],vect_value[i][9].toStdString().c_str());
-            print_text(page,rus_std,vect_value[i][9].toStdString().c_str(),10,(start_table+=std_cell)-tw,y);
-HPDF_Page_EndText(pages[page]);
-HPDF_Page_BeginText(pages[page]);
-            tw = HPDF_Page_TextWidth(pages[page],vect_value[i][10].toStdString().c_str());
-            print_text(page,rus_std,vect_value[i][10].toStdString().c_str(),10,(start_table+=std_cell)-tw,y);
-HPDF_Page_EndText(pages[page]);
-HPDF_Page_BeginText(pages[page]);
-            tw = HPDF_Page_TextWidth(pages[page],vect_value[i][11].toStdString().c_str());
-            print_text(page,rus_std,vect_value[i][11].toStdString().c_str(),10,(start_table+=std_cell)-tw,y);
-HPDF_Page_EndText(pages[page]);
-HPDF_Page_BeginText(pages[page]);
-            tw = HPDF_Page_TextWidth(pages[page],vect_value[i][12].toStdString().c_str());
-            print_text(page,rus_std,vect_value[i][12].toStdString().c_str(),10,(start_table+=std_cell)-tw,y);
-HPDF_Page_EndText(pages[page]);
+                }
+            }
 
             y-=20;
 
@@ -367,48 +373,29 @@ HPDF_Page_EndText(pages[page]);
         for (int i = 0; i < vect_value_size; ++i)
         {
             double tw;
-            start_table = 118;
+            start_table = 117;
 
-HPDF_Page_BeginText(pages[page]);
-            print_text(page,rus_std,QString::number(numer_of_line++).toStdString().c_str(),10,51+pos,y);
-HPDF_Page_EndText(pages[page]);
-HPDF_Page_BeginText(pages[page]);
-            tw = HPDF_Page_TextWidth(pages[page],vect_value[i][4].toStdString().c_str());
-            print_text(page,rus_std,vect_value[i][4].toStdString().c_str(),10,(start_table+=long_cell)-tw,y);
-HPDF_Page_EndText(pages[page]);
-HPDF_Page_BeginText(pages[page]);
-            tw = HPDF_Page_TextWidth(pages[page],vect_value[i][5].toStdString().c_str());
-            print_text(page,rus_std,vect_value[i][5].toStdString().c_str(),10,(start_table+=long_cell)-tw,y);
-HPDF_Page_EndText(pages[page]);
-HPDF_Page_BeginText(pages[page]);
-            tw = HPDF_Page_TextWidth(pages[page],vect_value[i][6].toStdString().c_str());
-            print_text(page,rus_std,vect_value[i][6].toStdString().c_str(),10,(start_table+=long_cell)-tw,y);
-HPDF_Page_EndText(pages[page]);
-HPDF_Page_BeginText(pages[page]);
-            tw = HPDF_Page_TextWidth(pages[page],vect_value[i][7].toStdString().c_str());
-            print_text(page,rus_std,vect_value[i][7].toStdString().c_str(),10,(start_table+=std_cell)-tw,y);
-HPDF_Page_EndText(pages[page]);
-HPDF_Page_BeginText(pages[page]);
-            tw = HPDF_Page_TextWidth(pages[page],vect_value[i][8].toStdString().c_str());
-            print_text(page,rus_std,vect_value[i][8].toStdString().c_str(),10,(start_table+=std_cell)-tw,y);
-HPDF_Page_EndText(pages[page]);
-HPDF_Page_BeginText(pages[page]);
-            tw = HPDF_Page_TextWidth(pages[page],vect_value[i][9].toStdString().c_str());
-            print_text(page,rus_std,vect_value[i][9].toStdString().c_str(),10,(start_table+=std_cell)-tw,y);
-HPDF_Page_EndText(pages[page]);
-HPDF_Page_BeginText(pages[page]);
-            tw = HPDF_Page_TextWidth(pages[page],vect_value[i][10].toStdString().c_str());
-            print_text(page,rus_std,vect_value[i][10].toStdString().c_str(),10,(start_table+=std_cell)-tw,y);
-HPDF_Page_EndText(pages[page]);
-HPDF_Page_BeginText(pages[page]);
-            tw = HPDF_Page_TextWidth(pages[page],vect_value[i][11].toStdString().c_str());
-            print_text(page,rus_std,vect_value[i][11].toStdString().c_str(),10,(start_table+=std_cell)-tw,y);
-HPDF_Page_EndText(pages[page]);
-HPDF_Page_BeginText(pages[page]);
-            tw = HPDF_Page_TextWidth(pages[page],vect_value[i][12].toStdString().c_str());
-            print_text(page,rus_std,vect_value[i][12].toStdString().c_str(),10,(start_table+=std_cell)-tw,y);
-HPDF_Page_EndText(pages[page]);
+			HPDF_Page_BeginText(pages[page]);
+			    print_text(page, rus_std, QString::number(numer_of_line++).toStdString().c_str(), 10, 51 + pos, y);
+			HPDF_Page_EndText(pages[page]);
+			for (int j = 4; j <= 12; ++j)
+			{
+				if (j < 7)
+				{
+					HPDF_Page_BeginText(pages[page]);
+					    tw = HPDF_Page_TextWidth(pages[page], vect_value[i][j].toStdString().c_str());
+					    print_text(page, rus_std, vect_value[i][j].toStdString().c_str(), 10, (start_table += long_cell) - tw, y);
+					HPDF_Page_EndText(pages[page]);
+				}
+				else
+				{
+					HPDF_Page_BeginText(pages[page]);
+					    tw = HPDF_Page_TextWidth(pages[page], vect_value[i][j].toStdString().c_str());
+					    print_text(page, rus_std, vect_value[i][j].toStdString().c_str(), 10, (start_table += std_cell) - tw, y);
+					HPDF_Page_EndText(pages[page]);
 
+				}
+			}
             y-=20;
         }
         vect_value_size = 0;
@@ -419,11 +406,8 @@ HPDF_Page_EndText(pages[page]);
         {
             numer_of_line = 0;
             both_of_graph(pos,height,start_table,std_cell,long_cell,105,PAGE_WIDTH,page,vect_value);
-
         }
-
  }
-
 
  void PDF_creator::both_of_graph(int pos,double height,int start_table,int std_cell,int long_cell,int PAGE_HEIGHT,int PAGE_WIDTH , int page,QVector<QVector<QString>> & vect_value)
  {
@@ -435,8 +419,6 @@ HPDF_Page_EndText(pages[page]);
 
     HPDF_Page_MoveTo (pages[page], start_table+pos, PAGE_HEIGHT);
     HPDF_Page_LineTo (pages[page], start_table+pos, PAGE_HEIGHT-20);
-
-
 
     HPDF_Page_MoveTo (pages[page], (start_table+=long_cell*3+std_cell)+pos, PAGE_HEIGHT);
     HPDF_Page_LineTo (pages[page], start_table+pos,PAGE_HEIGHT-20 );
@@ -462,13 +444,9 @@ HPDF_Page_EndText(pages[page]);
     HPDF_Page_MoveTo (pages[page], 40+pos, PAGE_HEIGHT-20);
     HPDF_Page_LineTo (pages[page], PAGE_WIDTH-85, PAGE_HEIGHT-20);
 
-    HPDF_Page_Stroke (pages[page]);
-
-
+    HPDF_Page_Stroke (pages[page]); // конец черчения
 
     start_table = 329;
-
-
 
     double sum_del_x = 0 ;
     double sum_del_y = 0;
@@ -476,7 +454,6 @@ HPDF_Page_EndText(pages[page]);
     double sum_om_x = 0;
     double sum_om_y = 0;
     double sum_om_z = 0;
-
 
     for (int i = 0; i < vect_value.size(); ++i)
     {
@@ -497,15 +474,10 @@ HPDF_Page_EndText(pages[page]);
     double av_om_y = std::sqrt(sum_om_y/ vect_value.size());
     double av_om_z = std::sqrt(sum_om_z/ vect_value.size());
 
-    QString result = "среднии значения                       " + QString::number(av_del_x,'f',1) + "    " + QString::number(av_del_y,'f',1) + "   " +
-            QString::number(av_del_z,'f',1) + "  " + QString::number(av_om_x,'f',1) + "    " + QString::number(av_om_y,'f',1) + "      " +
-            QString::number(av_om_z,'f',1);
-
-
-
+ 
     HPDF_Page_BeginText(pages[page]);
 
-                print_text(page,rus_std,QString("среднии значения").toStdString().c_str(),10,start_table-long_cell*3-std_cell+5,PAGE_HEIGHT-16);
+                print_text(page,rus_std,QString("Cреднии значения").toStdString().c_str(),10,start_table-long_cell*3-std_cell+5,PAGE_HEIGHT-16);
     HPDF_Page_EndText(pages[page]);
     HPDF_Page_BeginText(pages[page]);
                 tw = HPDF_Page_TextWidth(pages[page],QString::number(av_del_x,'f',1).toStdString().c_str());
@@ -637,8 +609,8 @@ HPDF_Page_EndText(pages[page]);
      QString text;
 
 
-if(sfx == "r1")
-{
+    if(sfx == "r1")
+    {
 HPDF_Page_BeginText(pages[page]);
      text = "Таблица "+QString::number(ris_t++)+" Статистические результаты функциональных испытаний МЗД ";
      print_text(page,rus_std,text.toStdString().c_str(),10,100, HPDF_Page_GetHeight(pages[page_count-1]) /2+200);
@@ -646,16 +618,16 @@ HPDF_Page_EndText(pages[page]);
 HPDF_Page_BeginText(pages[page]);
      print_text(page,rus_std,"              АЗДК-1 при скоростях вращения 1°/сек.",10,100, HPDF_Page_GetHeight(pages[page_count-1]) /2+180);
 HPDF_Page_EndText(pages[page]);
-}
-if(sfx == "o")
-{
+    }
+    if(sfx == "o")
+    {
 HPDF_Page_BeginText(pages[page]);
      text = "Таблица "+QString::number(ris_t++)+" Статистические результаты испытаний МЗД АЗДК-1.";
      print_text(page,rus_std,text.toStdString().c_str(),10,100, HPDF_Page_GetHeight(pages[page_count-1]) /2+270);
 HPDF_Page_EndText(pages[page]);
-}
-if(sfx == "r3")
-{
+    }
+    if(sfx == "r3")
+    {
 HPDF_Page_BeginText(pages[page]);
      text = "Таблица "+QString::number(ris_t++)+" Статистические результаты функциональных испытаний МЗД ";
      print_text(page,rus_std,text.toStdString().c_str(),10,100, HPDF_Page_GetHeight(pages[page_count-1]) /2+203);
@@ -663,9 +635,9 @@ HPDF_Page_EndText(pages[page]);
 HPDF_Page_BeginText(pages[page]);
      print_text(page,rus_std,"              АЗДК-1 при скоростях вращения 3°/сек.",10,100, HPDF_Page_GetHeight(pages[page_count-1]) /2+183);
 HPDF_Page_EndText(pages[page]);
-}
-if(sfx == "r2")
-{
+    }
+    if(sfx == "r2")
+    {
 HPDF_Page_BeginText(pages[page]);
      text = "Таблица "+QString::number(ris_t++)+" Статистические результаты функциональных испытаний МЗД ";
      print_text(page,rus_std,text.toStdString().c_str(),10,100, HPDF_Page_GetHeight(pages[page_count-1]) /2+203);
@@ -673,16 +645,12 @@ HPDF_Page_EndText(pages[page]);
 HPDF_Page_BeginText(pages[page]);
      print_text(page,rus_std,"              АЗДК-1 при скоростях вращения 2°/сек.",10,100, HPDF_Page_GetHeight(pages[page_count-1]) /2+183);
 HPDF_Page_EndText(pages[page]);
-}
+    }
 
 emit log_message("Таблица успешно сформированна");
 
 
-  }
-
-
-
-  
+}
 
  void PDF_creator::create_pdf()
  {
@@ -713,11 +681,9 @@ emit log_message("Таблица успешно сформированна");
 
  void PDF_creator::save()
  {
-
      emit log_message("Сохранение pdf файла");
 
      QString path = save_path;
-
 
      if (path.indexOf(".pdf") == -1)
          path += ".pdf";
@@ -725,9 +691,7 @@ emit log_message("Таблица успешно сформированна");
      if (QFile::exists(path))
      {
          QFile file(path);
-         
-         
-         
+
          if (!file.open(QIODevice::WriteOnly))
          {
              emit log_message("Файл с выбранным названием в данный", qRgb(255, 170, 0));
@@ -737,25 +701,12 @@ emit log_message("Таблица успешно сформированна");
          }
          file.remove();
      }
-     
-
-
-    // while(true)
-    // {
-     //    if(QFile::exists (path))
-     //    {
-     //        path.insert(path.size()-4,"(" + QString::number(count++) +")");
-     //    }
-     //    else
-     //        break;
-    // }
 
      QByteArray ba = path.toLocal8Bit();
      const char *c_str = ba.data();
      HPDF_SaveToFile(pdf, c_str);
 
      emit log_message("Сохранение завершено");
-
  }
 
 void PDF_creator::set_parser(Parser & parser)
@@ -798,182 +749,166 @@ void PDF_creator::set_parser(Parser & parser)
 
    void PDF_creator::print_text(int page,const char * font_setting,const char * text,int size_text,float x_pos = 0,float y_pos = 0)
    {
-
        font = HPDF_GetFont (pdf, font_setting, "UTF-8");
        HPDF_Page_SetFontAndSize(pages[page], font, size_text);
-
-
 
        if(x_pos != 0 && y_pos != 0)
        HPDF_Page_MoveTextPos(pages[page], x_pos, y_pos);
        HPDF_Page_ShowText(pages[page], text);
-
    }
 
 
 
- void PDF_creator::start()
- {
+   void PDF_creator::start()
+   {
+	   emit log_message("Начало работы", qRgb(90, 200, 90));
 
-     emit log_message("Начало работы",qRgb(90,200,90));
-     if(thread_gate)
-     {
-         parser->to_parse();
+	   if (thread_gate)
+	   {
+		   parser->to_parse();
 
-         emit progress(0);
+		   emit progress(0);
 
-         create_pdf();
-         create_page();
+		   create_pdf();
+		   create_page();
 
-         HPDF_SetCompressionMode (pdf, HPDF_COMP_ALL);
+		   HPDF_SetCompressionMode(pdf, HPDF_COMP_ALL);
 
-       
+		   if (!font_setting())
+		   {
+			   end_work();
+			   return;
+		   }
 
-        
+		   titul_list();
 
-
-         if (!font_setting())
-         {
-             end_work();
-             return;
-         }
-
-         //rus_bold = HPDF_LoadTTFontFromFile(pdf, "C:\Work\Azdk_PDFCreator\AZDK_PDFcreator\Release\fonts\arialbd.ttf", HPDF_TRUE);
-         //rus_std = HPDF_LoadTTFontFromFile(pdf, "C:\Work\Azdk_PDFCreator\AZDK_PDFcreator\Release\fonts\arial.ttf", HPDF_TRUE);//
-                                   
+		   try {
 
 
+			   try {
 
-         titul_list();
+				   if (sfx_state[0]) // s
+				   {
+					   s_otchet();
+					   emit progress(20);
 
+				   }
 
-        try{
+			   }
+			   catch (std::runtime_error& ex)
+			   {
+				   QApplication::beep();
+				   emit error(QString(ex.what()));
+			   }
 
+			   try {
 
-         try {
+				   if (sfx_state[1]) // r01
+				   {
+					   r01_otchet();
+					   emit progress(40);
 
-             if(sfx_state[0]) // s
-             {
-                 s_otchet();
-                 emit progress(20);
+				   }
 
-             }
+			   }
 
-         }
-         catch (std::runtime_error& ex)
-         {
-             QApplication::beep();
-             emit error(QString(ex.what()));
-         }
-
-         try{
-
-             if(sfx_state[1]) // r01
-             {
-                 r01_otchet();
-                 emit progress(40);
-
-             }
-
-         }
-
-         catch (std::runtime_error& ex)
-         {
-             QApplication::beep();
-             emit error(QString(ex.what()));
-         }
+			   catch (std::runtime_error& ex)
+			   {
+				   QApplication::beep();
+				   emit error(QString(ex.what()));
+			   }
 
 
-         try{
+			   try {
 
-             if(sfx_state[2]) // r1
-             {
-                 r1_otchet();
-                 emit progress(60);
+				   if (sfx_state[2]) // r1
+				   {
+					   r1_otchet();
+					   emit progress(60);
 
-             }
+				   }
 
-         }
+			   }
 
-         catch (std::runtime_error& ex)
-         {
-             QApplication::beep();
-             emit error(QString(ex.what()));
-         }
+			   catch (std::runtime_error& ex)
+			   {
+				   QApplication::beep();
+				   emit error(QString(ex.what()));
+			   }
 
-         try {
+			   try {
 
 
 
-         if(sfx_state[3]) // r2
-         {
-             r2_otchet();
-             emit progress(70);
+				   if (sfx_state[3]) // r2
+				   {
+					   r2_otchet();
+					   emit progress(70);
 
-         }
+				   }
 
-         }
+			   }
 
-         catch (std::runtime_error& ex)
-         {
-             QApplication::beep();
-             emit error(QString(ex.what()));
-         }
+			   catch (std::runtime_error& ex)
+			   {
+				   QApplication::beep();
+				   emit error(QString(ex.what()));
+			   }
 
-         try{
+			   try {
 
-         if(sfx_state[4]) // r3
-         {
-             r3_otchet();
-             emit progress(80);
+				   if (sfx_state[4]) // r3
+				   {
+					   r3_otchet();
+					   emit progress(80);
 
-         }
+				   }
 
-         }
+			   }
 
-         catch (std::runtime_error& ex)
-         {
-             QApplication::beep();
-             emit error(QString(ex.what()));
-         }
+			   catch (std::runtime_error& ex)
+			   {
+				   QApplication::beep();
+				   emit error(QString(ex.what()));
+			   }
 
-         try {
-
-
-
-         if(sfx_state[5]) // o
-         {
-             o_otchet();
-             emit progress(95);
-         }
-
-         }
-
-         catch (std::runtime_error& ex)
-         {
-             QApplication::beep();
-             emit error(QString(ex.what()));
-         }
+			   try {
 
 
-         }
 
-         catch (...)
-         {
-             QApplication::beep();
-             emit error(QString("crash algorithm"));
-         }
+				   if (sfx_state[5]) // o
+				   {
+					   o_otchet();
+					   emit progress(95);
+				   }
+
+			   }
+
+			   catch (std::runtime_error& ex)
+			   {
+				   QApplication::beep();
+				   emit error(QString(ex.what()));
+			   }
+
+
+		   }
+
+		   catch (...)
+		   {
+			   QApplication::beep();
+			   emit error(QString("crash algorithm"));
+		   }
 
 
 
 
-         end_work();
+		   end_work();
 
-     }
+	   }
 
 
 
- }
+   }
 
  bool PDF_creator::font_setting()
  {
@@ -1039,14 +974,8 @@ void PDF_creator::set_parser(Parser & parser)
 
  void PDF_creator::titul_list()
  {
-
-
-
-
-
      float tw;
      std::string text;
-
 
      font = HPDF_GetFont (pdf, rus_bold, "UTF-8");
      if(azdk.ver.isEmpty())
@@ -1062,7 +991,6 @@ HPDF_Page_BeginText(pages[0]);
              HPDF_Page_GetHeight(pages[0]) - 50);
      HPDF_Page_ShowText(pages[0], text.c_str());
 HPDF_Page_EndText(pages[0]);
-
 
      font = HPDF_GetFont (pdf, rus_std, "UTF-8");
      HPDF_Page_SetFontAndSize(pages[0], font, 14);

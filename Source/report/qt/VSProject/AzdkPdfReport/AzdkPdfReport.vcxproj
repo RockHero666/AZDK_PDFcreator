@@ -106,8 +106,8 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="..\..\otchet\azdk.h" />
-    <ClInclude Include="..\..\otchet\ngts\filepathedit.h" />
-    <QtMoc Include="..\..\otchet\filepathedit.h" />
+    <ClInclude Include="resource.h" />
+    <QtMoc Include="..\..\otchet\ngts\filepathedit.h" />
     <QtMoc Include="..\..\otchet\log\logw.h" />
     <QtMoc Include="..\..\otchet\log\logmodel.h" />
     <QtMoc Include="..\..\otchet\log\contexmenuwidget.h" />
@@ -131,7 +131,9 @@
     <ClCompile Include="..\..\otchet\pdf_creator.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <Image Include="..\..\otchet\error.png" />
     <Image Include="..\..\otchet\icon.ico" />
+    <Image Include="icon1.ico" />
   </ItemGroup>
   <ItemGroup>
     <QtRcc Include="..\..\otchet\resource.qrc" />
@@ -139,6 +141,9 @@
   <ItemGroup>
     <QtUic Include="..\..\otchet\form.ui" />
     <QtUic Include="..\..\otchet\mainwindow2.ui" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="AzdkPdfReport.rc" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Condition="Exists('$(QtMsBuild)\qt.targets')">

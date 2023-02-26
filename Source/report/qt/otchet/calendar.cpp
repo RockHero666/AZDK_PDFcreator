@@ -1,22 +1,20 @@
+#include <QMessageBox>
 #include "calendar.h"
 #include <QtWidgets/QCalendarWidget>
 #include "ui_form.h"
 
 
 Calendar::Calendar(QWidget *parent):
-    QWidget(parent)
-        , ui(new Ui::Form)
+    QWidget(parent), 
+    ui(new Ui::Form)
 {
     ui->setupUi(this);
     this->setWindowTitle("Выберите дату");
     this->setWindowFlags(Qt::SubWindow);
 
 
-
-
     ui->calendar_begin->setSelectedDate(QDate::currentDate());
     ui->calendar_end->setSelectedDate(QDate::currentDate());
-
 
     ui->calendar_begin->selectedDate();
 }
@@ -46,14 +44,11 @@ void Calendar::on_close_clicked()
     QDate start = get_date_begin();
     QDate end = get_date_end();
 
-
     if(start>end)
     {
       QMessageBox::about(this,"ERROR","Дата начала не может быть больше даты конца!");
       return;
     }
-
-
 
     emit finished();
     this->close();
