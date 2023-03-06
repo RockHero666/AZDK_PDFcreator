@@ -1,7 +1,7 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
-#include <QMainWindow>
+#include <QWidget>
 #include <QThread>
 #include <QTimer>
 #include "parser.h"
@@ -16,10 +16,10 @@
 #define APPLICATION_NAME "PDF_report"
 
 QT_BEGIN_NAMESPACE
-namespace Ui { class MainWindow; }
+namespace Ui { class MainForm; }
 QT_END_NAMESPACE
 
-class MainWindow : public QMainWindow
+class MainWindow : public QWidget
 {
     Q_OBJECT
 
@@ -32,7 +32,7 @@ class MainWindow : public QMainWindow
     bool start= 1;
     AzdkLogger save_log;
     Calendar calendar;
-    Ui::MainWindow* ui;
+    Ui::MainForm* ui;
 
 public:
 

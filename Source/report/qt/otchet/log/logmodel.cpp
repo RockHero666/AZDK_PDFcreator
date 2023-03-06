@@ -53,7 +53,8 @@ QVariant LogModel::data(const QModelIndex& _index, int role) const
             return QColor(msgNode.color);
         }
     case REPEAT_COL:
-        if (msgNode.count > 0) return msgNode.count;
+        if (msgNode.count > 0 && role == Qt::DisplayRole)
+            return msgNode.count;
     }
     return QVariant();
 }

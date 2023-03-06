@@ -6,17 +6,19 @@
 #include <QSettings>
 #include <QDesktopWidget>
 #include "mainwindow.h"
-#include "ui_mainwindow2.h"
+#include "ui_mainwindow3.h"
 #include "ngts/filepathedit.h"
 
 MainWindow::MainWindow(QWidget* parent)
-	: QMainWindow(parent),
+	: QWidget(parent),
 	progress(0),
-	ui(new Ui::MainWindow),
+	ui(new Ui::MainForm),
 	pdf_creator(PDF_creator::get_instance())
 {
 	ui->setupUi(this);
 	connects();
+
+	this->setWindowFlags(Qt::Window);
 	qApp->setWindowIcon(QIcon(":/res/icon.ico"));
 
 	SetConsoleCP(1251);
@@ -30,7 +32,7 @@ MainWindow::MainWindow(QWidget* parent)
 	timer.start(1000);
 	save_log.open("log.json", LogType::Common, "json");
 
-	ui->loger_button->hide();
+	ui->loger->hide();
 
 }
 
@@ -380,7 +382,7 @@ void MainWindow::connects()
 	connect(ui->open_file, &QPushButton::clicked, this, &MainWindow::to_open_path);
 	connect(ui->fpe, &FilePathEdit::pathChanged, this, &MainWindow::text_path_line_changed);
 	connect(ui->fpe_2, &FilePathEdit::pathChanged, this, &MainWindow::text_save_line_changed);
-	connect(ui->loger_button, &QPushButton::clicked, this, &MainWindow::open_close_logger_button_click);
+	//connect(ui->loger_button, &QPushButton::clicked, this, &MainWindow::open_close_logger_button_click);
 
 	connect(pdf_creator, SIGNAL(progress(int)), ui->progressBar, SLOT(setValue(int)));
 	connect(pdf_creator, SIGNAL(error(const QString&)), this, SLOT(error(const QString&)));
@@ -549,21 +551,17 @@ void MainWindow::open_close_logger_button_click()
 
 	if (!ui->loger->isHidden())
 	{
-		
+		int w = ui->loger->size().width();
 		ui->loger->hide();
-		int x = this->width() - 1000;
 		
-		
-		ui->gridLayout->removeWidget(ui->loger);
-		this->resize(100, this->height());
+		resize(width() - 1000, height());
 	}
 	else
 	{
 		
 		ui->loger->show();
+		//resize(width() + 300, height());
 		
-		ui->gridLayout->addWidget(ui->loger,0,3);
-		this->resize(this->width()+200, this->height());
 	}
 
 

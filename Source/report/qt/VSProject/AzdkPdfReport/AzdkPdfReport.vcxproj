@@ -140,7 +140,7 @@
   </ItemGroup>
   <ItemGroup>
     <QtUic Include="..\..\otchet\form.ui" />
-    <QtUic Include="..\..\otchet\mainwindow2.ui" />
+    <QtUic Include="..\..\otchet\mainwindow3.ui" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="AzdkPdfReport.rc" />
