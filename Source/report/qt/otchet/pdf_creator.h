@@ -6,7 +6,7 @@
 #include <Windows.h>
 #include "azdk.h"
 #include "parser.h"
-#include "hpdf.h"
+#include <hpdf.h>
 
 
 class PDF_creator: public QObject
