@@ -35,6 +35,7 @@ public:
         const QString & azdk_server_path,const QString & index,const QString & azdk_number); // Определяет количество кадров и время испытания
     int error_count(const QString & error_path); // вспомогательная функция для определения количества кадров
     bool is_exists(const QString& path);
+    QVector<QString> font_pars();
 
 signals:
     void log_message(const QString & message, QRgb color = QRgb());

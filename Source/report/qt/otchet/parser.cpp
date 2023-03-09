@@ -6,6 +6,7 @@
 #include <QDate>
 #include <iostream>
 #include <algorithm>
+#include <QStandardPaths>
 #include "parser.h"
 
 Parser::Parser(QObject *parent) : QObject(parent)
@@ -40,6 +41,7 @@ void Parser::to_parse_current_dir()
 
 void Parser::set_path(const QString & path)
 {
+
     this->path = path;
 }
 
@@ -335,6 +337,7 @@ int Parser::Find_time_on_vector(QVector<QString>& time_vect ,QString time , bool
         return result;
     }
     result = png_path;
+    std::string str = png_path.toLocal8Bit();
     return result;
 }
 
@@ -673,13 +676,71 @@ int Parser::Find_time_on_vector(QVector<QString>& time_vect ,QString time , bool
      }
 
      
-     QDirIterator it(dir_p, QDir::Files, QDirIterator::QDirIterator::NoIteratorFlags);
+     QDirIterator it(dir_p, QDir::Files, QDirIterator::NoIteratorFlags);
      while (it.hasNext())
      {
          if (path == it.next())
              return true;
      }
      return false;
+
+
+ }
+
+ QVector<QString> Parser::font_pars()
+ {
+     QStringList path = QStandardPaths::standardLocations(QStandardPaths::FontsLocation);
+     QVector<QString> all_f;
+     QVector<QString> true_p_f;
+     QStringList split;
+     QVector<QString> names_fonts_b;
+     QVector<QString> names_fonts;
+
+     QDirIterator it(path[0], QDir::Files, QDirIterator::NoIteratorFlags);
+     while (it.hasNext())
+     {
+         all_f.push_back(it.next());
+     }
+     
+
+     for (int i = 0; i < all_f.size(); i++)
+     {
+         if (all_f[i].indexOf("b.ttf") != -1 || all_f[i].indexOf("bd.ttf") != -1)
+             true_p_f.push_back(all_f[i]);
+     }
+
+     for (int i = 0; i < true_p_f.size(); i++)
+     {
+         split += true_p_f[i].split("/");
+     }
+      
+     for (int i = 0; i < split.size(); i++)
+     {
+         if (split[i].indexOf("b.ttf") != -1 || split[i].indexOf("bd.ttf") != -1)
+             names_fonts_b.push_back(split[i]);
+     }
+
+
+     for (int i = 0; i < names_fonts_b.size(); i++)
+     {
+         int indx_b = names_fonts_b[i].indexOf("b.ttf");
+         int indx_bd = names_fonts_b[i].indexOf("bd.ttf");
+         int indx = indx_b > indx_bd ? indx_b : indx_bd;
+
+         QString name;
+             for (int j = 0; j < indx; j++)
+             {
+                name += names_fonts_b[i][j];
+             }
+             names_fonts.push_back(name);
+             names_fonts[i][0] = names_fonts[i][0].toUpper();
+     }
+
+     
+
+
+     return names_fonts;
+
 
 
  }

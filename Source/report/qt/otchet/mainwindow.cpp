@@ -5,6 +5,8 @@
 #include <QDate>
 #include <QSettings>
 #include <QDesktopWidget>
+#include <iomanip>
+#include<QTextCodec>
 #include "mainwindow.h"
 #include "ui_mainwindow3.h"
 #include "ngts/filepathedit.h"
@@ -24,6 +26,7 @@ MainWindow::MainWindow(QWidget* parent)
 	SetConsoleCP(1251);
 	SetConsoleOutputCP(1251);
 	setlocale(LC_ALL, "RUS");
+	QTextCodec::setCodecForLocale(QTextCodec::codecForName("CP 1251"));
 
 	this->setWindowTitle("PDF_report");
 
@@ -31,7 +34,7 @@ MainWindow::MainWindow(QWidget* parent)
 
 	timer.start(1000);
 	save_log.open("log.json", LogType::Common, "json");
-
+	
 	ui->loger->hide();
 
 }
@@ -234,6 +237,36 @@ void MainWindow::text_path_line_changed(const QString& arg1)
 		parser.to_parse_current_dir();
 	}
 	check_box_checker();
+
+	QString number;
+
+	for (int i = 0; i < parser.all_paths.size(); i++)
+	{
+		if (parser.all_paths[i].indexOf(ui->name_report_line->text()) != -1)
+		{
+			QStringList sl = parser.all_paths[i].split("/");
+			std::string str = sl.last().toStdString();
+
+
+			for (int j = 0; j < str.size(); j++)
+			{
+				if (std::isdigit(str[j]))
+				{
+					number += str[j];
+					continue;
+				}
+				else if (!number.isEmpty())
+					break;
+			}
+
+			int x = number.toInt();
+			ui->number_spinBox->setValue(x);
+		}
+	}
+
+	
+
+
 }
 
 ///////////////////////////////////////////////////////////////////////
@@ -260,11 +293,12 @@ void MainWindow::on_to_path_button_clicked()
 	{
 		p += sl[i] + "/";
 	}
-	QDesktopServices::openUrl(p);
+	QDesktopServices::openUrl(QUrl::fromLocalFile(p));
 }
+
 void MainWindow::to_open_path()
 {
-	QDesktopServices::openUrl(ui->fpe_2->getPath());
+	QDesktopServices::openUrl(QUrl::fromLocalFile(ui->fpe_2->getPath()));
 }
 
 ///////////////////////////////////////////////////////////////////////
@@ -273,6 +307,35 @@ void MainWindow::to_open_path()
 
 void MainWindow::ui_load_and_config()
 {
+	QSettings settings("PDF_creator.ini", QSettings::IniFormat);
+
+	QVector<QString> fonts = parser.font_pars();
+	for (int i = 0; i < fonts.size(); i++)
+	{
+		ui->comboBox_fonts->addItem(fonts[i]);
+	}
+	for (int i = 0; i < fonts.size(); i++)
+	{
+		QString temp = settings.value("PDF_font").toString();
+
+		temp[0] = settings.value("PDF_font").toString()[0].toLower();
+		QString d_case = temp;
+
+		temp[0] = settings.value("PDF_font").toString()[0].toUpper();
+		QString u_case = temp;
+
+		if (fonts[i].indexOf(d_case) != -1  || fonts[i].indexOf(u_case) != -1)
+		{
+			ui->comboBox_fonts->setCurrentIndex(i);
+			break;
+		}
+	}
+	
+
+
+
+
+
 	ui->name_report_line->setText("azdkclient.tracked.azdk");
 	ui->management_report_line->setText("azdkserver.tracked.azdk");
 	ui->management_sky_report_line->setText("pdsserver.tracked.azdk");
@@ -294,7 +357,7 @@ void MainWindow::ui_load_and_config()
 	ui->size_doubleSpinBox->setRange(0, 99999999);
 	ui->duration_spinBox->setRange(0, 99999999);
 
-	QSettings settings("PDF_creator.ini", QSettings::IniFormat);
+	
 
 	ui->number_spinBox->setValue(settings.value("number").toInt());
 	ui->size_doubleSpinBox->setValue(settings.value("size").toDouble());
@@ -319,8 +382,7 @@ void MainWindow::ui_load_and_config()
 	if (settings.value("AZDK_ver").toBool())
 		azdk.ver = settings.value("AZDK_ver").toString();
 
-	if (settings.value("PDF_font").toBool())
-		pdf_creator->set_font_name(settings.value("PDF_font").toString());
+	
 
 	if (!settings.value("path_to_file_line").toString().isEmpty())
 	{
@@ -399,12 +461,14 @@ void MainWindow::connects()
 		{
 			ui->loger->addLog(message, 0, color);
 			save_log.log(message); 
+			
 		});
 	connect(&parser, &Parser::log_message, 
 		[&](auto& message, auto color) 
 		{
 			ui->loger->addLog(message, 0, color);
 			save_log.log(message); 
+			
 		});
 }
 
@@ -515,6 +579,7 @@ void MainWindow::on_create_button_clicked()
 			azdk.time = setDate();
 			pdf_creator->set_AZDK(azdk);
 			pdf_creator->set_parser(parser);
+			pdf_creator->set_font_name(ui->comboBox_fonts->currentText());
 
 			pdf_creator->moveToThread(&thread);
 			pdf_creator->set_thread_gate(true);
@@ -541,8 +606,8 @@ void MainWindow::timer_slot()
 	if (settings.value("AZDK_ver").toBool())
 		azdk.ver = settings.value("AZDK_ver").toString();
 
-	if (settings.value("PDF_font").toBool())
-		pdf_creator->set_font_name(settings.value("PDF_font").toString());
+	//if (settings.value("PDF_font").toBool())
+		//pdf_creator->set_font_name(settings.value("PDF_font").toString());
 }
 
 void MainWindow::open_close_logger_button_click()

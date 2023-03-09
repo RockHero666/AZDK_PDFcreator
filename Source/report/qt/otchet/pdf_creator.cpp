@@ -704,7 +704,7 @@ emit log_message("Таблица успешно сформированна");
 
      QByteArray ba = path.toLocal8Bit();
      const char *c_str = ba.data();
-     HPDF_SaveToFile(pdf, c_str);
+     HPDF_SaveToFile(pdf, ba);
 
      emit log_message("Сохранение завершено");
  }
@@ -765,14 +765,20 @@ void PDF_creator::set_parser(Parser & parser)
 
 	   if (thread_gate)
 	   {
-		   parser->to_parse();
+           
+
+		   
 
 		   emit progress(0);
 
 		   create_pdf();
 		   create_page();
 
+           HPDF_UseUTFEncodings(pdf); // ЕНКОДИНГ НА РУССКИЙ ТЕКСТ
+           HPDF_SetCurrentEncoder(pdf, "UTF-8");
 		   HPDF_SetCompressionMode(pdf, HPDF_COMP_ALL);
+
+           parser->to_parse();
 
 		   if (!font_setting())
 		   {
@@ -913,15 +919,21 @@ void PDF_creator::set_parser(Parser & parser)
  bool PDF_creator::font_setting()
  {
 
-     HPDF_UseUTFEncodings(pdf); // ЕНКОДИНГ НА РУССКИЙ ТЕКСТ
-     HPDF_SetCurrentEncoder(pdf, "UTF-8");
+     
      QString bold;
      QString std;
 
+     QString bold_L;
+     QString std_L;
+     QString font_name_L = font_name;
+     font_name_L[0] = font_name_L[0].toLower();
+
     bold = QStandardPaths::displayName(QStandardPaths::FontsLocation) + "/" + font_name + "bd.ttf";
     std = QStandardPaths::displayName(QStandardPaths::FontsLocation) + "/" + font_name + ".ttf";
+    bold_L = QStandardPaths::displayName(QStandardPaths::FontsLocation) + "/" + font_name_L + "bd.ttf";
+    std_L = QStandardPaths::displayName(QStandardPaths::FontsLocation) + "/" + font_name_L + ".ttf";
 
-     if (parser->is_exists(bold) && parser->is_exists(std))
+     if (parser->is_exists(bold) && parser->is_exists(std) || parser->is_exists(bold_L) && parser->is_exists(std_L))
      {
          rus_bold = HPDF_LoadTTFontFromFile(pdf, bold.toStdString().c_str(), HPDF_TRUE);
          rus_std = HPDF_LoadTTFontFromFile(pdf, std.toStdString().c_str(), HPDF_TRUE);
@@ -931,19 +943,77 @@ void PDF_creator::set_parser(Parser & parser)
      
      bold = QString("C:/Windows/Fonts") + QString("/") + font_name + QString("bd.ttf");
      std  = QString("C:/Windows/Fonts") + QString("/") + font_name + QString(".ttf");
+     bold_L = QString("C:/Windows/Fonts") + QString("/") + font_name_L + QString("bd.ttf");
+     std_L = QString("C:/Windows/Fonts") + QString("/") + font_name_L + QString(".ttf");
 
-     if (parser->is_exists(bold) && parser->is_exists(std))
+     if (parser->is_exists(bold) && parser->is_exists(std) || parser->is_exists(bold_L) && parser->is_exists(std_L))
      {
          rus_bold = HPDF_LoadTTFontFromFile(pdf, bold.toStdString().c_str(), HPDF_TRUE);
          rus_std = HPDF_LoadTTFontFromFile(pdf, std.toStdString().c_str(), HPDF_TRUE);
          emit log_message("Шрифт установлен");
          return true;
      }
+
+
+     bold = QStandardPaths::displayName(QStandardPaths::FontsLocation) + "/" + font_name + "b.ttf";
+     std = QStandardPaths::displayName(QStandardPaths::FontsLocation) + "/" + font_name + ".ttf";
+     bold_L = QStandardPaths::displayName(QStandardPaths::FontsLocation) + "/" + font_name_L + "b.ttf";
+     std_L = QStandardPaths::displayName(QStandardPaths::FontsLocation) + "/" + font_name_L + ".ttf";
+
+     if (parser->is_exists(bold) && parser->is_exists(std) || parser->is_exists(bold_L) && parser->is_exists(std_L))
+     {
+         rus_bold = HPDF_LoadTTFontFromFile(pdf, bold.toStdString().c_str(), HPDF_TRUE);
+         rus_std = HPDF_LoadTTFontFromFile(pdf, std.toStdString().c_str(), HPDF_TRUE);
+         emit log_message("Шрифт установлен");
+         return true;
+     }
+
+     bold = QString("C:/Windows/Fonts") + QString("/") + font_name + QString("b.ttf");
+     std = QString("C:/Windows/Fonts") + QString("/") + font_name + QString(".ttf");
+     bold_L = QString("C:/Windows/Fonts") + QString("/") + font_name_L + QString("b.ttf");
+     std_L = QString("C:/Windows/Fonts") + QString("/") + font_name_L + QString(".ttf");
+
+     if (parser->is_exists(bold) && parser->is_exists(std) || parser->is_exists(bold_L) && parser->is_exists(std_L))
+     {
+         rus_bold = HPDF_LoadTTFontFromFile(pdf, bold.toStdString().c_str(), HPDF_TRUE);
+         rus_std = HPDF_LoadTTFontFromFile(pdf, std.toStdString().c_str(), HPDF_TRUE);
+         emit log_message("Шрифт установлен");
+         return true;
+     }
+
+     bold = QStandardPaths::displayName(QStandardPaths::FontsLocation) + "/" + font_name + "b.ttf";
+     std = QStandardPaths::displayName(QStandardPaths::FontsLocation) + "/" + font_name + ".ttc";
+     bold_L = QStandardPaths::displayName(QStandardPaths::FontsLocation) + "/" + font_name_L + "b.ttf";
+     std_L = QStandardPaths::displayName(QStandardPaths::FontsLocation) + "/" + font_name_L + ".ttc";
+
+     if (parser->is_exists(bold) && parser->is_exists(std) || parser->is_exists(bold_L) && parser->is_exists(std_L))
+     {
+         rus_bold = HPDF_LoadTTFontFromFile(pdf, bold.toStdString().c_str(), HPDF_TRUE);
+         rus_std = HPDF_LoadTTFontFromFile2(pdf, std.toStdString().c_str(), HPDF_TRUE,0);
+         emit log_message("Шрифт установлен");
+         return true;
+     }
+
+     bold = QString("C:/Windows/Fonts") + QString("/") + font_name + QString("b.ttf");
+     std = QString("C:/Windows/Fonts") + QString("/") + font_name + QString(".ttc");
+     bold_L = QString("C:/Windows/Fonts") + QString("/") + font_name_L + QString("b.ttf");
+     std_L = QString("C:/Windows/Fonts") + QString("/") + font_name_L + QString(".ttc");
+
+     if (parser->is_exists(bold) && parser->is_exists(std) || parser->is_exists(bold_L) && parser->is_exists(std_L))
+     {
+         rus_bold = HPDF_LoadTTFontFromFile(pdf, bold.toStdString().c_str(), HPDF_TRUE);
+         rus_std = HPDF_LoadTTFontFromFile2(pdf, std.toStdString().c_str(), HPDF_TRUE,0);
+         emit log_message("Шрифт установлен");
+         return true;
+     }
+
+
      else
      {
          emit log_message("Указанный шрифт не был найден, работа программы остановленна!",qRgb(250,0,0));
          return false;
      }
+     
      
  }
 
@@ -1229,7 +1299,7 @@ HPDF_Page_EndText(pages[page_count-1]);
      QString p;
 
      p = parser->Png_path_veryf("/azdk" + azdk.number + "s/quats-azdk"+ azdk.number +"s.w.png");
-     image = HPDF_LoadPngImageFromFile(pdf,p.toStdString().c_str());
+     image = HPDF_LoadPngImageFromFile(pdf,p.toLocal8Bit());
      HPDF_Page_DrawImage (pages[page_count-1], image, 40, HPDF_Page_GetHeight(pages[page_count-1]) - 340, 2339/4.6,1235/4.6);
 
 HPDF_Page_BeginText(pages[page_count-1]);
@@ -1241,7 +1311,7 @@ HPDF_Page_BeginText(pages[page_count-1]);
 HPDF_Page_EndText(pages[page_count-1]);
 
      p = parser->Png_path_veryf("/azdk" + azdk.number + "s/quats-azdk"+ azdk.number +"s.x.png");
-     image = HPDF_LoadPngImageFromFile(pdf,p.toStdString().c_str());
+     image = HPDF_LoadPngImageFromFile(pdf,p.toLocal8Bit());
      HPDF_Page_DrawImage (pages[page_count-1], image, 40, HPDF_Page_GetHeight(pages[page_count-1]) - 740+70, 2339/4.6,1235/4.6);
 
 HPDF_Page_BeginText(pages[page_count-1]);
@@ -1257,7 +1327,7 @@ HPDF_Page_EndText(pages[page_count-1]);
      x=0;
 
      p = parser->Png_path_veryf("/azdk" + azdk.number + "s/quats-azdk"+ azdk.number +"s.y.png");
-     image = HPDF_LoadPngImageFromFile(pdf,p.toStdString().c_str());
+     image = HPDF_LoadPngImageFromFile(pdf,p.toLocal8Bit());
      HPDF_Page_DrawImage (pages[page_count-1], image, 40, HPDF_Page_GetHeight(pages[page_count-1]) - 340, 2339/4.6,1235/4.6);
 
 HPDF_Page_BeginText(pages[page_count-1]);
@@ -1269,7 +1339,7 @@ HPDF_Page_BeginText(pages[page_count-1]);
 HPDF_Page_EndText(pages[page_count-1]);
 
      p = parser->Png_path_veryf("/azdk" + azdk.number + "s/quats-azdk"+ azdk.number +"s.z.png");
-     image = HPDF_LoadPngImageFromFile(pdf,p.toStdString().c_str());
+     image = HPDF_LoadPngImageFromFile(pdf,p.toLocal8Bit());
      HPDF_Page_DrawImage (pages[page_count-1], image, 40, HPDF_Page_GetHeight(pages[page_count-1]) - 740+70, 2339/4.6,1235/4.6);
 
 HPDF_Page_BeginText(pages[page_count-1]);
@@ -1285,7 +1355,7 @@ HPDF_Page_EndText(pages[page_count-1]);
      x=0;
 
      p = parser->Png_path_veryf("/azdk" + azdk.number + "s/xyz-azdk"+ azdk.number +"s-angles.png");
-     image = HPDF_LoadPngImageFromFile(pdf,p.toStdString().c_str());
+     image = HPDF_LoadPngImageFromFile(pdf,p.toLocal8Bit());
      HPDF_Page_DrawImage (pages[page_count-1], image, 40, HPDF_Page_GetHeight(pages[page_count-1]) - 340+100, 4703/9.2,1857/9.2);
 
 HPDF_Page_BeginText(pages[page_count-1]);
@@ -1297,7 +1367,7 @@ HPDF_Page_BeginText(pages[page_count-1]);
 HPDF_Page_EndText(pages[page_count-1]);
 
      p = parser->Png_path_veryf("/azdk" + azdk.number + "s/xyz-azdk"+ azdk.number +"s.png");
-     image = HPDF_LoadPngImageFromFile(pdf,p.toStdString().c_str());
+     image = HPDF_LoadPngImageFromFile(pdf,p.toLocal8Bit());
      HPDF_Page_DrawImage (pages[page_count-1], image, 125-60, HPDF_Page_GetHeight(pages[page_count-1]) - 740, 536/1.1,489/1.1);
 
 HPDF_Page_BeginText(pages[page_count-1]);
@@ -1313,7 +1383,7 @@ HPDF_Page_EndText(pages[page_count-1]);
      x=0;
 
      p = parser->Png_path_veryf("/azdk" + azdk.number + "s/xyz-azdk"+ azdk.number +"s-mm-angles.png");
-     image = HPDF_LoadPngImageFromFile(pdf,p.toStdString().c_str());
+     image = HPDF_LoadPngImageFromFile(pdf,p.toLocal8Bit());
      HPDF_Page_DrawImage (pages[page_count-1], image, 40, HPDF_Page_GetHeight(pages[page_count-1]) - 340+100, 4703/9.2,1857/9.2);
 
 HPDF_Page_BeginText(pages[page_count-1]);
@@ -1325,7 +1395,7 @@ HPDF_Page_BeginText(pages[page_count-1]);
 HPDF_Page_EndText(pages[page_count-1]);
 
      p = parser->Png_path_veryf("/azdk" + azdk.number + "s/xyz-azdk"+ azdk.number +"s-mm.png");
-     image = HPDF_LoadPngImageFromFile(pdf,p.toStdString().c_str());
+     image = HPDF_LoadPngImageFromFile(pdf,p.toLocal8Bit());
      HPDF_Page_DrawImage (pages[page_count-1], image, 125-60, HPDF_Page_GetHeight(pages[page_count-1]) - 740, 536/1.1,489/1.1);
 
 HPDF_Page_BeginText(pages[page_count-1]);
@@ -1453,7 +1523,7 @@ HPDF_Page_EndText(pages[page_count-1]);
      QString p;
 
      p = parser->Png_path_veryf("/azdk" + azdk.number + "r01/quats-azdk"+ azdk.number +"r01.w.png");
-     image = HPDF_LoadPngImageFromFile(pdf,p.toStdString().c_str());
+     image = HPDF_LoadPngImageFromFile(pdf,p.toLocal8Bit());
      HPDF_Page_DrawImage (pages[page_count-1], image, 40, HPDF_Page_GetHeight(pages[page_count-1]) - 340, 2339/4.6,1235/4.6);
 
 HPDF_Page_BeginText(pages[page_count-1]);
@@ -1465,7 +1535,7 @@ HPDF_Page_BeginText(pages[page_count-1]);
 HPDF_Page_EndText(pages[page_count-1]);
 
      p = parser->Png_path_veryf("/azdk" + azdk.number + "r01/quats-azdk"+ azdk.number +"r01.x.png");
-     image = HPDF_LoadPngImageFromFile(pdf,p.toStdString().c_str());
+     image = HPDF_LoadPngImageFromFile(pdf,p.toLocal8Bit());
      HPDF_Page_DrawImage (pages[page_count-1], image, 40, HPDF_Page_GetHeight(pages[page_count-1]) - 740, 2339/4.6,1235/4.6);
 
 HPDF_Page_BeginText(pages[page_count-1]);
@@ -1481,7 +1551,7 @@ HPDF_Page_EndText(pages[page_count-1]);
      x=0;
 
      p = parser->Png_path_veryf("/azdk" + azdk.number + "r01/quats-azdk"+ azdk.number +"r01.y.png");
-     image = HPDF_LoadPngImageFromFile(pdf,p.toStdString().c_str());
+     image = HPDF_LoadPngImageFromFile(pdf,p.toLocal8Bit());
      HPDF_Page_DrawImage (pages[page_count-1], image, 40, HPDF_Page_GetHeight(pages[page_count-1]) - 340, 2339/4.6,1235/4.6);
 
 HPDF_Page_BeginText(pages[page_count-1]);
@@ -1493,7 +1563,7 @@ HPDF_Page_BeginText(pages[page_count-1]);
 HPDF_Page_EndText(pages[page_count-1]);
 
      p = parser->Png_path_veryf("/azdk" + azdk.number + "r01/quats-azdk"+ azdk.number +"r01.z.png");
-     image = HPDF_LoadPngImageFromFile(pdf,p.toStdString().c_str());
+     image = HPDF_LoadPngImageFromFile(pdf,p.toLocal8Bit());
      HPDF_Page_DrawImage (pages[page_count-1], image, 40, HPDF_Page_GetHeight(pages[page_count-1]) - 740, 2339/4.6,1235/4.6);
 
 HPDF_Page_BeginText(pages[page_count-1]);
@@ -1509,7 +1579,7 @@ HPDF_Page_EndText(pages[page_count-1]);
      x=0;
 
      p = parser->Png_path_veryf("/azdk" + azdk.number + "r01/xyz-azdk"+ azdk.number +"r01-angles.png");
-     image = HPDF_LoadPngImageFromFile(pdf,p.toStdString().c_str());
+     image = HPDF_LoadPngImageFromFile(pdf,p.toLocal8Bit());
      HPDF_Page_DrawImage (pages[page_count-1], image, 40, HPDF_Page_GetHeight(pages[page_count-1]) - 340+100, 4703/9.2,1857/9.2);
 
 HPDF_Page_BeginText(pages[page_count-1]);
@@ -1521,7 +1591,7 @@ HPDF_Page_BeginText(pages[page_count-1]);
 HPDF_Page_EndText(pages[page_count-1]);
 
      p = parser->Png_path_veryf("/azdk" + azdk.number + "r01/xyz-azdk"+ azdk.number +"r01.png");
-     image = HPDF_LoadPngImageFromFile(pdf,p.toStdString().c_str());
+     image = HPDF_LoadPngImageFromFile(pdf,p.toLocal8Bit());
      HPDF_Page_DrawImage (pages[page_count-1], image, 125-60, HPDF_Page_GetHeight(pages[page_count-1]) - 740, 536/1.1,489/1.1);
 
 HPDF_Page_BeginText(pages[page_count-1]);
@@ -1634,7 +1704,7 @@ HPDF_Page_EndText(pages[page_count-1]);
      QString p;
 
      p = parser->Png_path_veryf("/azdk" + azdk.number + "r1/quats-azdk"+ azdk.number +"r1.w.png");
-     image = HPDF_LoadPngImageFromFile(pdf,p.toStdString().c_str());
+     image = HPDF_LoadPngImageFromFile(pdf,p.toLocal8Bit());
      HPDF_Page_DrawImage (pages[page_count-1], image, 40, HPDF_Page_GetHeight(pages[page_count-1]) - 340, 2339/4.6,1235/4.6);
 
 HPDF_Page_BeginText(pages[page_count-1]);
@@ -1646,7 +1716,7 @@ HPDF_Page_BeginText(pages[page_count-1]);
 HPDF_Page_EndText(pages[page_count-1]);
 
      p = parser->Png_path_veryf("/azdk" + azdk.number + "r1/quats-azdk"+ azdk.number +"r1.x.png");
-     image = HPDF_LoadPngImageFromFile(pdf,p.toStdString().c_str());
+     image = HPDF_LoadPngImageFromFile(pdf,p.toLocal8Bit());
      HPDF_Page_DrawImage (pages[page_count-1], image, 40, HPDF_Page_GetHeight(pages[page_count-1]) - 740, 2339/4.6,1235/4.6);
 
 HPDF_Page_BeginText(pages[page_count-1]);
@@ -1662,7 +1732,7 @@ HPDF_Page_EndText(pages[page_count-1]);
      x=0;
 
      p = parser->Png_path_veryf("/azdk" + azdk.number + "r1/quats-azdk"+ azdk.number +"r1.y.png");
-     image = HPDF_LoadPngImageFromFile(pdf,p.toStdString().c_str());
+     image = HPDF_LoadPngImageFromFile(pdf,p.toLocal8Bit());
      HPDF_Page_DrawImage (pages[page_count-1], image, 40, HPDF_Page_GetHeight(pages[page_count-1]) - 340, 2339/4.6,1235/4.6);
 
 HPDF_Page_BeginText(pages[page_count-1]);
@@ -1674,7 +1744,7 @@ HPDF_Page_BeginText(pages[page_count-1]);
 HPDF_Page_EndText(pages[page_count-1]);
 
      p = parser->Png_path_veryf("/azdk" + azdk.number + "r1/quats-azdk"+ azdk.number +"r1.z.png");
-     image = HPDF_LoadPngImageFromFile(pdf,p.toStdString().c_str());
+     image = HPDF_LoadPngImageFromFile(pdf,p.toLocal8Bit());
      HPDF_Page_DrawImage (pages[page_count-1], image, 40, HPDF_Page_GetHeight(pages[page_count-1]) - 740, 2339/4.6,1235/4.6);
 
 HPDF_Page_BeginText(pages[page_count-1]);
@@ -1690,7 +1760,7 @@ HPDF_Page_EndText(pages[page_count-1]);
      x=0;
 
      p = parser->Png_path_veryf("/azdk" + azdk.number + "r1/xyz-azdk"+ azdk.number +"r1-angles.png");
-     image = HPDF_LoadPngImageFromFile(pdf,p.toStdString().c_str());
+     image = HPDF_LoadPngImageFromFile(pdf,p.toLocal8Bit());
      HPDF_Page_DrawImage (pages[page_count-1], image, 40, HPDF_Page_GetHeight(pages[page_count-1]) - 340, 4703/9.2,1857/9.2);
 
 HPDF_Page_BeginText(pages[page_count-1]);
@@ -1702,7 +1772,7 @@ HPDF_Page_BeginText(pages[page_count-1]);
 HPDF_Page_EndText(pages[page_count-1]);
 
      p = parser->Png_path_veryf("/azdk" + azdk.number + "r1/stats-frequency-azdk"+ azdk.number +"r1.png");
-     image = HPDF_LoadPngImageFromFile(pdf,p.toStdString().c_str());
+     image = HPDF_LoadPngImageFromFile(pdf,p.toLocal8Bit());
      HPDF_Page_DrawImage (pages[page_count-1], image, 40, HPDF_Page_GetHeight(pages[page_count-1]) - 740, 4678/9.2,2423/9.2);
 
 HPDF_Page_BeginText(pages[page_count-1]);
@@ -1789,7 +1859,7 @@ x=0;
 QString p;
 
      p = parser->Png_path_veryf("/azdk" + azdk.number + "r2/xyz-azdk"+ azdk.number +"r2-angles.png");
-     image = HPDF_LoadPngImageFromFile(pdf,p.toStdString().c_str());
+     image = HPDF_LoadPngImageFromFile(pdf,p.toLocal8Bit());
      HPDF_Page_DrawImage (pages[page_count-1], image, 40, HPDF_Page_GetHeight(pages[page_count-1]) - 340, 4703/9.2,1857/9.2);
 
 HPDF_Page_BeginText(pages[page_count-1]);
@@ -1801,7 +1871,7 @@ HPDF_Page_BeginText(pages[page_count-1]);
 HPDF_Page_EndText(pages[page_count-1]);
 
      p = parser->Png_path_veryf("/azdk" + azdk.number + "r2/stats-frequency-azdk"+ azdk.number +"r2.png");
-     image = HPDF_LoadPngImageFromFile(pdf,p.toStdString().c_str());
+     image = HPDF_LoadPngImageFromFile(pdf,p.toLocal8Bit());
      HPDF_Page_DrawImage (pages[page_count-1], image, 40, HPDF_Page_GetHeight(pages[page_count-1]) - 740, 4678/9.2,2423/9.2);
 
 HPDF_Page_BeginText(pages[page_count-1]);
@@ -1888,7 +1958,7 @@ x=0;
 QString p;
 
      p = parser->Png_path_veryf("/azdk" + azdk.number + "r3/xyz-azdk"+ azdk.number +"r3-angles.png");
-     image = HPDF_LoadPngImageFromFile(pdf,p.toStdString().c_str());
+     image = HPDF_LoadPngImageFromFile(pdf,p.toLocal8Bit());
      HPDF_Page_DrawImage (pages[page_count-1], image, 40, HPDF_Page_GetHeight(pages[page_count-1]) - 340, 4703/9.2,1857/9.2);
 
 HPDF_Page_BeginText(pages[page_count-1]);
@@ -1900,7 +1970,7 @@ HPDF_Page_BeginText(pages[page_count-1]);
 HPDF_Page_EndText(pages[page_count-1]);
 
      p = parser->Png_path_veryf("/azdk" + azdk.number + "r3/stats-frequency-azdk"+ azdk.number +"r3.png");
-     image = HPDF_LoadPngImageFromFile(pdf,p.toStdString().c_str());
+     image = HPDF_LoadPngImageFromFile(pdf,p.toLocal8Bit());
      HPDF_Page_DrawImage (pages[page_count-1], image, 40, HPDF_Page_GetHeight(pages[page_count-1]) - 740, 4678/9.2,2423/9.2);
 
 HPDF_Page_BeginText(pages[page_count-1]);
@@ -2020,7 +2090,7 @@ HPDF_Page_EndText(pages[page_count-1]);
 QString p;
 
      p = parser->Png_path_veryf("/azdk" + azdk.number + "o/quats-azdk"+ azdk.number +"o.w.png");
-     image = HPDF_LoadPngImageFromFile(pdf,p.toStdString().c_str());
+     image = HPDF_LoadPngImageFromFile(pdf,p.toLocal8Bit());
      HPDF_Page_DrawImage (pages[page_count-1], image, 40, HPDF_Page_GetHeight(pages[page_count-1]) - 340, 2339/4.6,1235/4.6);
 
 HPDF_Page_BeginText(pages[page_count-1]);
@@ -2032,7 +2102,7 @@ HPDF_Page_BeginText(pages[page_count-1]);
 HPDF_Page_EndText(pages[page_count-1]);
 
      p = parser->Png_path_veryf("/azdk" + azdk.number + "o/quats-azdk"+ azdk.number +"o.x.png");
-     image = HPDF_LoadPngImageFromFile(pdf,p.toStdString().c_str());
+     image = HPDF_LoadPngImageFromFile(pdf,p.toLocal8Bit());
      HPDF_Page_DrawImage (pages[page_count-1], image, 40, HPDF_Page_GetHeight(pages[page_count-1]) - 740, 2339/4.6,1235/4.6);
 
 HPDF_Page_BeginText(pages[page_count-1]);
@@ -2048,7 +2118,7 @@ HPDF_Page_EndText(pages[page_count-1]);
      x=0;
 
      p = parser->Png_path_veryf("/azdk" + azdk.number + "o/quats-azdk"+ azdk.number +"o.y.png");
-     image = HPDF_LoadPngImageFromFile(pdf,p.toStdString().c_str());
+     image = HPDF_LoadPngImageFromFile(pdf,p.toLocal8Bit());
      HPDF_Page_DrawImage (pages[page_count-1], image, 40, HPDF_Page_GetHeight(pages[page_count-1]) - 340, 2339/4.6,1235/4.6);
 
 HPDF_Page_BeginText(pages[page_count-1]);
@@ -2060,7 +2130,7 @@ HPDF_Page_BeginText(pages[page_count-1]);
 HPDF_Page_EndText(pages[page_count-1]);
 
      p = parser->Png_path_veryf("/azdk" + azdk.number + "o/quats-azdk"+ azdk.number +"o.z.png");
-     image = HPDF_LoadPngImageFromFile(pdf,p.toStdString().c_str());
+     image = HPDF_LoadPngImageFromFile(pdf,p.toLocal8Bit());
      HPDF_Page_DrawImage (pages[page_count-1], image, 40, HPDF_Page_GetHeight(pages[page_count-1]) - 740, 2339/4.6,1235/4.6);
 
 HPDF_Page_BeginText(pages[page_count-1]);
@@ -2076,7 +2146,7 @@ HPDF_Page_EndText(pages[page_count-1]);
      x=0;
 
      p = parser->Png_path_veryf("/azdk" + azdk.number + "o/stats-frequency-azdk"+ azdk.number +"o.png");
-     image = HPDF_LoadPngImageFromFile(pdf,p.toStdString().c_str());
+     image = HPDF_LoadPngImageFromFile(pdf,p.toLocal8Bit());
      HPDF_Page_DrawImage (pages[page_count-1], image, 40, HPDF_Page_GetHeight(pages[page_count-1]) - 340, 4678/9.2,2423/9.2);
 
 HPDF_Page_BeginText(pages[page_count-1]);
@@ -2095,7 +2165,7 @@ HPDF_Page_EndText(pages[page_count-1]);
 
 
      p = parser->Png_path_veryf("/azdk" + azdk.number + "o/xyz-azdk"+ azdk.number +"o-angles.png");
-     image = HPDF_LoadPngImageFromFile(pdf,p.toStdString().c_str());
+     image = HPDF_LoadPngImageFromFile(pdf,p.toLocal8Bit());
      HPDF_Page_DrawImage (pages[page_count-1], image, 40, HPDF_Page_GetHeight(pages[page_count-1]) - 740, 4703/9.2,1857/9.2);
 
 HPDF_Page_BeginText(pages[page_count-1]);
@@ -2111,7 +2181,7 @@ HPDF_Page_EndText(pages[page_count-1]);
      x=0;
 
      p = parser->Png_path_veryf("/azdk" + azdk.number + "o/xyz-azdk"+ azdk.number +"o.png");
-     image = HPDF_LoadPngImageFromFile(pdf,p.toStdString().c_str());
+     image = HPDF_LoadPngImageFromFile(pdf,p.toLocal8Bit());
      HPDF_Page_DrawImage (pages[page_count-1], image, 125-60, HPDF_Page_GetHeight(pages[page_count-1]) - 360-150, 536/1.1,489/1.1);
 
 HPDF_Page_BeginText(pages[page_count-1]);

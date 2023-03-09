@@ -8,6 +8,8 @@
 #include <QtCore/QHash>
 #include <memory>
 
+
+
 class QTextStream;
 class QJsonArray;
 class QTimer;
@@ -32,6 +34,7 @@ enum class LogType {
 /// Класс для журналирования сообщений различных типов по разным файлам
 class AzdkLogger : public QObject
 {
+   
     Q_OBJECT
 
     using LogPtr = std::shared_ptr<QTextStream>;
