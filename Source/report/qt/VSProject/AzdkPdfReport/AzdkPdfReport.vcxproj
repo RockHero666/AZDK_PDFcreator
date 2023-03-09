@@ -13,31 +13,31 @@
   <PropertyGroup Label="Globals">
     <ProjectGuid>{2BC243CB-31DE-457D-B9D4-1507E2C4EB4D}</ProjectGuid>
     <Keyword>QtVS_v304</Keyword>
-    <WindowsTargetPlatformVersion Condition="'$(Configuration)|$(Platform)' == 'Debug|Win32'">10.0.19041.0</WindowsTargetPlatformVersion>
-    <WindowsTargetPlatformVersion Condition="'$(Configuration)|$(Platform)' == 'Release|Win32'">10.0.19041.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion Condition="'$(Configuration)|$(Platform)' == 'Debug|Win32'">10.0.20348.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion Condition="'$(Configuration)|$(Platform)' == 'Release|Win32'">10.0.20348.0</WindowsTargetPlatformVersion>
     <QtMsBuild Condition="'$(QtMsBuild)'=='' OR !Exists('$(QtMsBuild)\qt.targets')">$(MSBuildProjectDirectory)\QtMsBuild</QtMsBuild>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
-    <PlatformToolset>v143</PlatformToolset>
+    <PlatformToolset>v141</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
-    <PlatformToolset>v143</PlatformToolset>
+    <PlatformToolset>v141</PlatformToolset>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Condition="Exists('$(QtMsBuild)\qt_defaults.props')">
     <Import Project="$(QtMsBuild)\qt_defaults.props" />
   </ImportGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|Win32'" Label="QtSettings">
-    <QtInstall>5.14.2_msvc2017</QtInstall>
-    <QtModules>core;gui;widgets;core;gui;widgets;</QtModules>
+    <QtInstall>5.12.6.VC2017</QtInstall>
+    <QtModules>core;gui;widgets</QtModules>
     <QtBuildConfig>debug</QtBuildConfig>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|Win32'" Label="QtSettings">
-    <QtInstall>5.14.2_msvc2017</QtInstall>
-    <QtModules>core;gui;widgets;</QtModules>
+    <QtInstall>5.12.6.VC2017</QtInstall>
+    <QtModules>core;gui;widgets</QtModules>
     <QtBuildConfig>release</QtBuildConfig>
   </PropertyGroup>
   <Target Name="QtMsBuildNotFound" BeforeTargets="CustomBuild;ClCompile" Condition="!Exists('$(QtMsBuild)\qt.targets') or !Exists('$(QtMsBuild)\qt.props')">
@@ -56,28 +56,31 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|Win32'">
     <ExecutablePath>%MiscLibs%\bin;$(ExecutablePath)</ExecutablePath>
-    <IncludePath>%MiscLibs%;%MiscLibs%\include;$(IncludePath)</IncludePath>
-    <LibraryPath>C:\Program Files %28x86%29\libpng\lib;C:\Program Files %28x86%29\zlib\lib;%MiscLibs%\lib;C:\Program Files %28x86%29\libharu\lib;$(LibraryPath)</LibraryPath>
+    <LibraryPath>%MiscLibs%\lib;$(LibraryPath)</LibraryPath>
+    <IncludePath>%MiscLibs%\include;%MiscLibs%\include\hpdf;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|Win32'">
     <ExecutablePath>%MiscLibs%\bin;$(ExecutablePath)</ExecutablePath>
-    <IncludePath>%MiscLibs%;%MiscLibs%\include;$(IncludePath)</IncludePath>
-    <LibraryPath>C:\Program Files %28x86%29\libpng\lib;C:\Program Files %28x86%29\zlib\lib;%MiscLibs%\lib;C:\Program Files %28x86%29\libharu\lib;$(LibraryPath)</LibraryPath>
+    <LibraryPath>%MiscLibs%\lib;$(LibraryPath)</LibraryPath>
+    <IncludePath>%MiscLibs%\include;%MiscLibs%\include\hpdf;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Link />
+    <ClCompile />
     <Link>
-      <AdditionalDependencies>zlib.lib;libpng16.lib;hpdf.lib;%(AdditionalDependencies);$(Qt_LIBS_)</AdditionalDependencies>
+      <AdditionalDependencies>hpdf.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <ClCompile>
-      <AdditionalIncludeDirectories>C:\Program Files\libharu\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>__STDC_LIMIT_MACROS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <Link>
-      <AdditionalDependencies>zlib.lib;libpng16.lib;hpdf.lib;%(AdditionalDependencies);$(Qt_LIBS_)</AdditionalDependencies>
+      <AdditionalDependencies>hpdf.lib;%(AdditionalDependencies);$(Qt_LIBS_)</AdditionalDependencies>
     </Link>
+    <ClCompile />
     <ClCompile>
-      <AdditionalIncludeDirectories>C:\Program Files\libharu\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>__STDC_LIMIT_MACROS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|Win32'" Label="Configuration">
@@ -132,8 +135,6 @@
   </ItemGroup>
   <ItemGroup>
     <Image Include="..\..\otchet\error.png" />
-    <Image Include="..\..\otchet\icon.ico" />
-    <Image Include="icon1.ico" />
   </ItemGroup>
   <ItemGroup>
     <QtRcc Include="..\..\otchet\resource.qrc" />
