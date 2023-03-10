@@ -33,6 +33,7 @@ class MainWindow : public QWidget
     AzdkLogger save_log;
     Calendar calendar;
     Ui::MainForm* ui;
+    bool style = 1;
 
 public:
 
@@ -111,6 +112,7 @@ private slots:
     void on_create_button_clicked();
     void timer_slot();
     void open_close_logger_button_click();
+    void change_style();
 
     ///////////////////////////////////////////////////////////////////////
 

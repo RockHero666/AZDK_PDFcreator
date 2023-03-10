@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>780</width>
+    <width>963</width>
     <height>576</height>
    </rect>
   </property>
@@ -30,6 +30,9 @@
        <property name="title">
         <string>Информация для составления отчета</string>
        </property>
+       <property name="alignment">
+        <set>Qt::AlignCenter</set>
+       </property>
        <layout class="QFormLayout" name="formLayout">
         <item row="0" column="0">
          <widget class="QLabel" name="label_7">
@@ -39,11 +42,7 @@
          </widget>
         </item>
         <item row="0" column="1">
-         <widget class="QSpinBox" name="number_spinBox">
-          <property name="buttonSymbols">
-           <enum>QAbstractSpinBox::NoButtons</enum>
-          </property>
-         </widget>
+         <widget class="QSpinBox" name="number_spinBox"/>
         </item>
         <item row="1" column="0">
          <widget class="QLabel" name="label_19">
@@ -53,14 +52,7 @@
          </widget>
         </item>
         <item row="1" column="1">
-         <widget class="QSpinBox" name="number_ods_spinBox">
-          <property name="minimum">
-           <number>1</number>
-          </property>
-          <property name="maximum">
-           <number>999</number>
-          </property>
-         </widget>
+         <widget class="QSpinBox" name="number_ods_spinBox"/>
         </item>
         <item row="2" column="0">
          <widget class="QLabel" name="label_18">
@@ -207,7 +199,10 @@
         </sizepolicy>
        </property>
        <property name="title">
-        <string/>
+        <string>Информация о исходных данных данных </string>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignCenter</set>
        </property>
        <layout class="QFormLayout" name="formLayout_2">
         <item row="0" column="0">
@@ -296,6 +291,12 @@
        <layout class="QVBoxLayout" name="verticalLayout_2">
         <item>
          <widget class="QCheckBox" name="sfx_s">
+          <property name="styleSheet">
+           <string notr="true">QCheckBox::disabled {
+   
+   color: darkgray;
+}</string>
+          </property>
           <property name="text">
            <string>s</string>
           </property>
@@ -303,6 +304,12 @@
         </item>
         <item>
          <widget class="QCheckBox" name="sfx_ro1">
+          <property name="styleSheet">
+           <string notr="true">QCheckBox::disabled {
+   
+   color: darkgray;
+}</string>
+          </property>
           <property name="text">
            <string>r01</string>
           </property>
@@ -310,6 +317,12 @@
         </item>
         <item>
          <widget class="QCheckBox" name="sfx_r1">
+          <property name="styleSheet">
+           <string notr="true">QCheckBox::disabled {
+   
+   color: darkgray;
+}</string>
+          </property>
           <property name="text">
            <string>r1</string>
           </property>
@@ -317,6 +330,12 @@
         </item>
         <item>
          <widget class="QCheckBox" name="sfx_r2">
+          <property name="styleSheet">
+           <string notr="true">QCheckBox::disabled {
+   
+   color: darkgray;
+}</string>
+          </property>
           <property name="text">
            <string>r2</string>
           </property>
@@ -324,6 +343,12 @@
         </item>
         <item>
          <widget class="QCheckBox" name="sfx_r3">
+          <property name="styleSheet">
+           <string notr="true">QCheckBox::disabled {
+  
+   color: darkgray;
+}</string>
+          </property>
           <property name="text">
            <string>r3</string>
           </property>
@@ -334,6 +359,12 @@
           <property name="layoutDirection">
            <enum>Qt::LeftToRight</enum>
           </property>
+          <property name="styleSheet">
+           <string notr="true">QCheckBox::disabled {
+ 
+   color: darkgray;
+}</string>
+          </property>
           <property name="text">
            <string>o</string>
           </property>
@@ -341,6 +372,12 @@
         </item>
         <item>
          <widget class="QCheckBox" name="sfx_all">
+          <property name="styleSheet">
+           <string notr="true">QCheckBox::disabled {
+   
+   color: darkgray;
+}</string>
+          </property>
           <property name="text">
            <string>выбрать все</string>
           </property>
@@ -358,78 +395,51 @@
         </sizepolicy>
        </property>
        <property name="title">
-        <string>Путь для формирования отчета</string>
+        <string>Панель управления</string>
        </property>
-       <layout class="QVBoxLayout" name="verticalLayout">
-        <item>
+       <property name="alignment">
+        <set>Qt::AlignCenter</set>
+       </property>
+       <layout class="QFormLayout" name="formLayout_3">
+        <item row="0" column="0">
+         <widget class="QLabel" name="label_17">
+          <property name="text">
+           <string>Путь для формирования отчета</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignCenter</set>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="1">
          <widget class="FilePathEdit" name="fpe_2">
           <property name="dialogMode" stdset="0">
            <enum>FilePathEdit::FILESAVE</enum>
           </property>
          </widget>
         </item>
-        <item>
-         <widget class="QPushButton" name="to_path_button">
-          <property name="text">
-           <string>Перейти в каталог</string>
-          </property>
-         </widget>
-        </item>
-        <item alignment="Qt::AlignRight">
-         <widget class="QPushButton" name="loger_button">
-          <property name="toolTip">
-           <string>Показ журнала сообщений</string>
-          </property>
-          <property name="autoFillBackground">
-           <bool>false</bool>
-          </property>
-          <property name="text">
-           <string/>
-          </property>
-          <property name="icon">
-           <iconset resource="resource.qrc">
-            <normaloff>:/res/res/r.png</normaloff>
-            <normalon>:/res/res/l.png</normalon>:/res/res/r.png</iconset>
-          </property>
-          <property name="checkable">
-           <bool>true</bool>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <spacer name="verticalSpacer">
-          <property name="orientation">
-           <enum>Qt::Vertical</enum>
-          </property>
-          <property name="sizeHint" stdset="0">
-           <size>
-            <width>20</width>
-            <height>40</height>
-           </size>
-          </property>
-         </spacer>
-        </item>
-        <item>
-         <widget class="QPushButton" name="create_button">
-          <property name="font">
-           <font>
-            <weight>75</weight>
-            <bold>true</bold>
-           </font>
-          </property>
-          <property name="text">
-           <string>Сделать отчет</string>
-          </property>
-         </widget>
-        </item>
-        <item>
+        <item row="1" column="1">
          <widget class="QPushButton" name="open_file">
           <property name="text">
            <string>Открыть файл</string>
           </property>
          </widget>
         </item>
-        <item>
+        <item row="2" column="1">
+         <widget class="QPushButton" name="to_path_button">
+          <property name="text">
+           <string>Перейти в каталог</string>
+          </property>
+         </widget>
+        </item>
+        <item row="3" column="1">
+         <widget class="QPushButton" name="create_button">
+          <property name="text">
+           <string>Сделать отчет</string>
+          </property>
+         </widget>
+        </item>
+        <item row="8" column="0" colspan="2">
          <widget class="QProgressBar" name="progressBar">
           <property name="styleSheet">
            <string notr="true">QProgressBar {
@@ -450,10 +460,71 @@
           </property>
          </widget>
         </item>
+        <item row="7" column="0">
+         <widget class="QPushButton" name="style_button">
+          <property name="minimumSize">
+           <size>
+            <width>30</width>
+            <height>30</height>
+           </size>
+          </property>
+          <property name="maximumSize">
+           <size>
+            <width>30</width>
+            <height>30</height>
+           </size>
+          </property>
+          <property name="layoutDirection">
+           <enum>Qt::LeftToRight</enum>
+          </property>
+          <property name="text">
+           <string/>
+          </property>
+          <property name="icon">
+           <iconset resource="resource.qrc">
+            <normaloff>:/res/res/style.png</normaloff>:/res/res/style.png</iconset>
+          </property>
+         </widget>
+        </item>
+        <item row="6" column="1">
+         <spacer name="verticalSpacer">
+          <property name="orientation">
+           <enum>Qt::Vertical</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>20</width>
+            <height>40</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
        </layout>
       </widget>
      </item>
     </layout>
+   </item>
+   <item row="0" column="1">
+    <widget class="QPushButton" name="loger_button">
+     <property name="maximumSize">
+      <size>
+       <width>17</width>
+       <height>52</height>
+      </size>
+     </property>
+     <property name="autoFillBackground">
+      <bool>false</bool>
+     </property>
+     <property name="text">
+      <string/>
+     </property>
+     <property name="checkable">
+      <bool>true</bool>
+     </property>
+     <property name="checked">
+      <bool>false</bool>
+     </property>
+    </widget>
    </item>
    <item row="0" column="2">
     <widget class="LogWidget" name="loger" native="true">

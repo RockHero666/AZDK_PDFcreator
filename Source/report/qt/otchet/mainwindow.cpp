@@ -36,7 +36,8 @@ MainWindow::MainWindow(QWidget* parent)
 	save_log.open("log.json", LogType::Common, "json");
 	
 	ui->loger->hide();
-
+	
+	setFocus();
 }
 
 MainWindow::~MainWindow()
@@ -307,6 +308,9 @@ void MainWindow::to_open_path()
 
 void MainWindow::ui_load_and_config()
 {
+	ui->loger_button->setIcon(QIcon(":/res/res/r.png"));
+
+
 	QSettings settings("PDF_creator.ini", QSettings::IniFormat);
 
 	QVector<QString> fonts = parser.font_pars();
@@ -437,6 +441,7 @@ void MainWindow::save_state()
 
 void MainWindow::connects()
 {
+	connect(ui->style_button, &QPushButton::clicked, this, &MainWindow::change_style);
 
 	connect(&timer, SIGNAL(timeout()), this, SLOT(timer_slot()));
 
@@ -444,7 +449,7 @@ void MainWindow::connects()
 	connect(ui->open_file, &QPushButton::clicked, this, &MainWindow::to_open_path);
 	connect(ui->fpe, &FilePathEdit::pathChanged, this, &MainWindow::text_path_line_changed);
 	connect(ui->fpe_2, &FilePathEdit::pathChanged, this, &MainWindow::text_save_line_changed);
-	//connect(ui->loger_button, &QPushButton::clicked, this, &MainWindow::open_close_logger_button_click);
+	connect(ui->loger_button, &QPushButton::clicked, this, &MainWindow::open_close_logger_button_click);
 
 	connect(pdf_creator, SIGNAL(progress(int)), ui->progressBar, SLOT(setValue(int)));
 	connect(pdf_creator, SIGNAL(error(const QString&)), this, SLOT(error(const QString&)));
@@ -612,22 +617,65 @@ void MainWindow::timer_slot()
 
 void MainWindow::open_close_logger_button_click()
 {
-	
+	if (ui->loger_button->isChecked())
+		ui->loger_button->setIcon(QIcon(":/res/res/l.png"));
+	else
+		ui->loger_button->setIcon(QIcon(":/res/res/r.png"));
+}
 
-	if (!ui->loger->isHidden())
+void MainWindow::change_style()
+{
+
+	if (style)
 	{
-		int w = ui->loger->size().width();
-		ui->loger->hide();
 		
-		resize(width() - 1000, height());
+		QPalette palette = qApp->style()->standardPalette();
+		palette.setColor(palette.Text, Qt::black);
+		qApp->setPalette(palette);
+
+		ui->sfx_o->setStyleSheet("");
+		ui->sfx_ro1->setStyleSheet("");
+		ui->sfx_r1->setStyleSheet("");
+		ui->sfx_r2->setStyleSheet("");
+		ui->sfx_r3->setStyleSheet("");
+		ui->sfx_s->setStyleSheet("");
+		ui->sfx_all->setStyleSheet("");
+
+		style = 0;
 	}
 	else
 	{
-		
-		ui->loger->show();
-		//resize(width() + 300, height());
-		
-	}
+		QPalette palette;
 
+
+		palette.setColor(palette.Window, QColor(53, 53, 53));
+		palette.setColor(palette.WindowText, Qt::white);
+		palette.setColor(palette.Base, QColor(25, 25, 25));
+		palette.setColor(palette.AlternateBase, QColor(53, 53, 53));
+		palette.setColor(palette.ToolTipBase, Qt::black);
+		palette.setColor(palette.ToolTipText, Qt::white);
+		palette.setColor(palette.Text, Qt::white);
+		palette.setColor(palette.Button, QColor(53, 53, 53));
+		palette.setColor(palette.ButtonText, Qt::white);
+		palette.setColor(palette.BrightText, Qt::red);
+		palette.setColor(palette.Link, QColor(42, 130, 218));
+		palette.setColor(palette.Highlight, QColor(42, 130, 218));
+		palette.setColor(palette.HighlightedText, Qt::black);
+
+		qApp->setPalette(palette);
+
+		QString sheet = "QCheckBox::disabled {color: darkgray;}";
+
+		ui->sfx_o->setStyleSheet(sheet);
+		ui->sfx_ro1->setStyleSheet(sheet);
+		ui->sfx_r1->setStyleSheet(sheet);
+		ui->sfx_r2->setStyleSheet(sheet);
+		ui->sfx_r3->setStyleSheet(sheet);
+		ui->sfx_s->setStyleSheet(sheet);
+		ui->sfx_all->setStyleSheet(sheet);
+
+
+		style = 1;
+	}
 
 }

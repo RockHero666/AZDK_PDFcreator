@@ -3,5 +3,6 @@
         <file>icon.ico</file>
         <file>res/l.png</file>
         <file>res/r.png</file>
+        <file>res/style.png</file>
     </qresource>
 </RCC>
