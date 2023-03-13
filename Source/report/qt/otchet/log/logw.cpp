@@ -200,3 +200,9 @@ void LogWidget::changeEvent(QEvent* e)
     }
     else QWidget::changeEvent(e);
 }
+
+
+void LogWidget::style_changed(bool style)
+{
+    mModel->style_change(style);
+}

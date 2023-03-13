@@ -38,7 +38,7 @@ public:
     QVector<QString> font_pars();
 
 signals:
-    void log_message(const QString & message, QRgb color = QRgb());
+    void log_message(const QString & message, QRgb color = qRgb(255, 255, 255));
 };
 
 #endif // PARSER_H

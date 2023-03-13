@@ -11,6 +11,7 @@
 #include "ui_mainwindow3.h"
 #include "ngts/filepathedit.h"
 
+
 MainWindow::MainWindow(QWidget* parent)
 	: QWidget(parent),
 	progress(0),
@@ -163,6 +164,7 @@ void MainWindow::on_Calendar_button_clicked()
 void MainWindow::another_window_close()
 {
 	ui->create_button->setDisabled(false);
+	ui->Calendar_button->setText(setDate());
 }
 
 void MainWindow::on_firmware_line_textChanged(const QString& arg1)
@@ -308,6 +310,8 @@ void MainWindow::to_open_path()
 
 void MainWindow::ui_load_and_config()
 {
+	ui->progressBar->hide();
+
 	ui->loger_button->setIcon(QIcon(":/res/res/r.png"));
 
 
@@ -380,8 +384,13 @@ void MainWindow::ui_load_and_config()
 	ui->speed_comboBox->setCurrentIndex(settings.value("speed").toInt());
 	ui->comboBox->setCurrentIndex(settings.value("interface_").toInt());
 
-	calendar.set_date_begin(settings.value("time_start_y").toInt(), settings.value("time_start_m").toInt(), settings.value("time_start_d").toInt());
-	calendar.set_date_end(settings.value("time_end_y").toInt(), settings.value("time_end_m").toInt(), settings.value("time_end_d").toInt());
+	if (settings.value("time_start_y").toBool() && settings.value("time_start_m").toBool()&& settings.value("time_start_d").toBool() &&
+		settings.value("time_end_y").toBool() && settings.value("time_end_m").toBool(), settings.value("time_end_d").toBool())
+	{
+		calendar.set_date_begin(settings.value("time_start_y").toInt(), settings.value("time_start_m").toInt(), settings.value("time_start_d").toInt());
+		calendar.set_date_end(settings.value("time_end_y").toInt(), settings.value("time_end_m").toInt(), settings.value("time_end_d").toInt());
+		another_window_close();// Первоначальная надпись на кнопке в слоте закрытия календаря
+	}
 
 	if (settings.value("AZDK_ver").toBool())
 		azdk.ver = settings.value("AZDK_ver").toString();
@@ -441,6 +450,9 @@ void MainWindow::save_state()
 
 void MainWindow::connects()
 {
+
+	connect(this, &MainWindow::style_change, ui->loger, &LogWidget::style_changed);
+
 	connect(ui->style_button, &QPushButton::clicked, this, &MainWindow::change_style);
 
 	connect(&timer, SIGNAL(timeout()), this, SLOT(timer_slot()));
@@ -520,6 +532,27 @@ QString MainWindow::setDate()
 
 void MainWindow::block_unblock_ui()
 {
+	if (ui->progressBar->isHidden())
+	{
+		ui->progressBar->show();
+		if (style)
+		{
+			ui->indicator->setPixmap(QPixmap(":/res/res/indicator_off.png"));
+			ui->open_file->setDisabled(true);
+		}
+		else
+		{
+			ui->indicator->setPixmap(QPixmap(":/res/res/indicator_off_white_style.png"));
+			ui->open_file->setDisabled(true);
+		}
+	}
+	else
+	{
+		ui->progressBar->hide();
+		ui->indicator->setPixmap(QPixmap(":/res/res/indicator_on.png"));
+		ui->open_file->setDisabled(false);
+	}
+
 	bool state;
 	if (ui->fpe->isEnabled())
 		state = 1;
@@ -545,8 +578,7 @@ void MainWindow::block_unblock_ui()
 	ui->Calendar_button->setDisabled(state);
 	ui->fpe->setDisabled(state);
 	ui->fpe_2->setDisabled(state);
-	ui->open_file->setDisabled(state);
-
+	
 	ui->fpe_2->setDisabled(state);
 
 	ui->create_button->setDisabled(state);
@@ -579,6 +611,8 @@ void MainWindow::on_create_button_clicked()
 	{
 		try
 		{
+			
+
 			pdf_creator->set_template_files(ui->name_report_line->text(), ui->management_report_line->text(), ui->management_sky_report_line->text());
 			pdf_creator->set_sfx_state(ui->sfx_s->checkState(), ui->sfx_ro1->checkState(), ui->sfx_r1->checkState(), ui->sfx_r2->checkState(), ui->sfx_r3->checkState(), ui->sfx_o->checkState());
 			azdk.time = setDate();
@@ -593,6 +627,10 @@ void MainWindow::on_create_button_clicked()
 			block_unblock_ui();
 
 			save_state();
+
+			
+
+			
 		}
 		catch (std::runtime_error& ex) {
 			throw(ex);
@@ -610,9 +648,6 @@ void MainWindow::timer_slot()
 
 	if (settings.value("AZDK_ver").toBool())
 		azdk.ver = settings.value("AZDK_ver").toString();
-
-	//if (settings.value("PDF_font").toBool())
-		//pdf_creator->set_font_name(settings.value("PDF_font").toString());
 }
 
 void MainWindow::open_close_logger_button_click()
@@ -628,9 +663,11 @@ void MainWindow::change_style()
 
 	if (style)
 	{
-		
+		emit style_change(style);
+
 		QPalette palette = qApp->style()->standardPalette();
 		palette.setColor(palette.Text, Qt::black);
+		
 		qApp->setPalette(palette);
 
 		ui->sfx_o->setStyleSheet("");
@@ -641,13 +678,17 @@ void MainWindow::change_style()
 		ui->sfx_s->setStyleSheet("");
 		ui->sfx_all->setStyleSheet("");
 
+
+		
+		
+
 		style = 0;
 	}
 	else
 	{
+		emit style_change(style);
+
 		QPalette palette;
-
-
 		palette.setColor(palette.Window, QColor(53, 53, 53));
 		palette.setColor(palette.WindowText, Qt::white);
 		palette.setColor(palette.Base, QColor(25, 25, 25));
@@ -674,8 +715,6 @@ void MainWindow::change_style()
 		ui->sfx_s->setStyleSheet(sheet);
 		ui->sfx_all->setStyleSheet(sheet);
 
-
 		style = 1;
 	}
-
 }

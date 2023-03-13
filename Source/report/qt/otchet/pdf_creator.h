@@ -92,7 +92,7 @@ signals:
     void progress(int val);  // для прогрес бара
     void error(const QString & message);
     void unblock_ui();
-    void log_message(const QString & message,QRgb color = QRgb());
+    void log_message(const QString & message,QRgb color = qRgb(255, 255, 255));
 };
 
 

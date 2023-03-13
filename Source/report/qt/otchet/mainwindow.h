@@ -39,6 +39,10 @@ public:
 
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
+
+signals:
+
+    void style_change(bool style);
     
 private slots:
 

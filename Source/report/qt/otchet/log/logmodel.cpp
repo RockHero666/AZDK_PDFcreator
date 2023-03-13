@@ -133,3 +133,24 @@ void LogModel::addArea(int id, const QString& _name)
 {
     mAreas.insert(id, _name);
 }
+
+
+void LogModel::style_change(bool style)
+{
+    if (style)
+    {
+        for (int i = 0; i < mMessages.size(); i++)
+        {
+            if (mMessages[i].color == qRgb(255, 255, 255))
+                mMessages[i].color = QRgb();
+        }
+    }
+    else
+    {
+        for (int i = 0; i < mMessages.size(); i++)
+        {
+            if (mMessages[i].color == QRgb())
+                mMessages[i].color = qRgb(255, 255, 255);
+        }
+    }
+}

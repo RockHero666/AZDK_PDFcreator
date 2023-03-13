@@ -45,6 +45,9 @@ public:
 
     void addArea(int id, const QString& _name);
 
+
+    void style_change(bool style);
+
 protected:
     QList<MessageNode> mMessages;
     QHash<int, QString> mAreas;

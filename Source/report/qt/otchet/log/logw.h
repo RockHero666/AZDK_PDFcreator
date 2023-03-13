@@ -30,6 +30,9 @@ public:
     bool isTimestampEnabled() const { return mTimestampEnabled; }
     void enableTimestamp(bool on);
 
+public slots:
+    void style_changed(bool style);
+
 protected:
     void setupUi();
     void createContextMenuActions();

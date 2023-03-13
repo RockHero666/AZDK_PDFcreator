@@ -4,5 +4,8 @@
         <file>res/l.png</file>
         <file>res/r.png</file>
         <file>res/style.png</file>
+        <file>res/indicator_off.png</file>
+        <file>res/indicator_on.png</file>
+        <file>res/indicator_off_white_style.png</file>
     </qresource>
 </RCC>
