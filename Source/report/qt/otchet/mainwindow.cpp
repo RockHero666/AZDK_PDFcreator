@@ -36,7 +36,8 @@ MainWindow::MainWindow(QWidget* parent)
 	timer.start(1000);
 	save_log.open("log.json", LogType::Common, "json");
 	
-	ui->loger->hide();
+	
+	
 	
 	setFocus();
 }
@@ -238,12 +239,18 @@ void MainWindow::text_path_line_changed(const QString& arg1)
 	{
 		parser.set_path(arg1);
 		parser.to_parse_current_dir();
+		auto date = parser.parse_calendar_date_from_file();
+
+		calendar.set_date_begin(date[0]);
+		calendar.set_date_end(date[1]);
+		another_window_close();// Первоначальная надпись на кнопке в слоте закрытия календаря
+
 	}
 	check_box_checker();
 
 	QString number;
 
-	for (int i = 0; i < parser.all_paths.size(); i++)
+	for (int i = 0; i < parser.all_paths.size(); i++) // автозаполнения номера отчета
 	{
 		if (parser.all_paths[i].indexOf(ui->name_report_line->text()) != -1)
 		{
@@ -310,6 +317,8 @@ void MainWindow::to_open_path()
 
 void MainWindow::ui_load_and_config()
 {
+	ui->open_file->setDisabled(true);
+	ui->loger->hide();
 	ui->progressBar->hide();
 
 	ui->loger_button->setIcon(QIcon(":/res/res/r.png"));
@@ -339,7 +348,7 @@ void MainWindow::ui_load_and_config()
 		}
 	}
 	
-
+	change_style();// первичная инициализация стиля
 
 
 
@@ -714,6 +723,11 @@ void MainWindow::change_style()
 		ui->sfx_r3->setStyleSheet(sheet);
 		ui->sfx_s->setStyleSheet(sheet);
 		ui->sfx_all->setStyleSheet(sheet);
+
+		sheet = "QPushButton::disabled {color: darkgray;}";
+
+		ui->open_file->setStyleSheet(sheet);
+		ui->create_button->setStyleSheet(sheet);
 
 		style = 1;
 	}

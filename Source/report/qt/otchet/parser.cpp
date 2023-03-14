@@ -745,3 +745,47 @@ int Parser::Find_time_on_vector(QVector<QString>& time_vect ,QString time , bool
 
  }
 
+ QVector<QDate> Parser::parse_calendar_date_from_file()
+ {
+     QVector<QDateTime> date;
+     QVector<QDate> result_date;
+     QVector<QDateTime> min_max_date;
+     
+
+     if (all_paths.size())
+         all_paths.clear();
+
+     QDirIterator it(path, QDir::Files, QDirIterator::QDirIterator::NoIteratorFlags);
+     while (it.hasNext())
+         all_paths.push_back(it.next());
+
+     for (int i = 0; i < all_paths.size(); i++)
+     {
+         QFileInfo file = all_paths[i];
+
+         if (file.suffix() == "txt")
+             date.push_back( file.lastModified());
+
+     }
+
+     min_max_date.push_back(date[0]);
+     min_max_date.push_back(date[0]);
+
+     for (int i = 0; i < date.size()-1; i++)
+     {
+        
+         if (min_max_date[0] > date[i])
+             min_max_date[0] = date[i];
+
+         if (min_max_date[1] < date[i])
+             min_max_date[1] = date[i];
+
+     }
+
+     result_date.push_back(min_max_date[0].date());
+     result_date.push_back(min_max_date[1].date());
+
+     return result_date;
+
+ }
+

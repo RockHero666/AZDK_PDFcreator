@@ -39,6 +39,16 @@ void Calendar::set_date_end(int y,int m,int d)
     ui->calendar_end->setSelectedDate(QDate(y,m,d));
 }
 
+void Calendar::set_date_begin(QDate& date)
+{
+    ui->calendar_begin->setSelectedDate(date);
+}
+
+void Calendar::set_date_end(QDate& date)
+{
+    ui->calendar_end->setSelectedDate(date);
+}
+
 void Calendar::on_close_clicked()
 {
     QDate start = get_date_begin();

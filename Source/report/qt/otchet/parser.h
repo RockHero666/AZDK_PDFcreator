@@ -37,6 +37,8 @@ public:
     bool is_exists(const QString& path);
     QVector<QString> font_pars();
 
+    QVector<QDate> parse_calendar_date_from_file(); // поиск минимальной и максимальной даты испытаний
+
 signals:
     void log_message(const QString & message, QRgb color = qRgb(255, 255, 255));
 };

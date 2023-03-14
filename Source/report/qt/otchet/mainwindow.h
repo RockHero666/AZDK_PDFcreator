@@ -33,7 +33,7 @@ class MainWindow : public QWidget
     AzdkLogger save_log;
     Calendar calendar;
     Ui::MainForm* ui;
-    bool style = 1;
+    bool style = 0;
 
 public:
 

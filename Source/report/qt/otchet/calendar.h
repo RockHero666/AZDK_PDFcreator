@@ -19,7 +19,8 @@ public:
 
     void set_date_begin(int y,int m,int d);
     void set_date_end(int y,int m,int d);
-
+    void set_date_begin(QDate & date);
+    void set_date_end(QDate& date);
 
 
 private slots:
