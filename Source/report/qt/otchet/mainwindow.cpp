@@ -241,9 +241,14 @@ void MainWindow::text_path_line_changed(const QString& arg1)
 		parser.to_parse_current_dir();
 		auto date = parser.parse_calendar_date_from_file();
 
-		calendar.set_date_begin(date[0]);
-		calendar.set_date_end(date[1]);
-		another_window_close();// Первоначальная надпись на кнопке в слоте закрытия календаря
+		if (date.size())
+		{
+			calendar.set_date_begin(date[0]);
+			calendar.set_date_end(date[1]);
+			another_window_close();// Первоначальная надпись на кнопке в слоте закрытия календаря
+		}
+		else
+			ui->Calendar_button->setText("Выставить дату");
 
 	}
 	check_box_checker();
@@ -500,8 +505,7 @@ void MainWindow::connects()
 
 bool MainWindow::checker()
 {
-	if (ui->sfx_all->isChecked()) {}
-	else if (ui->sfx_o->isChecked() || ui->sfx_ro1->isChecked() || ui->sfx_r1->isChecked() || ui->sfx_r2->isChecked() || ui->sfx_r3->isChecked() || ui->sfx_s->isChecked()) {}
+	if (ui->sfx_o->isChecked() || ui->sfx_ro1->isChecked() || ui->sfx_r1->isChecked() || ui->sfx_r2->isChecked() || ui->sfx_r3->isChecked() || ui->sfx_s->isChecked()) {}
 	else
 		return false;
 

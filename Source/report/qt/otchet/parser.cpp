@@ -768,23 +768,27 @@ int Parser::Find_time_on_vector(QVector<QString>& time_vect ,QString time , bool
 
      }
 
-     min_max_date.push_back(date[0]);
-     min_max_date.push_back(date[0]);
-
-     for (int i = 0; i < date.size()-1; i++)
+     if (date.size())
      {
-        
-         if (min_max_date[0] > date[i])
-             min_max_date[0] = date[i];
+         min_max_date.push_back(date[0]);
+         min_max_date.push_back(date[0]);
 
-         if (min_max_date[1] < date[i])
-             min_max_date[1] = date[i];
+         for (int i = 0; i < date.size() - 1; i++)
+         {
+
+             if (min_max_date[0] > date[i])
+                 min_max_date[0] = date[i];
+
+             if (min_max_date[1] < date[i])
+                 min_max_date[1] = date[i];
+
+         }
+
+         result_date.push_back(min_max_date[0].date());
+         result_date.push_back(min_max_date[1].date());
+
 
      }
-
-     result_date.push_back(min_max_date[0].date());
-     result_date.push_back(min_max_date[1].date());
-
      return result_date;
 
  }
