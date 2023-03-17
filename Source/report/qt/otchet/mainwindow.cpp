@@ -379,7 +379,14 @@ void MainWindow::ui_load_and_config()
 	ui->size_doubleSpinBox->setRange(0, 99999999);
 	ui->duration_spinBox->setRange(0, 99999999);
 
+	ui->intensity_doubleSpinBox->setSingleStep(0.1);
+	ui->influence_doubleSpinBox->setSingleStep(0.05);
+	ui->focus_doubleSpinBox->setSingleStep(0.05);
+	ui->size_doubleSpinBox->setSingleStep(0.25);
+	ui->duration_spinBox->setSingleStep(10);
+
 	
+
 
 	ui->number_spinBox->setValue(settings.value("number").toInt());
 	ui->size_doubleSpinBox->setValue(settings.value("size").toDouble());
@@ -692,7 +699,8 @@ void MainWindow::change_style()
 		ui->sfx_all->setStyleSheet("");
 
 
-		
+		ui->open_file->setStyleSheet("");
+		ui->create_button->setStyleSheet("");
 		
 
 		style = 0;

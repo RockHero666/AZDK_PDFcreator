@@ -73,7 +73,7 @@ void Parser::set_path(const QString & path)
      }
      else
      {
-         emit log_message("Ошибка в пути к файлам!",qRgb(255,0,0));
+         emit log_message("Ошибка в пути к файлам! Path = " + e_path,qRgb(255,0,0));
          throw std::runtime_error("bad_path");
      }
 
@@ -145,7 +145,7 @@ void Parser::set_path(const QString & path)
      }
      else
      {
-         emit log_message("Ошибка в пути к файлам!", qRgb(255, 0, 0));
+         emit log_message("Ошибка в пути к файлам! Path = " + s_path, qRgb(255, 0, 0));
          throw std::runtime_error("bad_path");
      }
 
@@ -193,7 +193,10 @@ void Parser::set_path(const QString & path)
          }
      }
      else
+     {
+         emit log_message("Ошибка в пути к файлам! Path = " + c_path, qRgb(255, 0, 0));
          throw std::runtime_error("bad_path");
+     }
 
      file_line = all_text.split('\n'); // разделяем единую строку на лист стрингов по разделителю
 
@@ -368,7 +371,7 @@ int Parser::Find_time_on_vector(QVector<QString>& time_vect ,QString time , bool
      }
      else
      {
-         emit log_message("Ошибка в пути к файлам!", qRgb(255, 0, 0));
+         emit log_message("Ошибка в пути к файлам! Path = " + azdk_s_path, qRgb(255, 0, 0));
          throw std::runtime_error("bad_path");
      }
 
@@ -401,7 +404,10 @@ int Parser::Find_time_on_vector(QVector<QString>& time_vect ,QString time , bool
          server.close();
      }
      else
-         throw std::runtime_error("bad_path");
+     {
+         emit log_message("Ошибка в пути к файлам! Path = " + s_path, qRgb(255, 0, 0));
+     throw std::runtime_error("bad_path");
+     }
 
 
      file_line = all_text.split('\n'); // разделяем единую строку на лист стрингов по разделителю
@@ -648,7 +654,10 @@ int Parser::Find_time_on_vector(QVector<QString>& time_vect ,QString time , bool
          error.close();
      }
      else
+     {
+         emit log_message("Ошибка в пути к файлам! Path = " + e_path, qRgb(255, 0, 0));
          throw std::runtime_error("bad_path");
+     }
 
      file_line = all_text.split('\n'); // разделяем единую строку на лист стрингов по разделителю
 

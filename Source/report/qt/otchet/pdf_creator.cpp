@@ -790,24 +790,12 @@ void PDF_creator::set_parser(Parser & parser)
 
 		   try {
 
-
-			   try {
-
 				   if (sfx_state[0]) // s
 				   {
 					   s_otchet();
 					   emit progress(20);
 
 				   }
-
-			   }
-			   catch (std::runtime_error& ex)
-			   {
-				   QApplication::beep();
-				   emit error(QString(ex.what()));
-			   }
-
-			   try {
 
 				   if (sfx_state[1]) // r01
 				   {
@@ -816,35 +804,12 @@ void PDF_creator::set_parser(Parser & parser)
 
 				   }
 
-			   }
-
-			   catch (std::runtime_error& ex)
-			   {
-				   QApplication::beep();
-				   emit error(QString(ex.what()));
-			   }
-
-
-			   try {
-
 				   if (sfx_state[2]) // r1
 				   {
 					   r1_otchet();
 					   emit progress(60);
 
 				   }
-
-			   }
-
-			   catch (std::runtime_error& ex)
-			   {
-				   QApplication::beep();
-				   emit error(QString(ex.what()));
-			   }
-
-			   try {
-
-
 
 				   if (sfx_state[3]) // r2
 				   {
@@ -853,16 +818,6 @@ void PDF_creator::set_parser(Parser & parser)
 
 				   }
 
-			   }
-
-			   catch (std::runtime_error& ex)
-			   {
-				   QApplication::beep();
-				   emit error(QString(ex.what()));
-			   }
-
-			   try {
-
 				   if (sfx_state[4]) // r3
 				   {
 					   r3_otchet();
@@ -870,43 +825,21 @@ void PDF_creator::set_parser(Parser & parser)
 
 				   }
 
-			   }
-
-			   catch (std::runtime_error& ex)
-			   {
-				   QApplication::beep();
-				   emit error(QString(ex.what()));
-			   }
-
-			   try {
-
-
-
 				   if (sfx_state[5]) // o
 				   {
 					   o_otchet();
 					   emit progress(95);
 				   }
 
-			   }
-
-			   catch (std::runtime_error& ex)
-			   {
-				   QApplication::beep();
-				   emit error(QString(ex.what()));
-			   }
-
-
 		   }
 
-		   catch (...)
+		   catch (std::runtime_error &ex)
 		   {
 			   QApplication::beep();
-			   emit error(QString("crash algorithm"));
+			   emit error(QString(ex.what()));
+               free();
+               
 		   }
-
-
-
 
 		   end_work();
 

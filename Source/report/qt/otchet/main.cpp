@@ -4,11 +4,15 @@
 #include <QStyle>
 
 
-
-int main(int argc, char *argv[])
+int WINAPI wWinMain(
+    HINSTANCE   hInstance,
+    HINSTANCE   hPrevInstance,
+    PWSTR       lpCmdLine,
+    int         nCmdShow
+)
 {
-
-	QApplication app(argc, argv);
+    
+	QApplication app(__argc, __argv);
 	MainWindow w;
 
     QString defaultStyleName = qApp->style()->objectName();

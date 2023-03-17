@@ -401,6 +401,12 @@
         <set>Qt::AlignCenter</set>
        </property>
        <layout class="QFormLayout" name="formLayout_3">
+        <property name="labelAlignment">
+         <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+        </property>
+        <property name="formAlignment">
+         <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
+        </property>
         <item row="0" column="0">
          <widget class="QLabel" name="label_17">
           <property name="text">
@@ -418,6 +424,38 @@
           </property>
          </widget>
         </item>
+        <item row="1" column="0">
+         <layout class="QHBoxLayout" name="horizontalLayout">
+          <property name="leftMargin">
+           <number>139</number>
+          </property>
+          <property name="topMargin">
+           <number>2</number>
+          </property>
+          <property name="bottomMargin">
+           <number>0</number>
+          </property>
+          <item>
+           <widget class="QLabel" name="indicator">
+            <property name="maximumSize">
+             <size>
+              <width>20</width>
+              <height>20</height>
+             </size>
+            </property>
+            <property name="text">
+             <string/>
+            </property>
+            <property name="pixmap">
+             <pixmap resource="resource.qrc">:/res/res/indicator_off.png</pixmap>
+            </property>
+            <property name="scaledContents">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </item>
         <item row="1" column="1">
          <widget class="QPushButton" name="open_file">
           <property name="text">
@@ -429,13 +467,6 @@
          <widget class="QPushButton" name="to_path_button">
           <property name="text">
            <string>Перейти в каталог</string>
-          </property>
-         </widget>
-        </item>
-        <item row="3" column="1">
-         <widget class="QPushButton" name="create_button">
-          <property name="text">
-           <string>Сделать отчет</string>
           </property>
          </widget>
         </item>
@@ -478,6 +509,22 @@
           </property>
          </widget>
         </item>
+        <item row="7" column="1">
+         <widget class="QPushButton" name="create_button">
+          <property name="minimumSize">
+           <size>
+            <width>0</width>
+            <height>30</height>
+           </size>
+          </property>
+          <property name="layoutDirection">
+           <enum>Qt::LeftToRight</enum>
+          </property>
+          <property name="text">
+           <string>Сделать отчет</string>
+          </property>
+         </widget>
+        </item>
         <item row="8" column="0" colspan="2">
          <widget class="QProgressBar" name="progressBar">
           <property name="styleSheet">
@@ -501,38 +548,6 @@
            <enum>QProgressBar::TopToBottom</enum>
           </property>
          </widget>
-        </item>
-        <item row="1" column="0">
-         <layout class="QHBoxLayout" name="horizontalLayout">
-          <property name="leftMargin">
-           <number>139</number>
-          </property>
-          <property name="topMargin">
-           <number>2</number>
-          </property>
-          <property name="bottomMargin">
-           <number>0</number>
-          </property>
-          <item>
-           <widget class="QLabel" name="indicator">
-            <property name="maximumSize">
-             <size>
-              <width>20</width>
-              <height>20</height>
-             </size>
-            </property>
-            <property name="text">
-             <string/>
-            </property>
-            <property name="pixmap">
-             <pixmap resource="resource.qrc">:/res/res/indicator_off.png</pixmap>
-            </property>
-            <property name="scaledContents">
-             <bool>true</bool>
-            </property>
-           </widget>
-          </item>
-         </layout>
         </item>
        </layout>
       </widget>
