@@ -802,3 +802,63 @@ int Parser::Find_time_on_vector(QVector<QString>& time_vect ,QString time , bool
 
  }
 
+ QVector<bool> Parser::parse_for_pict_script(QString azdk_num , QVector<bool> sfx_pressed)
+ {
+     QVector<QString> presset { "s","r01","r1","r2","r3","o" };
+     QVector<bool> result_pack{ 0, 0, 0, 0, 0, 0 };
+     QVector<QString> dir_names;
+
+     for (int i = 0; i < presset.size(); i++)
+     {
+         if (sfx_pressed[i])
+         dir_names.push_back("azdk" + azdk_num + presset[i]);
+     }
+
+
+
+
+     QVector<QString> temp_path;
+
+     QDirIterator it(path, QDir::Dirs, QDirIterator::NoIteratorFlags);
+     while (it.hasNext())
+         temp_path.push_back(it.next());
+
+
+     QVector<QStringList> path_2d;
+
+     for (int i = 2; i < temp_path.size(); i++)
+     {
+         path_2d.push_back(temp_path[i].split("/"));
+
+     }
+
+     for (int j = 0; j < dir_names.size(); j++)
+     {
+
+
+         for (int i = 0; i < path_2d.size(); i++)
+         {
+             if (path_2d[i][3] == dir_names[j])
+             {
+                 if (dir_names[j].indexOf("s") != -1)
+                     result_pack[0] = 1;
+                 else if (dir_names[j].indexOf("r01") != -1)
+                     result_pack[1] = 1;
+                 else if (dir_names[j].indexOf("r1") != -1)
+                     result_pack[2] = 1;
+                 else if (dir_names[j].indexOf("r2") != -1)
+                     result_pack[3] = 1;
+                 else if (dir_names[j].indexOf("r3") != -1)
+                     result_pack[4] = 1;
+                 else if (dir_names[j].indexOf("o") != -1)
+                     result_pack[5] = 1;
+
+
+             }
+         }
+     }
+
+
+     return result_pack;
+ }
+

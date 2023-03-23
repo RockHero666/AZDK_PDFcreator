@@ -4,11 +4,13 @@
 #include <QWidget>
 #include <QThread>
 #include <QTimer>
+#include <QProcess>
 #include "parser.h"
 #include "pdf_creator.h"
 #include "azdk.h"
 #include "calendar.h"
 #include "log/azdklogger.h"
+
 
 
 #define ORGANIZATION_NAME "Azmerit"
@@ -30,10 +32,12 @@ class MainWindow : public QWidget
     AZDK azdk;
     int progress;
     bool start= 1;
+    bool block_ui = 1;
     AzdkLogger save_log;
     Calendar calendar;
     Ui::MainForm* ui;
     bool style = 0;
+    QProcess proc;
 
 public:
 
@@ -117,6 +121,9 @@ private slots:
     void timer_slot();
     void open_close_logger_button_click();
     void change_style();
+    void pict_creator_script(QVector<bool> sfx_state, QVector<bool> parse_resulte);
+    void reed_script();
+    void script_end_work(int exit_code, QProcess::ExitStatus exitStatus);
 
     ///////////////////////////////////////////////////////////////////////
 

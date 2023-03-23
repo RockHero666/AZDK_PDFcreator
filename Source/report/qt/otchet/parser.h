@@ -39,6 +39,8 @@ public:
 
     QVector<QDate> parse_calendar_date_from_file(); // поиск минимальной и максимальной даты испытаний
 
+    QVector<bool> parse_for_pict_script(QString azdk_num, QVector<bool> sfx_pressed);
+
 signals:
     void log_message(const QString & message, QRgb color = qRgb(255, 255, 255));
 };

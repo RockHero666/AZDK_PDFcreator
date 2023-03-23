@@ -13,7 +13,7 @@
 
 
 MainWindow::MainWindow(QWidget* parent)
-	: QWidget(parent),
+	: proc(this), QWidget(parent),
 	progress(0),
 	ui(new Ui::MainForm),
 	pdf_creator(PDF_creator::get_instance())
@@ -40,6 +40,8 @@ MainWindow::MainWindow(QWidget* parent)
 	
 	
 	setFocus();
+
+	
 }
 
 MainWindow::~MainWindow()
@@ -472,6 +474,9 @@ void MainWindow::save_state()
 void MainWindow::connects()
 {
 
+	connect(&proc, &QProcess::readyReadStandardOutput, this, &MainWindow::reed_script);
+	connect(&proc, QOverload<int, QProcess::ExitStatus>::of(&QProcess::finished), this, &MainWindow::script_end_work);
+
 	connect(this, &MainWindow::style_change, ui->loger, &LogWidget::style_changed);
 
 	connect(ui->style_button, &QPushButton::clicked, this, &MainWindow::change_style);
@@ -552,6 +557,8 @@ QString MainWindow::setDate()
 
 void MainWindow::block_unblock_ui()
 {
+	block_ui = 1;
+	
 	if (ui->progressBar->isHidden())
 	{
 		ui->progressBar->show();
@@ -629,31 +636,45 @@ void MainWindow::on_create_button_clicked()
 {
 	if (checker())
 	{
-		try
+
+		QVector<bool> sfx_state{ ui->sfx_s->isChecked() ,ui->sfx_ro1->isChecked(),ui->sfx_r1->isChecked()
+		,ui->sfx_r2->isChecked(),ui->sfx_r3->isChecked(),ui->sfx_o->isChecked() };
+		QVector<bool> result_pack = parser.parse_for_pict_script(azdk.number, sfx_state);
+
+		if (sfx_state[0] != result_pack[0]|| sfx_state[1] != result_pack[1] || sfx_state[2] != result_pack[2]
+			|| sfx_state[3] != result_pack[3] || sfx_state[4] != result_pack[4] || sfx_state[5] != result_pack[5])
+			pict_creator_script(sfx_state, result_pack);
+		else
 		{
-			
 
-			pdf_creator->set_template_files(ui->name_report_line->text(), ui->management_report_line->text(), ui->management_sky_report_line->text());
-			pdf_creator->set_sfx_state(ui->sfx_s->checkState(), ui->sfx_ro1->checkState(), ui->sfx_r1->checkState(), ui->sfx_r2->checkState(), ui->sfx_r3->checkState(), ui->sfx_o->checkState());
-			azdk.time = setDate();
-			pdf_creator->set_AZDK(azdk);
-			pdf_creator->set_parser(parser);
-			pdf_creator->set_font_name(ui->comboBox_fonts->currentText());
 
-			pdf_creator->moveToThread(&thread);
-			pdf_creator->set_thread_gate(true);
-			thread.start();
+			try
+			{
 
-			block_unblock_ui();
 
-			save_state();
+				pdf_creator->set_template_files(ui->name_report_line->text(), ui->management_report_line->text(), ui->management_sky_report_line->text());
+				pdf_creator->set_sfx_state(ui->sfx_s->checkState(), ui->sfx_ro1->checkState(), ui->sfx_r1->checkState(), ui->sfx_r2->checkState(), ui->sfx_r3->checkState(), ui->sfx_o->checkState());
+				azdk.time = setDate();
+				pdf_creator->set_AZDK(azdk);
+				pdf_creator->set_parser(parser);
+				pdf_creator->set_font_name(ui->comboBox_fonts->currentText());
 
-			
+				pdf_creator->moveToThread(&thread);
+				pdf_creator->set_thread_gate(true);
+				thread.start();
 
-			
-		}
-		catch (std::runtime_error& ex) {
-			throw(ex);
+				if(block_ui)
+				block_unblock_ui();
+
+				save_state();
+
+
+
+
+			}
+			catch (std::runtime_error& ex) {
+				throw(ex);
+			}
 		}
 	}
 	else
@@ -743,4 +764,60 @@ void MainWindow::change_style()
 
 		style = 1;
 	}
+}
+
+void MainWindow::pict_creator_script(QVector<bool> sfx_state, QVector<bool> parse_resulte)
+{
+	block_unblock_ui();
+	block_ui = 0;
+	ui->progressBar->setValue(0);
+	ui->loger->addLog("Запущен скрипт создания графиков",0, qRgb(90, 200, 90));
+
+	QVector<QString> presset{ "s","r01","r1","r2","r3","o" };
+	QVector<bool> result_pack{ 0, 0, 0, 0, 0, 0 };
+	QVector<QString> arg_names;
+
+	for (int i = 0; i < presset.size(); i++)
+	{
+			arg_names.push_back("azdk" + azdk.number + presset[i] );
+	}
+	
+
+	QStringList arguments;
+	arguments << (("-w" + ui->fpe->getPath() + "/"));
+
+	for (int i = 0; i < arg_names.size(); i++)
+	{
+		if ( parse_resulte[i] == 0 && sfx_state[i])
+			arguments << ("-p" + arg_names[i]);
+
+	}
+	
+
+	proc.start("pdsstats.exe", arguments);
+
+	
+
+}
+
+void MainWindow::reed_script()
+{
+
+	QString str = proc.readAll();
+	save_log.log(str);
+
+	if(str.indexOf("%") != -1)
+	{
+		int pos = str.lastIndexOf(QChar('%'));
+		ui->progressBar->setValue(str.left(pos).toInt());
+	}
+}
+
+void MainWindow::script_end_work(int exit_code, QProcess::ExitStatus exitStatus)
+{
+	save_log.log("Script exit code = " + QString::number(exit_code));
+	proc.close();
+
+	ui->loger->addLog("Скрипт успешно завершил работу",0, qRgb(90, 200, 90));
+	on_create_button_clicked();
 }
