@@ -113,33 +113,51 @@ void MainWindow::check_box_checker()
 
 	for (int i = 0; i < parser.all_paths.size(); ++i)
 	{
-		if (parser.all_paths[i].indexOf("s.txt") != -1)
+		if (parser.all_paths[i].indexOf("s.txt") != -1 && parser.all_paths[i].indexOf("ss.txt") == -1)
+		{
 			ui->sfx_s->setDisabled(false);
+			break;
+		}
 	}
 	for (int i = 0; i < parser.all_paths.size(); ++i)
 	{
 		if (parser.all_paths[i].indexOf("r01.txt") != -1)
+		{
 			ui->sfx_ro1->setDisabled(false);
+			break;
+		}
 	}
 	for (int i = 0; i < parser.all_paths.size(); ++i)
 	{
 		if (parser.all_paths[i].indexOf("r1.txt") != -1)
+		{ 
 			ui->sfx_r1->setDisabled(false);
+			break;
+		}
 	}
 	for (int i = 0; i < parser.all_paths.size(); ++i)
 	{
 		if (parser.all_paths[i].indexOf("r2.txt") != -1)
+		{
 			ui->sfx_r2->setDisabled(false);
+			break;
+		}
 	}
 	for (int i = 0; i < parser.all_paths.size(); ++i)
 	{
 		if (parser.all_paths[i].indexOf("r3.txt") != -1)
+		{ 
 			ui->sfx_r3->setDisabled(false);
+			break;
+		}
 	}
 	for (int i = 0; i < parser.all_paths.size(); ++i)
 	{
 		if (parser.all_paths[i].indexOf("o.txt") != -1)
+		{ 
 			ui->sfx_o->setDisabled(false);
+			break;
+		}
 	}
 }
 

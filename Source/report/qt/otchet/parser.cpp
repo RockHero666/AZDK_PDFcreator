@@ -840,7 +840,7 @@ int Parser::Find_time_on_vector(QVector<QString>& time_vect ,QString time , bool
          {
              if (path_2d[i][3] == dir_names[j])
              {
-                 if (dir_names[j].indexOf("s") != -1)
+                 if (dir_names[j].indexOf("s") != -1 && dir_names[j].indexOf("ss.txt") == -1)
                      result_pack[0] = 1;
                  else if (dir_names[j].indexOf("r01") != -1)
                      result_pack[1] = 1;
