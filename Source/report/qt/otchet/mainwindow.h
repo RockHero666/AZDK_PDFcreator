@@ -38,6 +38,8 @@ class MainWindow : public QWidget
     Ui::MainForm* ui;
     bool style = 0;
     QProcess proc;
+    QString ini_path = "PDF_creator.ini";
+    bool no_gui_finish = 0;
 
 public:
 
@@ -111,6 +113,7 @@ private slots:
     ////////////////////////////////// SUPPORT FUNC ///////////////////////
 
     void ui_load_and_config();
+    void load_ini(QString& path);
     void save_state();
     void connects();
     bool checker();
@@ -124,6 +127,10 @@ private slots:
     void pict_creator_script(QVector<bool> sfx_state, QVector<bool> parse_resulte);
     void reed_script();
     void script_end_work(int exit_code, QProcess::ExitStatus exitStatus);
+    void exit();
+
+public:
+    void set_ini_file(QString& path);
 
     ///////////////////////////////////////////////////////////////////////
 

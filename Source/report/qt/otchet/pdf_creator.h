@@ -36,6 +36,7 @@ private:
     std::vector<HPDF_Page> pages;
     const char* rus_bold; // путь жирного шрифта
     const char* rus_std; // путь класического шрифта
+    bool is_no_gui = 0;
 
     static PDF_creator* pdf_ptr;// инстанс синглтона
     PDF_creator(const QString& font_name = "arial", QObject* parent = nullptr);
@@ -64,6 +65,7 @@ public:
     void set_template_files(const QString & file1,const QString & file2,const QString & file3);
     void set_sfx_state(bool s1,bool s2,bool s3,bool s4,bool s5,bool s6);
     void set_AZDK(const AZDK & azdk);
+    void set_gui_mod(bool mode);
 
     std::string minute_validator(int min,bool flag60);// конвертор из 10 в 60 систему
     void print_text(int page,const char * font_setting,const char * text,int size_text,float x_pos,float y_pos);

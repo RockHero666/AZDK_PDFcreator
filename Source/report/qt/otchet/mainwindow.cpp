@@ -33,14 +33,14 @@ MainWindow::MainWindow(QWidget* parent)
 
 	ui_load_and_config();
 
-	timer.start(1000);
-	save_log.open("log.json", LogType::Common, "json");
+	
 	
 	
 	
 	
 	setFocus();
 
+	
 	
 }
 
@@ -342,6 +342,10 @@ void MainWindow::to_open_path()
 
 void MainWindow::ui_load_and_config()
 {
+	timer.start(1000);
+	save_log.open("log.json", LogType::Common, "json");
+
+
 	ui->open_file->setDisabled(true);
 	ui->loger->hide();
 	ui->progressBar->hide();
@@ -349,29 +353,14 @@ void MainWindow::ui_load_and_config()
 	ui->loger_button->setIcon(QIcon(":/res/res/r.png"));
 
 
-	QSettings settings("PDF_creator.ini", QSettings::IniFormat);
+	
 
 	QVector<QString> fonts = parser.font_pars();
 	for (int i = 0; i < fonts.size(); i++)
 	{
 		ui->comboBox_fonts->addItem(fonts[i]);
 	}
-	for (int i = 0; i < fonts.size(); i++)
-	{
-		QString temp = settings.value("PDF_font").toString();
-
-		temp[0] = settings.value("PDF_font").toString()[0].toLower();
-		QString d_case = temp;
-
-		temp[0] = settings.value("PDF_font").toString()[0].toUpper();
-		QString u_case = temp;
-
-		if (fonts[i].indexOf(d_case) != -1  || fonts[i].indexOf(u_case) != -1)
-		{
-			ui->comboBox_fonts->setCurrentIndex(i);
-			break;
-		}
-	}
+	
 	
 	change_style();// первичная инициализация стиля
 
@@ -405,8 +394,35 @@ void MainWindow::ui_load_and_config()
 	ui->size_doubleSpinBox->setSingleStep(0.25);
 	ui->duration_spinBox->setSingleStep(10);
 
-	
+	load_ini(ini_path);
 
+
+	
+}
+
+void MainWindow::load_ini(QString & path)
+{
+
+
+	QSettings settings(path, QSettings::IniFormat);
+
+	QVector<QString> fonts = parser.font_pars();
+	for (int i = 0; i < fonts.size(); i++)
+	{
+		QString temp = settings.value("PDF_font").toString();
+
+		temp[0] = settings.value("PDF_font").toString()[0].toLower();
+		QString d_case = temp;
+
+		temp[0] = settings.value("PDF_font").toString()[0].toUpper();
+		QString u_case = temp;
+
+		if (fonts[i].indexOf(d_case) != -1 || fonts[i].indexOf(u_case) != -1)
+		{
+			ui->comboBox_fonts->setCurrentIndex(i);
+			break;
+		}
+	}
 
 	ui->number_spinBox->setValue(settings.value("number").toInt());
 	ui->size_doubleSpinBox->setValue(settings.value("size").toDouble());
@@ -425,7 +441,7 @@ void MainWindow::ui_load_and_config()
 	ui->speed_comboBox->setCurrentIndex(settings.value("speed").toInt());
 	ui->comboBox->setCurrentIndex(settings.value("interface_").toInt());
 
-	if (settings.value("time_start_y").toBool() && settings.value("time_start_m").toBool()&& settings.value("time_start_d").toBool() &&
+	if (settings.value("time_start_y").toBool() && settings.value("time_start_m").toBool() && settings.value("time_start_d").toBool() &&
 		settings.value("time_end_y").toBool() && settings.value("time_end_m").toBool(), settings.value("time_end_d").toBool())
 	{
 		calendar.set_date_begin(settings.value("time_start_y").toInt(), settings.value("time_start_m").toInt(), settings.value("time_start_d").toInt());
@@ -436,13 +452,14 @@ void MainWindow::ui_load_and_config()
 	if (settings.value("AZDK_ver").toBool())
 		azdk.ver = settings.value("AZDK_ver").toString();
 
-	
+
 
 	if (!settings.value("path_to_file_line").toString().isEmpty())
 	{
 		ui->fpe->setPath(settings.value("path_to_file_line").toString());
 		ui->fpe_2->setPath(settings.value("savepath_line").toString());
 	}
+
 }
 
 void MainWindow::save_state()
@@ -512,6 +529,7 @@ void MainWindow::connects()
 
 	connect(&thread, &QThread::started, pdf_creator, &PDF_creator::start);
 	connect(pdf_creator, &PDF_creator::finished, &thread, &QThread::terminate);
+	connect(pdf_creator, &PDF_creator::finished, this, &MainWindow::exit);
 	connect(pdf_creator, &PDF_creator::unblock_ui, this, &MainWindow::block_unblock_ui);
 
 	connect(&calendar, &Calendar::finished, this, &MainWindow::another_window_close);
@@ -828,6 +846,7 @@ void MainWindow::reed_script()
 	{
 		int pos = str.lastIndexOf(QChar('%'));
 		ui->progressBar->setValue(str.left(pos).toInt());
+		std::cout << str.left(pos).toStdString() << std::endl;
 	}
 }
 
@@ -838,4 +857,31 @@ void MainWindow::script_end_work(int exit_code, QProcess::ExitStatus exitStatus)
 
 	ui->loger->addLog("Скрипт успешно завершил работу",0, qRgb(90, 200, 90));
 	on_create_button_clicked();
+}
+
+void MainWindow::exit()
+{
+	if (no_gui_finish)
+		qApp->exit();
+}
+
+void MainWindow::set_ini_file(QString& path)
+{
+	ini_path = path;
+	load_ini(ini_path);
+
+	QSettings settings(ini_path, QSettings::IniFormat);
+
+	ui->sfx_s->setCheckState(Qt::CheckState(settings.value("sfx_s").toInt()));
+	ui->sfx_ro1->setCheckState(Qt::CheckState(settings.value("sfx_ro1").toInt()));
+	ui->sfx_r1->setCheckState(Qt::CheckState(settings.value("sfx_r1").toInt()));
+	ui->sfx_r2->setCheckState(Qt::CheckState(settings.value("sfx_r2").toInt()));
+	ui->sfx_r3->setCheckState(Qt::CheckState(settings.value("sfx_r3").toInt()));
+	ui->sfx_o->setCheckState(Qt::CheckState(settings.value("sfx_o").toInt()));
+
+	on_create_button_clicked();
+
+	no_gui_finish = 1;
+
+
 }

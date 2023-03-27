@@ -746,6 +746,12 @@ void PDF_creator::set_parser(Parser & parser)
       this->azdk = azdk;
   }
 
+  void PDF_creator::set_gui_mod(bool mode)
+  {
+      is_no_gui = mode;
+
+  }
+
 
    void PDF_creator::print_text(int page,const char * font_setting,const char * text,int size_text,float x_pos = 0,float y_pos = 0)
    {
@@ -770,6 +776,7 @@ void PDF_creator::set_parser(Parser & parser)
 		   
 
 		   emit progress(0);
+           std::cout << 0<< std::endl;
 
 		   create_pdf();
 		   create_page();
@@ -794,6 +801,7 @@ void PDF_creator::set_parser(Parser & parser)
 				   {
 					   s_otchet();
 					   emit progress(20);
+                       std::cout << 20 << std::endl;
 
 				   }
 
@@ -801,34 +809,35 @@ void PDF_creator::set_parser(Parser & parser)
 				   {
 					   r01_otchet();
 					   emit progress(40);
-
+                       std::cout << 40 << std::endl;
 				   }
 
 				   if (sfx_state[2]) // r1
 				   {
 					   r1_otchet();
 					   emit progress(60);
-
+                       std::cout << 60 << std::endl;
 				   }
 
 				   if (sfx_state[3]) // r2
 				   {
 					   r2_otchet();
 					   emit progress(70);
-
+                       std::cout << 70 << std::endl;
 				   }
 
 				   if (sfx_state[4]) // r3
 				   {
 					   r3_otchet();
 					   emit progress(80);
-
+                       std::cout << 80 << std::endl;
 				   }
 
 				   if (sfx_state[5]) // o
 				   {
 					   o_otchet();
 					   emit progress(95);
+                       std::cout << 95 << std::endl;
 				   }
 
 		   }
@@ -965,6 +974,7 @@ void PDF_creator::set_parser(Parser & parser)
      sfx_state.clear();
      template_files.clear();
      emit progress(100);
+     std::cout << 100 << std::endl;
      QApplication::beep();
      thread_gate = false;
      emit unblock_ui();
