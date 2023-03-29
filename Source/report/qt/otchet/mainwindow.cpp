@@ -11,6 +11,7 @@
 #include "ui_mainwindow3.h"
 #include "ngts/filepathedit.h"
 
+const QString dateFormat = "yyyy.MM.dd";
 
 MainWindow::MainWindow(QWidget* parent)
 	: proc(this), QWidget(parent),
@@ -285,7 +286,7 @@ void MainWindow::text_path_line_changed(const QString& arg1)
 
 			for (int j = 0; j < str.size(); j++)
 			{
-				if (std::isdigit(str[j]))
+				if (isdigit(str[j]))
 				{
 					number += str[j];
 					continue;
@@ -402,9 +403,8 @@ void MainWindow::ui_load_and_config()
 
 void MainWindow::load_ini(QString & path)
 {
-
-
 	QSettings settings(path, QSettings::IniFormat);
+	settings.setIniCodec("UTF-8");
 
 	QVector<QString> fonts = parser.font_pars();
 	for (int i = 0; i < fonts.size(); i++)
@@ -424,40 +424,46 @@ void MainWindow::load_ini(QString & path)
 		}
 	}
 
-	ui->number_spinBox->setValue(settings.value("number").toInt());
-	ui->size_doubleSpinBox->setValue(settings.value("size").toDouble());
-	ui->number_ods_spinBox->setValue(settings.value("number_Ods").toInt());
+	ui->number_spinBox->setValue(settings.value("azdk_number").toInt());
+	ui->size_doubleSpinBox->setValue(settings.value("image_size").toDouble());
+	ui->number_ods_spinBox->setValue(settings.value("ods_number").toInt());
 	ui->focus_doubleSpinBox->setValue(settings.value("focus").toDouble());
-	ui->influence_doubleSpinBox->setValue(settings.value("influence").toDouble());
-	ui->intensity_doubleSpinBox->setValue(settings.value("intensity").toDouble());
-	ui->firmware_line->setText(settings.value("firmware").toString());
-	ui->duration_spinBox->setValue(settings.value("duration").toInt());
+	ui->influence_doubleSpinBox->setValue(settings.value("mag_factor").toDouble());
+	ui->intensity_doubleSpinBox->setValue(settings.value("image_intensity").toDouble());
+	ui->firmware_line->setText(settings.value("firmware_ver").toString());
+	ui->duration_spinBox->setValue(settings.value("exp_duration").toInt());
 
-	ui->checkBox->setCheckState(Qt::CheckState(settings.value("binar").toInt()));
-	on_checkBox_stateChanged(settings.value("binar").toInt());
-	ui->checkBox_timer->setCheckState(Qt::CheckState(settings.value("timer").toInt()));
-	on_checkBox_timer_stateChanged(settings.value("timer").toInt());
+	ui->checkBox->setChecked(settings.value("binary_mode").toBool());
+	//on_checkBox_stateChanged(settings.value("binary_mode").toBool());
+	ui->checkBox_timer->setChecked(settings.value("watchdog").toBool());
+	//on_checkBox_timer_stateChanged(settings.value("timer").toInt());
 
-	ui->speed_comboBox->setCurrentIndex(settings.value("speed").toInt());
-	ui->comboBox->setCurrentIndex(settings.value("interface_").toInt());
+	//ui->speed_comboBox->setCurrentIndex(settings.value("speed").toInt());
+	ui->speed_comboBox->setCurrentText(settings.value("speed").toString());
+	//ui->comboBox->setCurrentIndex(settings.value("comm_interface").toInt());
+	ui->comboBox->setCurrentText(settings.value("comm_interface").toString());
 
-	if (settings.value("time_start_y").toBool() && settings.value("time_start_m").toBool() && settings.value("time_start_d").toBool() &&
-		settings.value("time_end_y").toBool() && settings.value("time_end_m").toBool(), settings.value("time_end_d").toBool())
-	{
-		calendar.set_date_begin(settings.value("time_start_y").toInt(), settings.value("time_start_m").toInt(), settings.value("time_start_d").toInt());
-		calendar.set_date_end(settings.value("time_end_y").toInt(), settings.value("time_end_m").toInt(), settings.value("time_end_d").toInt());
-		another_window_close();// Первоначальная надпись на кнопке в слоте закрытия календаря
-	}
+	//if (settings.value("time_start_y").toBool() && settings.value("time_start_m").toBool() && settings.value("time_start_d").toBool() &&
+	//	settings.value("time_end_y").toBool() && settings.value("time_end_m").toBool(), settings.value("time_end_d").toBool())
+	//{
+	//	calendar.set_date_begin(settings.value("time_start_y").toInt(), settings.value("time_start_m").toInt(), settings.value("time_start_d").toInt());
+	//	calendar.set_date_end(settings.value("time_end_y").toInt(), settings.value("time_end_m").toInt(), settings.value("time_end_d").toInt());
+	//	another_window_close();// Первоначальная надпись на кнопке в слоте закрытия календаря
+	//}
+
+	auto startDate = QDate::fromString(settings.value("time_start").toString(), dateFormat);
+	auto endDate = QDate::fromString(settings.value("time_end").toString(), dateFormat);
+	calendar.set_date_begin(startDate);
+	calendar.set_date_end(endDate);
+	another_window_close();
 
 	if (settings.value("AZDK_ver").toBool())
 		azdk.ver = settings.value("AZDK_ver").toString();
 
-
-
-	if (!settings.value("path_to_file_line").toString().isEmpty())
+	if (!settings.value("data_dir").toString().isEmpty())
 	{
-		ui->fpe->setPath(settings.value("path_to_file_line").toString());
-		ui->fpe_2->setPath(settings.value("savepath_line").toString());
+		ui->fpe->setPath(settings.value("data_dir").toString());
+		ui->fpe_2->setPath(settings.value("output_file").toString());
 	}
 
 }
@@ -465,45 +471,47 @@ void MainWindow::load_ini(QString & path)
 void MainWindow::save_state()
 {
 	QSettings settings("PDF_creator.ini", QSettings::IniFormat);
-	settings.setValue("number", azdk.number);
-	settings.setValue("size", ui->size_doubleSpinBox->value());
-	settings.setValue("number_Ods", azdk.number_Ods);
+	settings.setIniCodec("UTF-8");
+	settings.setValue("azdk_number", azdk.number);
+	settings.setValue("image_size", ui->size_doubleSpinBox->value());
+	settings.setValue("ods_number", azdk.number_Ods);
 	settings.setValue("focus", ui->focus_doubleSpinBox->value());
-	settings.setValue("speed", ui->speed_comboBox->currentIndex());
-	settings.setValue("firmware", azdk.firmware);
-	settings.setValue("influence", ui->influence_doubleSpinBox->value());
-	settings.setValue("intensity", ui->intensity_doubleSpinBox->value());
-	settings.setValue("duration", ui->duration_spinBox->value());
-	settings.setValue("interface_", ui->comboBox->currentIndex());
+	settings.setValue("speed", ui->speed_comboBox->currentText());
+	settings.setValue("firmware_ver", azdk.firmware);
+	settings.setValue("mag_factor", ui->influence_doubleSpinBox->value());
+	settings.setValue("image_intensity", ui->intensity_doubleSpinBox->value());
+	settings.setValue("exp_duration", ui->duration_spinBox->value());
+	settings.setValue("comm_interface", ui->comboBox->currentText());
 
-	settings.setValue("binar", ui->checkBox->checkState());
-	settings.setValue("timer", ui->checkBox_timer->checkState());
+	settings.setValue("binary_mode", ui->checkBox->isChecked());
+	settings.setValue("watchdog", ui->checkBox_timer->isChecked());
 
-	int d = calendar.get_date_begin().day();
-	int m = calendar.get_date_begin().month();
-	int y = calendar.get_date_begin().year();
+	//int d = calendar.get_date_begin().day();
+	//int m = calendar.get_date_begin().month();
+	//int y = calendar.get_date_begin().year();
+	//
+	//settings.setValue("time_start_d", d);
+	//settings.setValue("time_start_m", m);
+	//settings.setValue("time_start_y", y);
+	//
+	//d = calendar.get_date_end().day();
+	//m = calendar.get_date_end().month();
+	//y = calendar.get_date_end().year();
+	//
+	//settings.setValue("time_end_d", d);
+	//settings.setValue("time_end_m", m);
+	//settings.setValue("time_end_y", y);
 
-	settings.setValue("time_start_d", d);
-	settings.setValue("time_start_m", m);
-	settings.setValue("time_start_y", y);
+	settings.setValue("time_start", calendar.get_date_begin().toString(dateFormat));
+	settings.setValue("time_end", calendar.get_date_end().toString(dateFormat));
 
-	d = calendar.get_date_end().day();
-	m = calendar.get_date_end().month();
-	y = calendar.get_date_end().year();
+	settings.setValue("data_dir", ui->fpe->getPath());
 
-	settings.setValue("time_end_d", d);
-	settings.setValue("time_end_m", m);
-	settings.setValue("time_end_y", y);
+	settings.setValue("output_file", ui->fpe_2->getPath());
 
-	settings.setValue("path_to_file_line", ui->fpe->getPath());
+	settings.setValue("AZDK_ver", azdk.ver);
 
-	settings.setValue("savepath_line", ui->fpe_2->getPath());
-
-	if (!settings.value("AZDK_ver").toBool())
-		settings.setValue("AZDK_ver", "АЗДК-1.5");
-
-	if (!settings.value("PDF_font").toBool())
-		settings.setValue("PDF_font", "arial");
+	settings.setValue("PDF_font", ui->comboBox_fonts->currentText());
 }
 
 void MainWindow::connects()
@@ -722,6 +730,7 @@ void MainWindow::on_create_button_clicked()
 void MainWindow::timer_slot()
 {
 	QSettings settings("PDF_creator.ini", QSettings::IniFormat);
+	settings.setIniCodec("UTF-8");
 
 	if (settings.value("AZDK_ver").toBool())
 		azdk.ver = settings.value("AZDK_ver").toString();
@@ -810,7 +819,7 @@ void MainWindow::pict_creator_script(QVector<bool> sfx_state, QVector<bool> pars
 	ui->loger->addLog("Запущен скрипт создания графиков",0, qRgb(90, 200, 90));
 
 	QVector<QString> presset{ "s","r01","r1","r2","r3","o" };
-	QVector<bool> result_pack{ 0, 0, 0, 0, 0, 0 };
+	//QVector<bool> result_pack{ 0, 0, 0, 0, 0, 0 };
 	QVector<QString> arg_names;
 
 	for (int i = 0; i < presset.size(); i++)
@@ -871,13 +880,14 @@ void MainWindow::set_ini_file(QString& path)
 	load_ini(ini_path);
 
 	QSettings settings(ini_path, QSettings::IniFormat);
+	settings.setIniCodec("UTF-8");
 
-	ui->sfx_s->setCheckState(Qt::CheckState(settings.value("sfx_s").toInt()));
-	ui->sfx_ro1->setCheckState(Qt::CheckState(settings.value("sfx_ro1").toInt()));
-	ui->sfx_r1->setCheckState(Qt::CheckState(settings.value("sfx_r1").toInt()));
-	ui->sfx_r2->setCheckState(Qt::CheckState(settings.value("sfx_r2").toInt()));
-	ui->sfx_r3->setCheckState(Qt::CheckState(settings.value("sfx_r3").toInt()));
-	ui->sfx_o->setCheckState(Qt::CheckState(settings.value("sfx_o").toInt()));
+	ui->sfx_s->setChecked(settings.value("sfx_s").toBool());
+	ui->sfx_ro1->setChecked(settings.value("sfx_ro1").toBool());
+	ui->sfx_r1->setChecked(settings.value("sfx_r1").toBool());
+	ui->sfx_r2->setChecked(settings.value("sfx_r2").toBool());
+	ui->sfx_r3->setChecked(settings.value("sfx_r3").toBool());
+	ui->sfx_o->setChecked(settings.value("sfx_o").toBool());
 
 	on_create_button_clicked();
 

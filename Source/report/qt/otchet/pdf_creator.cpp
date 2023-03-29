@@ -703,8 +703,7 @@ emit log_message("Таблица успешно сформированна");
      }
 
      QByteArray ba = path.toLocal8Bit();
-     const char *c_str = ba.data();
-     HPDF_SaveToFile(pdf, ba);
+     HPDF_SaveToFile(pdf, ba.data());
 
      emit log_message("Сохранение завершено");
  }
@@ -846,7 +845,7 @@ void PDF_creator::set_parser(Parser & parser)
 		   {
 			   QApplication::beep();
 			   emit error(QString(ex.what()));
-               free();
+               //free();
                
 		   }
 

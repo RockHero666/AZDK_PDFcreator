@@ -11,8 +11,6 @@
 #include "calendar.h"
 #include "log/azdklogger.h"
 
-
-
 #define ORGANIZATION_NAME "Azmerit"
 #define ORGANIZATION_DOMAIN "http://www.azmerit.ru"
 #define APPLICATION_NAME "PDF_report"

@@ -346,7 +346,7 @@ int Parser::Find_time_on_vector(QVector<QString>& time_vect ,QString time , bool
 
  QVector<QString> Parser::Frames_count_and_time_ver2(const QString & server_path,const QString & azdk_server_path,const QString & index,const QString & azdk_number)
  {
-     emit log_message("Извлечение данных времени испытаний и их количества");
+     emit log_message(tr("Извлечение данных времени испытаний и их количества"));
 
      QString s_path = path + server_path + index +".txt";
      QFile server(s_path);
@@ -824,11 +824,11 @@ int Parser::Find_time_on_vector(QVector<QString>& time_vect ,QString time , bool
          temp_path.push_back(it.next());
 
 
-     QVector<QStringList> path_2d;
+     QVector<QString> path_2d;
 
      for (int i = 2; i < temp_path.size(); i++)
      {
-         path_2d.push_back(temp_path[i].split("/"));
+         path_2d.push_back(temp_path[i].split("/").last());
 
      }
 
@@ -838,7 +838,7 @@ int Parser::Find_time_on_vector(QVector<QString>& time_vect ,QString time , bool
 
          for (int i = 0; i < path_2d.size(); i++)
          {
-             if (path_2d[i][3] == dir_names[j])
+             if (path_2d[i] == dir_names[j])
              {
                  if (dir_names[j].indexOf("s") != -1 && dir_names[j].indexOf("ss.txt") == -1)
                      result_pack[0] = 1;
