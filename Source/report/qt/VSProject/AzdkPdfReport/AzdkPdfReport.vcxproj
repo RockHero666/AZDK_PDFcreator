@@ -55,14 +55,14 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|Win32'">
-    <ExecutablePath>%MiscLibs%\bin;$(ExecutablePath)</ExecutablePath>
-    <LibraryPath>%MiscLibs%\lib;$(LibraryPath)</LibraryPath>
-    <IncludePath>%MiscLibs%\include;%MiscLibs%\include\hpdf;$(IncludePath)</IncludePath>
+    <ExecutablePath>$(MiscLibs)\bin;$(ExecutablePath)</ExecutablePath>
+    <IncludePath>$(MiscLibs)\include;$(MiscLibs)\include\hpdf;$(IncludePath)</IncludePath>
+    <LibraryPath>$(MiscLibs)\lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|Win32'">
-    <ExecutablePath>%MiscLibs%\bin;$(ExecutablePath)</ExecutablePath>
-    <LibraryPath>%MiscLibs%\lib;$(LibraryPath)</LibraryPath>
-    <IncludePath>%MiscLibs%\include;%MiscLibs%\include\hpdf;$(IncludePath)</IncludePath>
+    <ExecutablePath>$(MiscLibs)\bin;$(ExecutablePath)</ExecutablePath>
+    <IncludePath>$(MiscLibs)\include;$(MiscLibs)\include\hpdf;$(IncludePath)</IncludePath>
+    <LibraryPath>$(MiscLibs)\lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <Link />
