@@ -7,5 +7,6 @@
         <file>res/indicator_off.png</file>
         <file>res/indicator_on.png</file>
         <file>res/indicator_off_white_style.png</file>
+        <file>table2.png</file>
     </qresource>
 </RCC>

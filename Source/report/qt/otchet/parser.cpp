@@ -23,7 +23,7 @@ void Parser::to_parse()
     while (it.hasNext())
        all_paths.push_back(it.next());
 
-    emit log_message("Парсинг всех путей");
+    emit log_message(tr("Парсинг всех путей"));
 
 }
 
@@ -36,7 +36,7 @@ void Parser::to_parse_current_dir()
     while (it.hasNext())
        all_paths.push_back(it.next());
 
-    emit log_message("Парсинг корневых путей");
+    emit log_message(tr("Парсинг корневых путей"));
 }
 
 void Parser::set_path(const QString & path)
@@ -47,7 +47,7 @@ void Parser::set_path(const QString & path)
 
  QVector<QVector<QString>> Parser::parse_resulte_table(const QString & error_path)
  {
-     emit log_message("Извлечение данных для СКО таблици");
+     emit log_message(tr("Извлечение данных для СКО таблици"));
 
      QString e_path = path + error_path;
      QString all_text;
@@ -73,7 +73,7 @@ void Parser::set_path(const QString & path)
      }
      else
      {
-         emit log_message("Ошибка в пути к файлам! Path = " + e_path,qRgb(255,0,0));
+         emit log_message(tr("Ошибка в пути к файлам! Path = ") + e_path,qRgb(255,0,0));
          throw std::runtime_error("bad_path");
      }
 
@@ -104,7 +104,7 @@ void Parser::set_path(const QString & path)
 
      }
 
-     emit log_message("Данные извлечены");
+     emit log_message(tr("Данные извлечены"));
      return SKO;
 
  }
@@ -112,7 +112,7 @@ void Parser::set_path(const QString & path)
  QVector<int> Parser::parse_resulte_table_2_ver2(const QString & client_path,const QString & server_path)
  {
 
-     emit log_message("Извлечение данных результатов функциональных испытаний МЗД");
+     emit log_message(tr("Извлечение данных результатов функциональных испытаний МЗД"));
 
      QString c_path = path + client_path;
      QString s_path = path + server_path;
@@ -145,7 +145,7 @@ void Parser::set_path(const QString & path)
      }
      else
      {
-         emit log_message("Ошибка в пути к файлам! Path = " + s_path, qRgb(255, 0, 0));
+         emit log_message(tr("Ошибка в пути к файлам! Path = ") + s_path, qRgb(255, 0, 0));
          throw std::runtime_error("bad_path");
      }
 
@@ -194,7 +194,7 @@ void Parser::set_path(const QString & path)
      }
      else
      {
-         emit log_message("Ошибка в пути к файлам! Path = " + c_path, qRgb(255, 0, 0));
+         emit log_message(tr("Ошибка в пути к файлам! Path = ") + c_path, qRgb(255, 0, 0));
          throw std::runtime_error("bad_path");
      }
 
@@ -259,7 +259,7 @@ void Parser::set_path(const QString & path)
      }
 
 
-      emit log_message("Данные извлечены");
+      emit log_message(tr("Данные извлечены"));
      return table_value;
 
 
@@ -335,8 +335,8 @@ int Parser::Find_time_on_vector(QVector<QString>& time_vect ,QString time , bool
     auto it_c = std::find(all_paths.begin(),all_paths.end(),png_path);
     if(it_c == all_paths.end())
     {
-        result ="error.png";
-        emit log_message("Некоторые картинки отсутствовали и были заменены на шаблонный файл.", qRgb(255, 0, 0));
+        result ="resurce/error.png";
+        emit log_message(tr("Некоторые картинки отсутствовали и были заменены на шаблонный файл."), qRgb(255, 0, 0));
         return result;
     }
     result = png_path;
@@ -346,7 +346,7 @@ int Parser::Find_time_on_vector(QVector<QString>& time_vect ,QString time , bool
 
  QVector<QString> Parser::Frames_count_and_time_ver2(const QString & server_path,const QString & azdk_server_path,const QString & index,const QString & azdk_number)
  {
-     emit log_message("Извлечение данных времени испытаний и их количества");
+     emit log_message(tr("Извлечение данных времени испытаний и их количества"));
 
      QString s_path = path + server_path + index +".txt";
      QFile server(s_path);
@@ -371,7 +371,7 @@ int Parser::Find_time_on_vector(QVector<QString>& time_vect ,QString time , bool
      }
      else
      {
-         emit log_message("Ошибка в пути к файлам! Path = " + azdk_s_path, qRgb(255, 0, 0));
+         emit log_message(tr("Ошибка в пути к файлам! Path = ") + azdk_s_path, qRgb(255, 0, 0));
          throw std::runtime_error("bad_path");
      }
 
@@ -405,7 +405,7 @@ int Parser::Find_time_on_vector(QVector<QString>& time_vect ,QString time , bool
      }
      else
      {
-         emit log_message("Ошибка в пути к файлам! Path = " + s_path, qRgb(255, 0, 0));
+         emit log_message(tr("Ошибка в пути к файлам! Path = ") + s_path, qRgb(255, 0, 0));
      throw std::runtime_error("bad_path");
      }
 
@@ -628,7 +628,7 @@ int Parser::Find_time_on_vector(QVector<QString>& time_vect ,QString time , bool
 
     }
 
-     emit log_message("Данные извлечены");
+     emit log_message(tr("Данные извлечены"));
      return result;
 
 
@@ -655,7 +655,7 @@ int Parser::Find_time_on_vector(QVector<QString>& time_vect ,QString time , bool
      }
      else
      {
-         emit log_message("Ошибка в пути к файлам! Path = " + e_path, qRgb(255, 0, 0));
+         emit log_message(tr("Ошибка в пути к файлам! Path = ") + e_path, qRgb(255, 0, 0));
          throw std::runtime_error("bad_path");
      }
 
@@ -824,11 +824,15 @@ int Parser::Find_time_on_vector(QVector<QString>& time_vect ,QString time , bool
          temp_path.push_back(it.next());
 
 
-     QVector<QStringList> path_2d;
+     QVector<QString> path_dir;
 
      for (int i = 2; i < temp_path.size(); i++)
      {
-         path_2d.push_back(temp_path[i].split("/"));
+         //path_2d.push_back(temp_path[i].split("/").last());
+         QFileInfo file(temp_path[i]);
+
+         if (file.isDir())
+             path_dir.push_back(file.fileName());
 
      }
 
@@ -836,9 +840,9 @@ int Parser::Find_time_on_vector(QVector<QString>& time_vect ,QString time , bool
      {
 
 
-         for (int i = 0; i < path_2d.size(); i++)
+         for (int i = 0; i < path_dir.size(); i++)
          {
-             if (path_2d[i][3] == dir_names[j])
+             if (path_dir[i] == dir_names[j])
              {
                  if (dir_names[j].indexOf("s") != -1 && dir_names[j].indexOf("ss.txt") == -1)
                      result_pack[0] = 1;

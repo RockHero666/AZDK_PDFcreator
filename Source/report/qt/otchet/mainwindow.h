@@ -40,6 +40,7 @@ class MainWindow : public QWidget
     QProcess proc;
     QString ini_path = "PDF_creator.ini";
     bool no_gui_finish = 0;
+    bool script_gate = 0;
 
 public:
 
@@ -127,6 +128,7 @@ private slots:
     void pict_creator_script(QVector<bool> sfx_state, QVector<bool> parse_resulte);
     void reed_script();
     void script_end_work(int exit_code, QProcess::ExitStatus exitStatus);
+    void script_error(QVector<bool> sfx_state, QVector<bool> parse_resulte);
     void exit();
 
 public:

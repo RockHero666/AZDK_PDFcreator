@@ -8,8 +8,9 @@
 #include <QTime>
 #include <cmath>
 #include <QStandardPaths>
+#include <QImage>
+#include <QBuffer>
 #include "pdf_creator.h"
-
 
 
 
@@ -20,7 +21,9 @@ void PDF_creator::error_handler(HPDF_STATUS error_no, HPDF_STATUS detail_no, voi
     std::cout << "ERROR: error_no= " << std::hex << error_no << std::dec << " detail_no = " << detail_no << "/n";
     if (pdf_ptr)
     {
-        emit pdf_ptr->log_message(QString::asprintf("%x", "ERROR: error_no = " + error_no));
+        emit pdf_ptr->log_message("ERROR: error_no = ");
+        emit pdf_ptr->log_message(QString::asprintf("%x",  error_no));
+        
         emit pdf_ptr->log_message(" detail_no = " + detail_no);
     }
     throw std::runtime_error("handler_error");
@@ -508,7 +511,7 @@ HPDF_Page_EndText(pages[page]);
 
   void PDF_creator::draw_graph_2(int page,QVector<int> & vect_value,int frames, const QString & sfx)
   {
-      emit log_message("Формирование МЗД таблици");
+      emit log_message(tr("Формирование МЗД таблици"));
 
      double tw;
      font = HPDF_GetFont (pdf, rus_std, "UTF-8");
@@ -517,7 +520,7 @@ HPDF_Page_EndText(pages[page]);
 
      if(sfx != "o")
      {
-     image = HPDF_LoadPngImageFromFile(pdf,"table2.png");
+     image = HPDF_LoadPngImageFromFile(pdf, "resurce/table2.png");
      HPDF_Page_DrawImage (pages[page], image, 175, HPDF_Page_GetHeight(pages[page_count-1]) /2+20, 250,150);
 
 HPDF_Page_BeginText(pages[page]);
@@ -556,7 +559,7 @@ HPDF_Page_EndText(pages[page]);
       }
       else
       {
-          image = HPDF_LoadPngImageFromFile(pdf,"table2.png");
+          image = HPDF_LoadPngImageFromFile(pdf,"resurce/table2.png");
           HPDF_Page_DrawImage (pages[page], image, 175, HPDF_Page_GetHeight(pages[page_count-1]) /2+100, 250,150);
 
 HPDF_Page_BeginText(pages[page]);
@@ -647,7 +650,7 @@ HPDF_Page_BeginText(pages[page]);
 HPDF_Page_EndText(pages[page]);
     }
 
-emit log_message("Таблица успешно сформированна");
+emit log_message(tr("Таблица успешно сформированна"));
 
 
 }
@@ -681,7 +684,7 @@ emit log_message("Таблица успешно сформированна");
 
  void PDF_creator::save()
  {
-     emit log_message("Сохранение pdf файла");
+     emit log_message(tr("Сохранение pdf файла"));
 
      QString path = save_path;
 
@@ -694,9 +697,9 @@ emit log_message("Таблица успешно сформированна");
 
          if (!file.open(QIODevice::WriteOnly))
          {
-             emit log_message("Файл с выбранным названием в данный", qRgb(255, 170, 0));
-             emit log_message("момент используется, закройте", qRgb(255, 170, 0));
-             emit log_message("файл и повторите попытку", qRgb(255, 170, 0));
+             emit log_message(tr("Файл с выбранным названием в данный"), qRgb(255, 170, 0));
+             emit log_message(tr("момент используется, закройте"), qRgb(255, 170, 0));
+             emit log_message(tr("файл и повторите попытку"), qRgb(255, 170, 0));
              return;
          }
          file.remove();
@@ -706,7 +709,7 @@ emit log_message("Таблица успешно сформированна");
      const char *c_str = ba.data();
      HPDF_SaveToFile(pdf, ba);
 
-     emit log_message("Сохранение завершено");
+     emit log_message(tr("Сохранение завершено"));
  }
 
 void PDF_creator::set_parser(Parser & parser)
@@ -767,7 +770,7 @@ void PDF_creator::set_parser(Parser & parser)
 
    void PDF_creator::start()
    {
-	   emit log_message("Начало работы", qRgb(90, 200, 90));
+	   emit log_message(tr("Начало работы"), qRgb(90, 200, 90));
 
 	   if (thread_gate)
 	   {
@@ -879,7 +882,7 @@ void PDF_creator::set_parser(Parser & parser)
      {
          rus_bold = HPDF_LoadTTFontFromFile(pdf, bold.toStdString().c_str(), HPDF_TRUE);
          rus_std = HPDF_LoadTTFontFromFile(pdf, std.toStdString().c_str(), HPDF_TRUE);
-         emit log_message("Шрифт установлен");
+         emit log_message(tr("Шрифт установлен"));
          return true;
      }
      
@@ -892,7 +895,7 @@ void PDF_creator::set_parser(Parser & parser)
      {
          rus_bold = HPDF_LoadTTFontFromFile(pdf, bold.toStdString().c_str(), HPDF_TRUE);
          rus_std = HPDF_LoadTTFontFromFile(pdf, std.toStdString().c_str(), HPDF_TRUE);
-         emit log_message("Шрифт установлен");
+         emit log_message(tr("Шрифт установлен"));
          return true;
      }
 
@@ -906,7 +909,7 @@ void PDF_creator::set_parser(Parser & parser)
      {
          rus_bold = HPDF_LoadTTFontFromFile(pdf, bold.toStdString().c_str(), HPDF_TRUE);
          rus_std = HPDF_LoadTTFontFromFile(pdf, std.toStdString().c_str(), HPDF_TRUE);
-         emit log_message("Шрифт установлен");
+         emit log_message(tr("Шрифт установлен"));
          return true;
      }
 
@@ -919,7 +922,7 @@ void PDF_creator::set_parser(Parser & parser)
      {
          rus_bold = HPDF_LoadTTFontFromFile(pdf, bold.toStdString().c_str(), HPDF_TRUE);
          rus_std = HPDF_LoadTTFontFromFile(pdf, std.toStdString().c_str(), HPDF_TRUE);
-         emit log_message("Шрифт установлен");
+         emit log_message(tr("Шрифт установлен"));
          return true;
      }
 
@@ -932,7 +935,7 @@ void PDF_creator::set_parser(Parser & parser)
      {
          rus_bold = HPDF_LoadTTFontFromFile(pdf, bold.toStdString().c_str(), HPDF_TRUE);
          rus_std = HPDF_LoadTTFontFromFile2(pdf, std.toStdString().c_str(), HPDF_TRUE,0);
-         emit log_message("Шрифт установлен");
+         emit log_message(tr("Шрифт установлен"));
          return true;
      }
 
@@ -945,14 +948,14 @@ void PDF_creator::set_parser(Parser & parser)
      {
          rus_bold = HPDF_LoadTTFontFromFile(pdf, bold.toStdString().c_str(), HPDF_TRUE);
          rus_std = HPDF_LoadTTFontFromFile2(pdf, std.toStdString().c_str(), HPDF_TRUE,0);
-         emit log_message("Шрифт установлен");
+         emit log_message(tr("Шрифт установлен"));
          return true;
      }
 
 
      else
      {
-         emit log_message("Указанный шрифт не был найден, работа программы остановленна!",qRgb(250,0,0));
+         emit log_message(tr("Указанный шрифт не был найден, работа программы остановленна!"),qRgb(250,0,0));
          return false;
      }
      
@@ -978,7 +981,7 @@ void PDF_creator::set_parser(Parser & parser)
      QApplication::beep();
      thread_gate = false;
      emit unblock_ui();
-     emit log_message("Конец работы",qRgb(90,200,90));
+     emit log_message(tr("Конец работы"),qRgb(90,200,90));
      emit finished();
  }
 
@@ -994,7 +997,7 @@ void PDF_creator::set_parser(Parser & parser)
      if(azdk.ver.isEmpty())
         text= "Отчет о функциональных испытаниях МЗД АЗДК-1.5 №";//Заголовок////////
      else
-        text= "Отчет о функциональных испытаниях МЗД "+azdk.ver.toStdString() +" №";
+        text= "Отчет о функциональных испытаниях МЗД АЗДК-"+azdk.ver.toStdString() +" №";
 
      text+=azdk.number.toStdString();
      HPDF_Page_SetFontAndSize(pages[0], font, 16);
@@ -1132,7 +1135,7 @@ HPDF_Page_EndText(pages[0]);
      auto ct = parser->Frames_count_and_time_ver2("/"+template_files[2]+azdk.number,"/"+template_files[1]+azdk.number,"s",azdk.number);
      std::string text = "Тест-"+ std::to_string(test) + " (точностной)";
 
-    emit log_message("создание s отчета");
+    emit log_message(tr("создание s отчета"));
 
      create_page();
      calantitul(page_count-1);
@@ -1350,7 +1353,7 @@ HPDF_Page_BeginText(pages[page_count-1]);
 HPDF_Page_EndText(pages[page_count-1]);
 
 
-     emit log_message("Формирование СКО таблици");
+     emit log_message(tr("Формирование СКО таблици"));
      int y;
      if(sko_otchet.size()<=30)
          y = 1;//sko_otchet.size()/30;
@@ -1366,8 +1369,8 @@ HPDF_Page_EndText(pages[page_count-1]);
          draw_graph(page_count-1,sko_otchet);
      }
 
-     emit log_message("Таблица сформированна");
-     emit log_message("s отчет создан");
+     emit log_message(tr("Таблица сформированна"));
+     emit log_message(tr("s отчет создан"));
 
  }
 
@@ -1377,7 +1380,7 @@ HPDF_Page_EndText(pages[page_count-1]);
      auto ct = parser->Frames_count_and_time_ver2("/"+template_files[2]+azdk.number,"/"+template_files[1]+azdk.number,"r01",azdk.number);
      std::string text = "Тест-"+ std::to_string(test) + " (точностной)";
 
-     emit log_message("Создание r01 отчета");
+     emit log_message(tr("Создание r01 отчета"));
 
      create_page();
      calantitul(page_count-1);
@@ -1545,7 +1548,7 @@ HPDF_Page_BeginText(pages[page_count-1]);
      print_text(page_count-1,rus_std,"          представленные в системе координат прибора.",10,x_start_pos,HPDF_Page_GetHeight(pages[page_count-1]) - 775);
 HPDF_Page_EndText(pages[page_count-1]);
 
-     emit log_message("ro1 отчет создан");
+     emit log_message(tr("ro1 отчет создан"));
 
  }
 
@@ -1556,7 +1559,7 @@ HPDF_Page_EndText(pages[page_count-1]);
      auto val_vect = parser->parse_resulte_table_2_ver2("/"+template_files[0]+azdk.number + "r1.txt","/"+template_files[2]+azdk.number + "r1.txt");
      std::string text = "Тест-"+ std::to_string(test) + " (статистический)";
 
-     emit log_message("Создание r1 отчета");
+     emit log_message(tr("Создание r1 отчета"));
 
      create_page();
      calantitul(page_count-1);
@@ -1732,7 +1735,7 @@ HPDF_Page_BeginText(pages[page_count-1]);
      print_text(page_count-1,rus_std,"          отождествлениями  ",10,x_start_pos,HPDF_Page_GetHeight(pages[page_count-1]) - 805);
 HPDF_Page_EndText(pages[page_count-1]);
 
-    emit log_message("r1 отчет создан");
+    emit log_message(tr("r1 отчет создан"));
 
  }
 
@@ -1743,7 +1746,7 @@ HPDF_Page_EndText(pages[page_count-1]);
      auto val_vect = parser->parse_resulte_table_2_ver2("/"+template_files[0]+azdk.number + "r2.txt","/"+template_files[2]+azdk.number + "r2.txt");
      std::string text = "Тест-"+ std::to_string(test) + " (статистический)";
 
-     emit log_message("Создание r2 отчета");
+     emit log_message(tr("Создание r2 отчета"));
 
      create_page();
      calantitul(page_count-1);
@@ -1831,7 +1834,7 @@ HPDF_Page_BeginText(pages[page_count-1]);
      print_text(page_count-1,rus_std,"          отождествлениями  ",10,x_start_pos,HPDF_Page_GetHeight(pages[page_count-1]) - 805);
 HPDF_Page_EndText(pages[page_count-1]);
 
-     emit log_message("r2 отчет создан");
+     emit log_message(tr("r2 отчет создан"));
 
  }
 
@@ -1842,7 +1845,7 @@ HPDF_Page_EndText(pages[page_count-1]);
      auto val_vect = parser->parse_resulte_table_2_ver2("/"+template_files[0]+azdk.number + "r3.txt","/"+template_files[2]+azdk.number + "r3.txt");
      std::string text = "Тест-"+ std::to_string(test) + " (статистический)";
 
-     emit log_message("Создание ro3 отчета");
+     emit log_message(tr("Создание r3 отчета"));
 
      create_page();
      calantitul(page_count-1);
@@ -1930,7 +1933,7 @@ HPDF_Page_BeginText(pages[page_count-1]);
      print_text(page_count-1,rus_std,"          отождествлениями  ",10,x_start_pos,HPDF_Page_GetHeight(pages[page_count-1]) - 805);
 HPDF_Page_EndText(pages[page_count-1]);
 
-    emit log_message("r3 отчет создан");
+    emit log_message(tr("r3 отчет создан"));
  }
 
  void PDF_creator::o_otchet()
@@ -1940,7 +1943,7 @@ HPDF_Page_EndText(pages[page_count-1]);
      auto val_vect = parser->parse_resulte_table_2_ver2("/"+template_files[0]+azdk.number + "o.txt","/"+template_files[2]+azdk.number + "o.txt");
      std::string text = "Тест-"+ std::to_string(test) + " (орбитальный)";
 
-     emit log_message("Создание о отчета");
+     emit log_message(tr("Создание о отчета"));
 
      create_page();
      calantitul(page_count-1);
@@ -2135,5 +2138,5 @@ HPDF_Page_BeginText(pages[page_count-1]);
      print_text(page_count-1,rus_std,"          компонент кватерниона, установленного в ОДС (синяя линия). ",10,x_start_pos,HPDF_Page_GetHeight(pages[page_count-1]) - 395-150);
 HPDF_Page_EndText(pages[page_count-1]);
 
-     emit log_message("о отчет создан");
+     emit log_message(tr("о отчет создан"));
  }
